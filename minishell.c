@@ -12,6 +12,7 @@
 
 #include "minishell.h"
 
+/* dir is the cwd + :  eq the prompt to print*/
 void	getprompt(char *dir)
 {
 	int	i;
@@ -19,6 +20,7 @@ void	getprompt(char *dir)
 	ft_bzero(dir, sizeof(char) * MAXLEN);
 	getcwd(dir, sizeof(char) * MAXLEN);
 	i = ft_strlen(dir);
+//printf("%d\n", i);
 	if (MAXLEN - 2 < i)
 	{
 		*dir = 0;
@@ -40,6 +42,7 @@ int	getcmd(char *buf, int size, char *dir, t_data *data)
 	if (!dir)
 		return (ft_putstr_fd("dir too long to print\n", 1), -1);
 	input = readline(dir);
+printf("input: %s\n", input);
 	if (!input)
 		return (freenull(input), -1);
 	len = ft_strlen(input);
@@ -56,6 +59,13 @@ int	main(int ac, char *av[], char **envp)
 	char	buf[MAXLEN];
 	char	dir[MAXLEN];
 	t_data	data;
+	
+	t_list *token_list;
+
+// Print environment variables
+/*for (int i = 0; envp[i] != NULL; i++) {
+	printf("Environment variable %d: %s\n", i, envp[i]);
+}*/
 
 	(void)av;
 	(void)ac;
@@ -64,9 +74,22 @@ int	main(int ac, char *av[], char **envp)
 	server();
 	while (getcmd(buf, MAXLEN, dir, &data) >= 0)
 	{
-		server();
-		if (builtin_func(buf, &data) == 0)
+		/*added this*/	
+
+		if(ft_strlen(buf) == 0)//empty input
 			continue ;
+		
+		token_list = process_raw_input(buf);
+		parse_token_list(&token_list);
+		printf("----\n");
+		print_token_list(token_list);
+		execute_list(token_list);
+		
+		/**end**/
+
+		//server();
+		//if (builtin_func(buf, &data) == 0)
+		//	continue ;
 	}
 	exitcl(0);
 }

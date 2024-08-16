@@ -49,7 +49,24 @@ typedef struct s_list
 	void			*content;
 	struct s_list	*next;
 }	t_list;
+
+//lexer token e.g cat "hello" > test.txt
+//cmd = cat
+//arg = "hello"
+//type = 0 //cmd
+//type = 1 //arguments
+//type = 2 //operator
+typedef struct s_token
+{
+	char			*cmd;
+	char			*arg;
+	char			*operator;
+	int				type;			
+}	t_token;
+
 extern int	g_var;
+
+
 
 // ft
 void	ft_bzero(void *b, size_t len);
@@ -83,4 +100,19 @@ void	initdata(char buf[MAXLEN], char **env, t_data *data);
 // shell
 void	getprompt(char *dir);
 
+//lexer/parser/executor
+t_list *process_raw_input(char *str);
+t_list	*ft_lstlast(t_list *lst);
+void	ft_lstadd_front(t_list **lst, t_list *new);
+int		ft_lstsize(t_list *lst);
+void    print_token_list(t_list *token_list);
+void parse_token_list(t_list **token_list);
+int equals(char *s1, char *s2);
+int	ft_lstsize(t_list *lst);
+t_list	*ft_lstlast(t_list *lst);
+void	lstremove_last(t_list **lst);
+void	ft_lstdelone(t_list *lst, void (*del)(void*));
+void    execute_list(t_list *token_list);
+char *do_other(t_list *cmd_list, char **child_args);
+char	*ft_strjoin(char const *s1, char const *s2);
 #endif
