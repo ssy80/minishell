@@ -7,9 +7,7 @@
 <NUMBER> ::= <DIGIT>
            | <DIGIT> <NUMBER> 
 
-<WORD> ::= <ALPHA>
-         | <ALPHA> <WORD>
-		 | <ALPHA> <WORD> <NUMBER>
+<WORD> ::= <ALPHA> <WORD>
 		 | <ALPHA> <WORD> <NUMBER> <WORD>
 		 | EMPTY
 
