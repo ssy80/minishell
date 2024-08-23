@@ -36,21 +36,21 @@
 # define MFAIL "Malloc failure\n"
 # define M_MAX "Too many malloc pointer\n"
 
+typedef struct s_list
+{
+	void			*content;
+	struct s_list	*next;
+}	t_list;
+
 typedef struct s_data
 {
-	char	**env;
+	t_list	*env;
 	char	*buf;
 	void	*freept[PTMAX];
 	int		ptno;
 	int		tkn[MAXLEN][2];
 	int		itr;
 }	t_data;
-
-typedef struct s_list
-{
-	void			*content;
-	struct s_list	*next;
-}	t_list;
 
 //lexer token e.g cat "hello" > test.txt
 //cmd = cat
@@ -67,8 +67,6 @@ typedef struct s_token
 }	t_token;
 
 extern int	g_var;
-
-
 
 // ft
 void	ft_bzero(void *b, size_t len);
@@ -92,7 +90,7 @@ void	setfreept(t_data *data, void *pt);
 void	freenullall(t_data *data);
 // built in function
 void	getpwd(void);
-void	getmyenv(char **envp);
+void	getmyenv(t_data *data);
 void	exitcommand(char *input, t_data *data);
 void	getcd(char *buf);
 int		builtin_func(char *buf, t_data *data);
@@ -111,8 +109,6 @@ int		ft_lstsize(t_list *lst);
 void    print_token_list(t_list *token_list);
 void parse_token_list(t_list **token_list);
 int equals(char *s1, char *s2);
-int	ft_lstsize(t_list *lst);
-t_list	*ft_lstlast(t_list *lst);
 void	lstremove_last(t_list **lst);
 void	ft_lstdelone(t_list *lst, void (*del)(void*));
 void    execute_list(t_list *token_list);

@@ -21,15 +21,16 @@ void	getpwd(void)
 	ft_putstr_fd("\n", STDOUT_FILENO);
 }
 
-void	getmyenv(char **envp)
+void	getmyenv(t_data *data)
 {
-	int	i;
+	t_list	*cp;
 
-	i = -1;
-	while (envp[++i])
+	cp = data->env;
+	while (cp)
 	{
-		ft_putstr_fd(envp[i], STDOUT_FILENO);
+		ft_putstr_fd(cp->content, STDOUT_FILENO);
 		ft_putstr_fd("\n", STDOUT_FILENO);
+		cp = cp->next;
 	}
 }
 
@@ -90,6 +91,6 @@ int	builtin_func(char *buf, t_data *data)
 		return (getpwd(), 0);
 	if (buf[0] == 'e' && buf[1] == 'n' && buf[2] == 'v' \
 	&& (buf[3] == ' ' || buf[3] == '\0'))
-		return (getmyenv(data->env), 0);
+		return (getmyenv(data), 0);
 	return (1);
 }

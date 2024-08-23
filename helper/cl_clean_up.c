@@ -27,6 +27,7 @@ void	freenullall(t_data *data)
 		free(data->freept[data->ptno]);
 		data->freept[data->ptno] = NULL;
 	}
+	ft_lstclear(&(data->env), free);
 }
 
 void	freenull(void *pt)
