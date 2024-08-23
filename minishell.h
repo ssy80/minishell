@@ -42,6 +42,8 @@ typedef struct s_data
 	char	*buf;
 	void	*freept[PTMAX];
 	int		ptno;
+	int		tkn[MAXLEN][2];
+	int		itr;
 }	t_data;
 
 typedef struct s_list
@@ -99,6 +101,7 @@ void	initfd(char *dir);
 void	initdata(char buf[MAXLEN], char **env, t_data *data);
 // shell
 void	getprompt(char *dir);
+void	parsecmd(t_data *data, int i, int start);
 
 //lexer/parser/executor
 t_list *process_raw_input(char *str);
