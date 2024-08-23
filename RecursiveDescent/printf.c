@@ -25,7 +25,7 @@ int putnum(long num, int base){
 	return putnum(num / base, base) + putnum(num % base, base); 
 }
 
-// <STR> -> <ALLCHAR><STR><PSTR><PNUM><PHEX>
+// <STR> -> <ALLCHAR><STR><PSTR><PNUM><PHEX> | EMPTY
 int ptf(char *str, int i, int n, va_list args)
 {
 	if (!str[i])
