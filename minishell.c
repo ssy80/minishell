@@ -38,11 +38,13 @@ int	getcmd(char *buf, int size, char *dir, t_data *data)
 	int			len;
 
 	ft_bzero(buf, size);
+	ft_bzero(data->tkn, MAXLEN * 2);
+	data->itr = 0;
 	getprompt(dir);
 	if (!dir)
 		return (ft_putstr_fd("dir too long to print\n", 1), -1);
 	input = readline(dir);
-printf("input: %s\n", input);
+	printf("input: %s\n", input);
 	if (!input)
 		return (freenull(input), -1);
 	len = ft_strlen(input);
@@ -75,9 +77,9 @@ int	main(int ac, char *av[], char **envp)
 	while (getcmd(buf, MAXLEN, dir, &data) >= 0)
 	{
 		/*added this*/	
-
 		if(ft_strlen(buf) == 0)//empty input
 			continue ;
+		parsecmd(&data, 0, 0);
 		
 		token_list = process_raw_input(buf);
 		parse_token_list(&token_list);
@@ -90,6 +92,7 @@ int	main(int ac, char *av[], char **envp)
 		//server();
 		//if (builtin_func(buf, &data) == 0)
 		//	continue ;
+
 	}
 	exitcl(0);
 }
