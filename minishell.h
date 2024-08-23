@@ -94,6 +94,7 @@ void	getmyenv(t_data *data);
 void	exitcommand(char *input, t_data *data);
 void	getcd(char *buf);
 int		builtin_func(char *buf, t_data *data);
+char	*getenvvar(char *var, t_data *data);
 // init
 void	initfd(char *dir);
 void	initdata(char buf[MAXLEN], char **env, t_data *data);

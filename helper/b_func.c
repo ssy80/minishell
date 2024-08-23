@@ -58,6 +58,29 @@ void	exitcommand(char *input, t_data *data)
 		return (freenullall(data), freenull(input), exitcl(0));
 }
 
+// get env value with var as key
+char	*getenvvar(char *var, t_data *data)
+{
+	size_t	i;
+	t_list *cp;
+	
+	cp = data->env;
+	while (cp)
+	{
+		i = -1;
+		while (var[++i])
+		{
+			if (((char *)cp->content)[i] != var[i])
+				break ;
+		}
+		if (i == ft_strlen(var) && ((char *)cp->content)[i] == '=' && !var[i])
+			return (&((char *)cp->content)[i+1]);
+		cp = cp->next;
+	}
+	return ("");
+}
+
+
 void	getcd(char *buf)
 {
 	char	**tmp;
