@@ -12,30 +12,7 @@
 
 #include "../minishell.h"
 
-// void	copyenv1(char **env, t_data *data)
-// {
-// 	int	i;
-// 	int	len;
-
-// 	i = 0;
-// 	while (env[i])
-// 		i++;
-// 	data->env = ft_calloc(i + 1, sizeof(char *));
-// 	if (!data->env)
-// 		return (ft_putstr_fd(MFAIL, 1), exit(1));
-// 	setfreept(data, data->env);
-// 	i = -1;
-// 	while (env[++i])
-// 	{
-// 		len = ft_strlen(env[i]);
-// 		data->env[i] = ft_calloc(len + 1, sizeof(char));
-// 		if (!data->env[i])
-// 			return (ft_putstr_fd(MFAIL, 1), freenullall(data), exit(1));
-// 		setfreept(data, data->env[i]);
-// 		ft_strlcpy(data->env[i], env[i], len + 1);
-// 	}
-// }
-
+// copy env into linkedlist for easier manipulation when editing env value
 static void	copyenv(char **env, t_data *data)
 {
 	int		i;
@@ -60,6 +37,8 @@ static void	copyenv(char **env, t_data *data)
 	data->env = ll;
 }
 
+// initializing all variable in data struct to null
+// prevent valgrind error of uninitialised value being used
 void	initdata(char buf[MAXLEN], char **env, t_data *data)
 {
 	ft_bzero(data, sizeof(t_data));

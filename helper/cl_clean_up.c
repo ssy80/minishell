@@ -12,6 +12,7 @@
 
 #include "../minishell.h"
 
+// used when adding malloc pointer
 void	setfreept(t_data *data, void *pt)
 {
 	if (data->ptno >= PTMAX)
@@ -20,6 +21,7 @@ void	setfreept(t_data *data, void *pt)
 	data->ptno++;
 }
 
+// used when exiting to free all pointer in data.freept
 void	freenullall(t_data *data)
 {
 	while (--data->ptno >= 0)
@@ -30,12 +32,15 @@ void	freenullall(t_data *data)
 	ft_lstclear(&(data->env), free);
 }
 
+// free and null pointer so that double free pt will not cause error
+// free null does nothing
 void	freenull(void *pt)
 {
 	free(pt);
 	pt = NULL;
 }
 
+// close fd 0, 1 ,2 before exiting
 void	exitcl(int code)
 {
 	close(0);

@@ -15,15 +15,7 @@
 // check for white space char  \t\r\n\v
 _Bool	is_whitesp(char s)
 {
-	char	a[128];
-
-	ft_bzero(a, sizeof(char) * 128);
-	a[' '] = '1';
-	a['\t'] = '1';
-	a['\r'] = '1';
-	a['\n'] = '1';
-	a['\v'] = '1';
-	if (a[(int)s] == '1')
+	if (s == ' ' || s == '\t' || s == '\r' || s == '\n' || s == '\v')
 		return (true);
 	return (false);
 }
@@ -35,14 +27,7 @@ _Bool	is_whitesp(char s)
 // check for symbol	<|>&;()
 _Bool	is_sym(char s)
 {
-	char	a[128];
-
-	ft_bzero(a, sizeof(char) * 128);
-	a['<'] = '1';
-	a['|'] = '1';
-	a['>'] = '1';
-	a['='] = '1';
-	if (a[(int)s] == '1')
+	if (s == '<' || s == '|' || s == '>' || s == '=')
 		return (true);
 	return (false);
 }
@@ -99,6 +84,8 @@ int	parsespace(t_data *data, int i, int start)
 	return (parsespace(data, i + 1, start));
 }
 
+// handle str and return back start and end index of each token
+// serparator is |, > and <, result stored in data.tkn
 void	parsecmd(t_data *data, int i, int start)
 {
 	if (!data->buf[i])

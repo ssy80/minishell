@@ -36,3 +36,6 @@
 <PIPELINE> ::= <SIMPLE-COMMAND> '|' <PIPELINE>  |  <SIMPLE-COMMAND>
 
 START ::= <PIPELINE>
+
+# Command to test
+cat<<EOF>>testcmd.txt
