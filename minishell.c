@@ -62,7 +62,7 @@ int	main(int ac, char *av[], char **envp)
 	char	dir[MAXLEN];
 	t_data	data;
 	
-	t_list *token_list;
+//	t_list *token_list;
 
 // Print environment variables
 /*for (int i = 0; envp[i] != NULL; i++) {
@@ -76,18 +76,19 @@ int	main(int ac, char *av[], char **envp)
 	server();
 	while (getcmd(buf, MAXLEN, dir, &data) >= 0)
 	{
-		/*added this*/	
+
 		if(ft_strlen(buf) == 0)//empty input
 			continue ;
 		parsecmd(&data, 0, 0);
+
+//printf("buffer: %s\n", data.buf);
 		
-		token_list = process_raw_input(buf);
-		parse_token_list(&token_list);
-		printf("----\n");
-		print_token_list(token_list);
-		execute_list(token_list);
-		
-		/**end**/
+//		token_list = process_raw_input(buf);
+//		parse_token_list(&token_list);
+//		printf("----\n");
+//		print_token_list(token_list);
+//		execute_list(token_list);
+
 
 		//server();
 		//if (builtin_func(buf, &data) == 0)
