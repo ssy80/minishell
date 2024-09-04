@@ -35,6 +35,43 @@
 # define CDERR "No such file or directory\n"
 # define MFAIL "Malloc failure\n"
 # define M_MAX "Too many malloc pointer\n"
+# define MAXARGS 10
+# define EXEC 1
+# define REDIR 2
+# define PIPE 3
+# define PIPESYM 1
+# define MSYM 2
+# define LSYM 3
+# define MMSYM 4
+# define LLSYM 5
+# define CHARSYM 6
+# define NUMSYM 7
+# define ERRSYM -1
+
+typedef struct s_cmd
+{
+	int type;
+}	t_cmd;
+
+typedef struct s_execcmd {
+	int type;
+	char *argv[MAXARGS];
+	char *eargv[MAXARGS];
+}	t_execcmd;
+
+typedef struct s_redircmd {
+	int type;
+	t_cmd *cmd;
+	char *file;
+	int mode;
+	int fd;
+}	t_redircmd;
+
+typedef struct s_pipecmd {
+	int type;
+	t_cmd *left;
+	t_cmd *right;
+}	t_pipecmd;
 
 typedef struct s_list
 {
@@ -50,6 +87,8 @@ typedef struct s_data
 	int		ptno;
 	int		tkn[MAXLEN][2];
 	int		itr;
+	char	*cmd[MAXLEN];
+	int		tkn_no;
 }	t_data;
 
 //lexer token e.g cat "hello" > test.txt
@@ -63,23 +102,25 @@ typedef struct s_token
 	char			*cmd;
 	char			*arg;
 	char			*operator;
-	int				type;			
+	int				type;
 }	t_token;
 
 extern int	g_var;
 
 // ft
+int		ft_isalpha(int a);
+int		ft_isalnum(int a);
 void	ft_bzero(void *b, size_t len);
+void	*ft_calloc(size_t number, size_t size);
 void	ft_putstr_fd(char *s, int fd);
-size_t	ft_strlcpy(char *dest, char *src, size_t size);
 size_t	ft_strlen(const char *str);
+size_t	ft_strlcpy(char *dest, char *src, size_t size);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 char	*ft_strchr(const char *s, int c);
 char	**ft_split(char const *s, char c);
 void	ft_lstadd_back(t_list **lst, t_list *new);
 t_list	*ft_lstnew(void *content);
 void	ft_lstclear(t_list **lst, void (*del)(void*));
-void	*ft_calloc(size_t number, size_t size);
 // signal
 void	handle_signal(int signum, siginfo_t *info, void *context);
 void	server(void);
@@ -88,6 +129,7 @@ void	freenull(void *pt);
 void	exitcl(int code);
 void	setfreept(t_data *data, void *pt);
 void	freenullall(t_data *data);
+void	freedatacmd(t_data *data);
 // built in function
 void	getpwd(void);
 void	getmyenv(t_data *data);
@@ -100,7 +142,8 @@ void	initfd(char *dir);
 void	initdata(char buf[MAXLEN], char **env, t_data *data);
 // shell
 void	getprompt(char *dir);
-void	parsecmd(t_data *data, int i, int start);
+void	gettkn(t_data *data, int i, int start);
+void	loadcmdtkn(t_data *data);
 
 //lexer/parser/executor
 t_list *process_raw_input(char *str);

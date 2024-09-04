@@ -49,3 +49,15 @@ void	exitcl(int code)
 	rl_clear_history();
 	exit(code);
 }
+
+void	freedatacmd(t_data *data)
+{
+	int	i;
+
+	i = -1;
+	while (++i < data->itr)
+	{
+		free(data->cmd[i]);
+		data->cmd[i] = NULL;
+	}
+}

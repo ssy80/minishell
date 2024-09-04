@@ -80,6 +80,46 @@ char	*getenvvar(char *var, t_data *data)
 	return ("");
 }
 
+/* 
+	return false if 
+
+ */
+bool	isvalidenvkey(char *var)
+{
+	int	i;
+
+	i = 0;
+	if (var[i] != '_' && ft_isalpha(var[i]) ==0)
+		return (false);
+	i++;
+	while (var[i] && var[i] != '=')
+	{
+		if (var[i] != '_' && ft_isalnum(var[i]) == 0)
+			return (false);
+		i++;
+	}
+	return (true);
+}
+
+
+int	addenvvar(char *var, t_data *data)
+{
+	char	*tmp;
+	size_t	l;
+	t_list	*envnode;
+
+	l = ft_strlen(var);
+	tmp = ft_calloc(l + 1, sizeof(char));
+	if (!tmp)
+		return (ft_putstr_fd(MFAIL, 1), freenullall(data), exit(1), -1);
+	ft_strlcpy(tmp, var, l + 1);
+	envnode = ft_lstnew(tmp);
+	if (!envnode)
+		return (free(tmp), ft_putstr_fd(MFAIL, 1), freenullall(data), exit(1), -1);
+	ft_lstadd_back(&(data->env), envnode);
+	return (0);
+}
+
 
 void	getcd(char *buf)
 {
