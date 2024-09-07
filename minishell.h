@@ -79,6 +79,15 @@ typedef struct s_list
 	struct s_list	*next;
 }	t_list;
 
+
+// env = env variable
+// buf hold the cmd entered
+// freept is the linked list of pt to be free
+// number of ptno as there is a limit of PTMAX
+// tkn is 2d array with start and end index (end is exclusive) of tkn
+// itr is token number
+// cmd is array of tkn split using malloc allocated mem
+// tkn_no is number of tkn processed
 typedef struct s_data
 {
 	t_list	*env;
@@ -144,7 +153,9 @@ void	initdata(char buf[MAXLEN], char **env, t_data *data);
 void	getprompt(char *dir);
 void	gettkn(t_data *data, int i, int start);
 void	loadcmdtkn(t_data *data);
-
+// parsing
+t_cmd	*parsepipe(t_data *data, int i);
+_Bool	is_sym(char s);
 //lexer/parser/executor
 t_list *process_raw_input(char *str);
 t_list	*ft_lstlast(t_list *lst);
