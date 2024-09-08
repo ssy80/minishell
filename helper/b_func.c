@@ -120,6 +120,35 @@ int	addenvvar(char *var, t_data *data)
 	return (0);
 }
 
+int	listlength(t_list *a)
+{
+	int	i;
+
+	i = 0;
+	while (a)
+	{
+		a = a->next;
+		i++;
+	}
+	return (i);
+}
+
+void	lltoarray(t_data *data)
+{
+	int		i;
+	t_list	*cp;
+
+	i = -1;
+	data->envc = ft_calloc(listlength(data->env) + 1, sizeof(char *));
+	if (!data->envc)
+		return (ft_putstr_fd(MFAIL, 1), freenullall(data), exit(1), -1);
+	cp = data->env;
+	while (cp)
+	{
+		data->envc[++i] = data->env->content;
+		cp = data->env->next;
+	}
+}
 
 void	getcd(char *buf)
 {

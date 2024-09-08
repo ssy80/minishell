@@ -30,6 +30,7 @@ void	freenullall(t_data *data)
 		data->freept[data->ptno] = NULL;
 	}
 	ft_lstclear(&(data->env), free);
+	freenull(data->envc);
 }
 
 // free and null pointer so that double free pt will not cause error

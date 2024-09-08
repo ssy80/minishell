@@ -91,6 +91,7 @@ typedef struct s_list
 typedef struct s_data
 {
 	t_list	*env;
+	char	**envc;
 	char	*buf;
 	void	*freept[PTMAX];
 	int		ptno;
