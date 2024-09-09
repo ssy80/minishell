@@ -141,7 +141,7 @@ void	lltoarray(t_data *data)
 	i = -1;
 	data->envc = ft_calloc(listlength(data->env) + 1, sizeof(char *));
 	if (!data->envc)
-		return (ft_putstr_fd(MFAIL, 1), freenullall(data), exit(1), -1);
+		return (ft_putstr_fd(MFAIL, 1), freenullall(data), exit(1));
 	cp = data->env;
 	while (cp)
 	{

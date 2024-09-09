@@ -46,15 +46,29 @@ int	parse2q(t_data *data, int i, int start)
 	return (parse1q(data, i + 1, start));
 }
 
-int	parsesym(t_data *data, int i, int start)
+void	setdatatkn(t_data *data, int i, int start)
 {
-	if (!is_sym(data->buf[i]))
-	{
 		data->tkn[data->itr][0] = start;
 		data->tkn[data->itr][1] = i;
 		data->itr++;
-		return (i);
-	}
+}
+
+int	parsesym(t_data *data, int i, int start)
+{
+	if (!is_sym(data->buf[i]))
+		return (setdatatkn(data, i, start), i);
+	if (data->buf[i] == '<' && data->buf[i + 1] == '<')
+		return (setdatatkn(data, i + 2, start), i + 2);
+	if (data->buf[i] == '>' && data->buf[i + 1] == '>')
+		return (setdatatkn(data, i + 2, start), i + 2);
+	if (data->buf[i] == '|' && data->buf[i + 1] == '|')
+		return (setdatatkn(data, i + 2, start), i + 2);
+	if (data->buf[i] == '|')
+		return (setdatatkn(data, i + 1, start), i + 1);
+	if (data->buf[i] == '<')
+		return (setdatatkn(data, i + 1, start), i + 1);
+	if (data->buf[i] == '>')
+		return (setdatatkn(data, i + 1, start), i + 1);
 	return (parsesym(data, i + 1, start));
 }
 
