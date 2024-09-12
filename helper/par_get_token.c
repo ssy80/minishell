@@ -44,7 +44,7 @@ int	parse1q(t_data *data, int i, int start)
 	if (!data->buf[i])
 		return (setdatatkn(data, i, start), i);
 	if (data->buf[i] == '\'' && !is_sym(data->buf[i + 1]) && !is_whitesp(data->buf[i + 1]))
-		return (i = parsechar(data, i + 1, start), i);
+		return (parsechar(data, i + 1, start));
 	if (data->buf[i] == '\'')
 		return (setdatatkn(data, i + 1, start), i + 1);
 	return (parse1q(data, i + 1, start));
@@ -55,7 +55,7 @@ int	parse2q(t_data *data, int i, int start)
 	if (!data->buf[i])
 		return (setdatatkn(data, i, start), i);
 	if (data->buf[i] == '"' && !is_sym(data->buf[i + 1]) && !is_whitesp(data->buf[i + 1]))
-		return (i = parsechar(data, i + 1, start), i);
+		return (parsechar(data, i + 1, start));
 	if (data->buf[i] == '"')
 		return (setdatatkn(data, i + 1, start), i + 1);
 	return (parse2q(data, i + 1, start));
@@ -81,8 +81,12 @@ int	parsesym(t_data *data, int i, int start)
 
 int	parsechar(t_data *data, int i, int start)
 {
-	if (!data->buf[i] || is_sym(data->buf[i]) || data->buf[i] == ' ')
+	if (!data->buf[i] || is_sym(data->buf[i]) || is_whitesp(data->buf[i]))
 		return (setdatatkn(data, i, start), i);
+	if (data->buf[i] == '\'')
+		return (parse1q(data, i + 1, start));
+	if (data->buf[i] == '"')
+		return (parse2q(data, i + 1, start));
 	return (parsechar(data, i + 1, start));
 }
 
