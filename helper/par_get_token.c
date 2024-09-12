@@ -32,26 +32,35 @@ _Bool	is_sym(char s)
 	return (false);
 }
 
-int	parse1q(t_data *data, int i, int start)
-{
-	if (data->buf[i] == '\'')
-		return (i);
-	return (parse1q(data, i + 1, start));
-}
-
-int	parse2q(t_data *data, int i, int start)
-{
-	if (data->buf[i] == '"')
-		return (i);
-	return (parse1q(data, i + 1, start));
-}
-
 void	setdatatkn(t_data *data, int i, int start)
 {
 		data->tkn[data->itr][0] = start;
 		data->tkn[data->itr][1] = i;
 		data->itr++;
 }
+
+int	parse1q(t_data *data, int i, int start)
+{
+	if (!data->buf[i])
+		return (setdatatkn(data, i, start), i);
+	if (data->buf[i] == '\'' && !is_sym(data->buf[i + 1]) && !is_whitesp(data->buf[i + 1]))
+		return (i = parsechar(data, i + 1, start), i);
+	if (data->buf[i] == '\'')
+		return (setdatatkn(data, i + 1, start), i + 1);
+	return (parse1q(data, i + 1, start));
+}
+
+int	parse2q(t_data *data, int i, int start)
+{
+	if (!data->buf[i])
+		return (setdatatkn(data, i, start), i);
+	if (data->buf[i] == '"' && !is_sym(data->buf[i + 1]) && !is_whitesp(data->buf[i + 1]))
+		return (i = parsechar(data, i + 1, start), i);
+	if (data->buf[i] == '"')
+		return (setdatatkn(data, i + 1, start), i + 1);
+	return (parse2q(data, i + 1, start));
+}
+
 
 int	parsesym(t_data *data, int i, int start)
 {
@@ -60,8 +69,6 @@ int	parsesym(t_data *data, int i, int start)
 	if (data->buf[i] == '<' && data->buf[i + 1] == '<')
 		return (setdatatkn(data, i + 2, start), i + 2);
 	if (data->buf[i] == '>' && data->buf[i + 1] == '>')
-		return (setdatatkn(data, i + 2, start), i + 2);
-	if (data->buf[i] == '|' && data->buf[i + 1] == '|')
 		return (setdatatkn(data, i + 2, start), i + 2);
 	if (data->buf[i] == '|')
 		return (setdatatkn(data, i + 1, start), i + 1);
@@ -75,12 +82,7 @@ int	parsesym(t_data *data, int i, int start)
 int	parsechar(t_data *data, int i, int start)
 {
 	if (!data->buf[i] || is_sym(data->buf[i]) || data->buf[i] == ' ')
-	{
-		data->tkn[data->itr][0] = start;
-		data->tkn[data->itr][1] = i;
-		data->itr++;
-		return (i);
-	}
+		return (setdatatkn(data, i, start), i);
 	return (parsechar(data, i + 1, start));
 }
 
@@ -105,12 +107,15 @@ void	gettkn(t_data *data, int i, int start)
 	if (!data->buf[i])
 		return ;
 	i = parsespace(data, i, start);
+	if (data->buf[i] && data->buf[i] == '\'')
+		return (gettkn(data, i = parse1q(data, i + 1, i), i));
+	if (data->buf[i] && data->buf[i] == '"')
+		return (gettkn(data, i = parse2q(data, i + 1, i), i));
 	if (data->buf[i] && !is_sym(data->buf[i]))
-		i = parsechar(data, i, i);
-	i = parsespace(data, i, start);
+		return (gettkn(data, i = parsechar(data, i, i), i));
 	if (data->buf[i] && is_sym(data->buf[i]))
-		i = parsesym(data, i, i);
-	return (gettkn(data, i, i));
+		return (gettkn(data, i = parsesym(data, i, i), i));
+	return (gettkn(data, i + 1, i));
 }
 
 void	loadcmdtkn(t_data *data)
