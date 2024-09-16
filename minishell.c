@@ -86,6 +86,10 @@ int	main(int ac, char *av[], char **envp)
 		printf("buffer: %s\n", data.buf);
 		for (int i =0; i<data.itr;i++)
 			printf("%s\n", data.cmd[i]);
+		if (syn_check(&data))
+			write(1, "true\n", 5);
+		else
+			write(1, "false\n", 6);
 		// tree = parsepipe(&data, 0);
 		(void) tree;
 //		token_list = process_raw_input(buf);

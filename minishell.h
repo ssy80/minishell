@@ -156,10 +156,11 @@ void	gettkn(t_data *data, int i, int start);
 void	loadcmdtkn(t_data *data);
 // parsing
 t_cmd	*parsepipe(t_data *data, int i);
-_Bool	is_sym(char s);
+bool	is_sym(char s);
 int		parsechar(t_data *data, int i, int start);
 int		parsesym(t_data *data, int i, int start);
 int		parsespace(t_data *data, int i, int start);
+bool	syn_check(t_data *data);
 //lexer/parser/executor
 t_list *process_raw_input(char *str);
 t_list	*ft_lstlast(t_list *lst);

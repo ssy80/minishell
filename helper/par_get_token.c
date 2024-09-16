@@ -25,7 +25,7 @@ _Bool	is_whitesp(char s)
 // need to handle special char below
 // <>|$"'&&||<<>>=
 // check for symbol	<|>&;()
-_Bool	is_sym(char s)
+bool	is_sym(char s)
 {
 	if (s == '<' || s == '|' || s == '>' || s == '=')
 		return (true);

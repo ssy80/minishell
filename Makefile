@@ -32,5 +32,5 @@ re : fclean all
 run : $(NAME)
 	valgrind --leak-check=full ./$(NAME)
 
-gdb: $(NAME)
+g: $(NAME)
 	gdb ./$(NAME)
