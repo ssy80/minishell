@@ -9,7 +9,7 @@
 /*   Updated: 2024/05/23 19:48:10 by ssian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "libft.h"
+#include "../minishell.h"
 
 static int	count_len(int n)
 {

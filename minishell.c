@@ -63,14 +63,8 @@ int	main(int ac, char *av[], char **envp)
 	char	buf[MAXLEN];
 	char	dir[MAXLEN];
 	t_data	data;
-	t_cmd	*tree;
-	
-//	t_list *token_list;
-
-// Print environment variables
-/*for (int i = 0; envp[i] != NULL; i++) {
-	printf("Environment variable %d: %s\n", i, envp[i]);
-}*/
+	//t_cmd	*tree;
+	t_list	*cmd_list;
 
 	(void)av;
 	(void)ac;
@@ -81,8 +75,10 @@ int	main(int ac, char *av[], char **envp)
 	{
 		if(ft_strlen(buf) == 0)//empty input
 			continue ;
+
 		gettkn(&data, 0, 0);
 		loadcmdtkn(&data);
+
 		printf("buffer: %s\n", data.buf);
 		for (int i =0; i<data.itr;i++)
 			printf("%s\n", data.cmd[i]);
@@ -90,16 +86,33 @@ int	main(int ac, char *av[], char **envp)
 			write(1, "true\n", 5);
 		else
 			write(1, "false\n", 6);
+		
+
+
+		cmd_list = NULL;
+		cmd_list = create_cmd_list(&data);
+		if (cmd_list == NULL)                    //malloc failed ?
+		{
+			free_datacmd(&data);
+			exit(EXIT_FAILURE);
+		}
+
+//print_cmd(cmd_list);
+
+		process_cmd_list(cmd_list);
+	
+		free_cmdlist(cmd_list);
+		ft_freelist(cmd_list);
+		cmd_list = NULL;
+
+		free_datacmd(&data);
+
+
 		// tree = parsepipe(&data, 0);
-		(void) tree;
-//		token_list = process_raw_input(buf);
-//		parse_token_list(&token_list);
-//		printf("----\n");
-//		print_token_list(token_list);
-//		execute_list(token_list);
+		//(void) tree;
 		//if (builtin_func(buf, &data) == 0)
 		//	continue ;
-		freedatacmd(&data);
+		//freedatacmd(&data);
 	}
 	exitcl(0);
 }

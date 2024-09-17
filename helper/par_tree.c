@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-t_cmd	*execcmd(t_data *data)
+/*t_cmd	*execcmd(t_data *data)
 {
 	t_execcmd	*cmd;
 
@@ -21,9 +21,9 @@ t_cmd	*execcmd(t_data *data)
 		return (freenullall(data), exitcl(1), NULL);
 	cmd->type = EXEC;
 	return ((t_cmd *)cmd);
-}
+}*/
 
-t_cmd	*pipecmd(t_data *data, t_cmd *left, t_cmd *right)
+/*t_cmd	*pipecmd(t_data *data, t_cmd *left, t_cmd *right)
 {
 	t_pipecmd *cmd;
 
@@ -34,9 +34,9 @@ t_cmd	*pipecmd(t_data *data, t_cmd *left, t_cmd *right)
 	cmd->left = left;
 	cmd->right = right;
 	return ((t_cmd *)cmd);
-}
+}*/
 
-t_cmd	*redircmd(t_cmd *subcmd, char *str, int mode, int fd)
+/*t_cmd	*redircmd(t_cmd *subcmd, char *str, int mode, int fd)
 {
 	t_redircmd *cmd;
 
@@ -47,7 +47,7 @@ t_cmd	*redircmd(t_cmd *subcmd, char *str, int mode, int fd)
 	cmd->mode = mode;
 	cmd->fd = fd;
 	return ((t_cmd *)cmd);
-}
+}*/
 
 
 int	parsetype(char *tkn)
@@ -73,7 +73,7 @@ int	parsetype(char *tkn)
 }
 
 
-t_cmd	*parseredir(t_cmd *cmd, t_data *data, int i)
+/*t_cmd	*parseredir(t_cmd *cmd, t_data *data, int i)
 {
 	int	type;
 
@@ -96,9 +96,9 @@ t_cmd	*parseredir(t_cmd *cmd, t_data *data, int i)
 		type = parsetype(data->cmd[i]);
 	}
 	return cmd;
-}
+}*/
 
-t_cmd	*parseexec(t_data *data, int i)
+/*t_cmd	*parseexec(t_data *data, int i)
 {
 	t_cmd		*ret;
 	t_execcmd	*cmd;
@@ -123,9 +123,9 @@ t_cmd	*parseexec(t_data *data, int i)
 		ret = parseredir(ret, data, data->tkn_no);
 	}
 	return (ret);
-}
+}*/
 
-t_cmd	*parsepipe(t_data *data, int i)
+/*t_cmd	*parsepipe(t_data *data, int i)
 {
 	t_cmd	*cmd;
 
@@ -136,5 +136,5 @@ t_cmd	*parsepipe(t_data *data, int i)
 		cmd = pipecmd(data, cmd, parsepipe(data, data->tkn_no));
 	}
 	return cmd;
-}
+}*/
 

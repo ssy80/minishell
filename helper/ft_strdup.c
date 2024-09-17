@@ -9,7 +9,7 @@
 /*   Updated: 2024/05/23 19:46:05 by ssian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "libft.h"
+#include "../minishell.h"
 
 char	*ft_strdup(const char *s)
 {

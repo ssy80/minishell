@@ -5,258 +5,439 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: ssian <ssian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/15 10:24:27 by ssian             #+#    #+#             */
-/*   Updated: 2024/08/15 10:24:32 by ssian            ###   ########.fr       */
+/*   Created: 2024/08/28 16:20:22 by ssian             #+#    #+#             */
+/*   Updated: 2024/08/28 16:20:23 by ssian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../minishell.h"
 
-/*static int is_builtin_fn(char *cmd)
+static void do_inout(t_list *inout_list)
 {
-    if (equals(cmd, "echo") == 1)
-        return (1);
-    if (equals(cmd, "cd") == 1)
-        return (1);
-    if (equals(cmd, "pwd") == 1)
-        return (1);
-    if (equals(cmd, "export") == 1)
-        return (1);
-    if (equals(cmd, "unset") == 1)
-        return (1);
-    if (equals(cmd, "env") == 1)
-        return (1);
-    if (equals(cmd, "exit") == 1)
-        return (1);
-    return (0);
-}*/
+    t_inout *inout;
+    int filefd;
 
-static char *do_pwd(void)
-{
-    //char	tmp[MAXLEN];
-    char    *tmp;
-    int     size;
-
-    tmp = malloc(sizeof(char) * (MAXLEN + 1 + 1)); //1 for '\n', 1 for '\0'
-    ft_bzero(tmp, (MAXLEN + 1 + 1));
-
-	getcwd(tmp, sizeof(char) * MAXLEN);
-
-    size = ft_strlen(tmp);
-    tmp[size] = '\n';
-    
-    return (tmp);
-}
-
-static char *do_echo(char **args)
-{
-    char    *tmp;
-    int     flag_n;
-    int     size;
-    int     i;
-    int     k;
-    int     j;
-
-    tmp = NULL;
-    flag_n = 0; //with \n
-    if (args[0] == NULL)
-        return ("\n");
-    if (equals(args[0], "-n"))
-        flag_n = 1;      //no \n
-    i = flag_n;
-    size = 0;
-    while (args[i])
+    while (inout_list != NULL)
     {
-        size = size + ft_strlen(args[i]) + 1;
-        i++;
-    }
-    size--;
-    if (flag_n == 0)
-        size++;
-    tmp = malloc(sizeof(char) * (size + 1) );
-    ft_bzero(tmp, (size + 1));
-    i = flag_n;
-    j = 0;
-    while (args[i])
-    {
-        k = 0;
-        
-        while(args[i][k])
+        inout = (t_inout *)(inout_list->content);
+        if (inout->type == 2)                                                //2=infile
         {
-            tmp[j] = args[i][k];
-            j++;
-            k++;
+            filefd = open(inout->file, O_RDONLY);
+            if (filefd < 0) 
+            {
+                perror(inout->file);
+                exit(EXIT_FAILURE);
+            }
+            dup2(filefd, STDIN_FILENO);
+            close (filefd);
         }
-        i++;
-        if (args[i] != NULL)
+        else if (inout->type == 0)                                            //0=create
         {
-            tmp[j] = ' ';
-            j++;
+            filefd = open(inout->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+            if (filefd < 0) 
+            {
+                perror(inout->file);
+                exit(EXIT_FAILURE);
+            }
+            dup2(filefd, STDOUT_FILENO);
+            close (filefd);
         }
+        else if (inout->type == 1)                                             //1=append
+        {
+            filefd = open(inout->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+            if (filefd < 0) 
+            {
+                perror(inout->file);
+                exit(EXIT_FAILURE);
+            }
+            dup2(filefd, STDOUT_FILENO);
+            close (filefd);
+        }
+        else if (inout->type == 3)                                             //3=heredoc
+        {
+            filefd = open(inout->heredoc, O_RDONLY);
+            if (filefd < 0) 
+            {
+                perror(inout->heredoc);
+                exit(EXIT_FAILURE);
+            }
+            dup2(filefd, STDIN_FILENO);
+            close (filefd);
+            if (unlink(inout->heredoc) == -1) 
+            {
+                perror("unlink");
+                exit(EXIT_FAILURE);
+            }
+        }
+        inout_list = inout_list->next;
     }
-    if (flag_n == 0)
-        tmp[j] = '\n';
-    
-    return (tmp);
 }
 
-
-
-static char *execute_cmd(t_list *cmd_list, char **child_args)
+static void do_single_cmd(t_cmd *cmd)
 {
-    t_token *token;
-
-    //(void)child_args;
-    token = (t_token *)(cmd_list->content); //get cmd to execute
+    char    **envp = { NULL };
+    pid_t pidt;
+    char   *command;
     
-    //builtin cmd
-    if (equals(token->cmd, "echo") == 1)
-        return (do_echo(child_args));
-    //if (equals(token->cmd, "cd") == 1)
-    //    return (do_cd(child_args));
-    if (equals(token->cmd, "pwd") == 1)
-        return (do_pwd());
-    //if (equals(token->cmd, "export") == 1)
-    //    return (do_export(child_args));
-    //if (equals(token->cmd, "unset") == 1)
-    //    return (do_unset(child_args));
-    //if (equals(token->cmd, "env") == 1)
-    //    return (do_env(child_args));
-    //if (equals(token->cmd, "exit") == 1)
-    //    return (do_exit(child_args));
-
-    //other cmd
-    //fork a child process, execev the cmd with args , get output
-    return (do_other(cmd_list, child_args));
-
-    //return (NULL);
-}
-
-static int get_args_size(t_list *cmd_list)
-{
-    t_token *token;
-    int i;
-
-    if (cmd_list->next == NULL)
-        return (0);
-    cmd_list = cmd_list->next;
-    token = (t_token *)(cmd_list->content);
-    i = 0;
-    while (token->type == 1)
+    if ((pidt = fork()) == -1) 
     {
-        i++;
-        if(cmd_list->next == NULL)
-            break;
-        cmd_list = cmd_list->next;
-        token = (t_token *)(cmd_list->content);
+        perror("fork pidt failed");
+        exit(EXIT_FAILURE);
     }
-    return (i);
+    if (pidt == 0) 
+    {
+        if (cmd->inout_list != NULL)
+        {
+            do_inout(cmd->inout_list);
+        }
+
+        if (cmd->cmd != NULL)
+        {
+            if (is_dir(cmd->cmd) == 1)
+            {
+                ft_putstr_fd(cmd->cmd, STDERR_FILENO);
+                ft_putstr_fd(": ", STDERR_FILENO);
+                ft_putstr_fd("Is a directory\n", STDERR_FILENO);
+                exit(EXIT_FAILURE);
+            }
+
+            command = get_command_path(cmd->cmd);
+
+            if (command == NULL)
+            {
+                ft_putstr_fd(cmd->cmd, STDERR_FILENO);
+                ft_putstr_fd(": ", STDERR_FILENO);
+                ft_putstr_fd("command not found\n", STDERR_FILENO);
+                exit(EXIT_FAILURE);
+            }
+            else
+            {
+                if (execve(command, cmd->args, envp) == -1) 
+                {
+                    perror(cmd->cmd);
+                    free(command);
+                    exit(EXIT_FAILURE);
+                }
+                free(command);
+            }
+        }
+
+        exit(EXIT_SUCCESS);
+    }
+    else
+    {
+        wait(NULL);
+    }
 }
 
-static char **get_child_args(t_list *cmd_list)
+void do_command_first(t_cmd *cmd, int pipefd_out[], pid_t pidt)//, int *saved_stdout) //first cmd
 {
-    t_token *token;
-    char    **args;
-    int     size;
+    char    **envp = { NULL };
+    char    *command;
+
+    if ((pidt = fork()) == -1) 
+    {
+        perror("fork pidt failed");
+        exit(EXIT_FAILURE);
+    }
+
+    if (pidt == 0) 
+    {
+        close(pipefd_out[0]);
+
+        dup2(pipefd_out[1], STDOUT_FILENO);     
+        close(pipefd_out[1]);
+
+        if (cmd->inout_list != NULL)
+        {
+            do_inout(cmd->inout_list);
+        }
+
+        if (cmd->cmd != NULL)
+        {
+            if (is_dir(cmd->cmd) == 1)
+            {
+                ft_putstr_fd(cmd->cmd, STDERR_FILENO);
+                ft_putstr_fd(": ", STDERR_FILENO);
+                ft_putstr_fd("Is a directory\n", STDERR_FILENO);
+                exit(EXIT_FAILURE);
+            }
+
+            command = get_command_path(cmd->cmd);
+
+            if (command == NULL)
+            {
+                ft_putstr_fd(cmd->cmd, STDERR_FILENO);
+                ft_putstr_fd(": ", STDERR_FILENO);
+                ft_putstr_fd("command not found\n", STDERR_FILENO);
+                exit(EXIT_FAILURE);
+            }
+            else
+            {
+                if (execve(command, cmd->args, envp) == -1) 
+                {
+                    perror(cmd->cmd);
+                    free(command);
+                    exit(EXIT_FAILURE);
+                }
+                free(command);
+            }
+        }
+
+        exit(EXIT_SUCCESS);
+
+    }
+    else
+    {
+        //1st cmd no need close pipe
+    }
+    
+}
+
+void do_command_mid(t_cmd *cmd, int pipefd_in[], int pipefd_out[], pid_t pidt)  
+{
+    char    **envp = { NULL };
+    char *command;
+
+    if ((pidt = fork()) == -1) 
+    {
+        perror("fork pidt failed");
+        exit(EXIT_FAILURE);
+    }
+
+    if (pidt == 0) 
+    {
+        close(pipefd_in[1]);
+        close(pipefd_out[0]);
+
+        dup2(pipefd_in[0], STDIN_FILENO);
+        close(pipefd_in[0]);
+        dup2(pipefd_out[1], STDOUT_FILENO);
+        close(pipefd_out[1]);
+
+        if (cmd->inout_list != NULL)
+        {
+            do_inout(cmd->inout_list);
+        }
+
+        if (cmd->cmd != NULL)
+        {
+            if (is_dir(cmd->cmd) == 1)
+            {
+                ft_putstr_fd(cmd->cmd, STDERR_FILENO);
+                ft_putstr_fd(": ", STDERR_FILENO);
+                ft_putstr_fd("Is a directory\n", STDERR_FILENO);
+                exit(EXIT_FAILURE);
+            }
+
+            command = get_command_path(cmd->cmd);
+
+            if (command == NULL)
+            {
+                ft_putstr_fd(cmd->cmd, STDERR_FILENO);
+                ft_putstr_fd(": ", STDERR_FILENO);
+                ft_putstr_fd("command not found\n", STDERR_FILENO);
+                exit(EXIT_FAILURE);
+            }
+            else
+            {
+                if (execve(command, cmd->args, envp) == -1) 
+                {
+                    perror(cmd->cmd);
+                    free(command);
+                    exit(EXIT_FAILURE);
+                }
+                free(command);
+            }
+        }
+
+        exit(EXIT_SUCCESS);
+    }
+    else
+    {
+        //2nd close in pipe.
+        close(pipefd_in[0]);
+        close(pipefd_in[1]);
+    }
+}
+
+void do_command_last(t_cmd *cmd, int pipefd_in[], pid_t pidt)          
+{
+    char    **envp = { NULL };
+    char *command;
+
+    if ((pidt = fork()) == -1) 
+    {
+        perror("fork pidt failed");
+        exit(EXIT_FAILURE);
+    }
+
+    if (pidt == 0) 
+    {
+        close(pipefd_in[1]);
+
+        dup2(pipefd_in[0], STDIN_FILENO);
+        close(pipefd_in[0]);
+
+        if (cmd->inout_list != NULL)
+        {
+            do_inout(cmd->inout_list);
+        }
+
+        if (cmd->cmd != NULL)
+        {
+            if (is_dir(cmd->cmd) == 1)
+            {
+                ft_putstr_fd(cmd->cmd, STDERR_FILENO);
+                ft_putstr_fd(": ", STDERR_FILENO);
+                ft_putstr_fd("Is a directory\n", STDERR_FILENO);
+                exit(EXIT_FAILURE);
+            }
+
+            command = get_command_path(cmd->cmd);
+
+            if (command == NULL)
+            {
+                ft_putstr_fd(cmd->cmd, STDERR_FILENO);
+                ft_putstr_fd(": ", STDERR_FILENO);
+                ft_putstr_fd("command not found\n", STDERR_FILENO);
+                exit(EXIT_FAILURE);
+            }
+            else
+            {
+                if (execve(command, cmd->args, envp) == -1) 
+                {
+                    perror(cmd->cmd);
+                    free(command);
+                    exit(EXIT_FAILURE);
+                }
+                free(command);
+            }
+        }
+
+        exit(EXIT_SUCCESS);
+    }
+    else
+    {
+        //last cmd, close in pipe
+        close(pipefd_in[0]);
+        close(pipefd_in[1]);
+    }
+    
+}
+
+static void process_heredoc(t_list *cmd_list)
+{
+    t_cmd   *cmd;
+    t_list  *inout_list;
+    t_inout *inout;
     int     i;
 
-    size = get_args_size(cmd_list);
-//printf("size: %d\n", size);
-    args = malloc(sizeof(char *) * (size + 1));
-    if (args == NULL)
-        return (NULL);
-    args[size] = NULL;
-    if (cmd_list->next == NULL)
-    {
-        return (args);
-    }
-
-    cmd_list = cmd_list->next;
-    token = (t_token *)(cmd_list->content);
     i = 0;
-    while (token->type == 1)
-    {
-        args[i] = token->arg;
-        i++;
-        if(cmd_list->next == NULL)
-            break;
-        cmd_list = cmd_list->next;
-        token = (t_token *)(cmd_list->content);
-    }
-    return (args);
-}
-
-static t_list *process_cmd(t_list *cmd_list)
-{
-    t_token *token;
-    char    *output;
-    char    **child_args;
-
-    output = NULL;
-
     while (cmd_list != NULL)
     {
-        token = (t_token *)(cmd_list->content);
-
-        if (token->type == 0)//cmd
+        cmd = (t_cmd *)(cmd_list->content);
+        inout_list = cmd->inout_list;
+          
+        while (inout_list != NULL)
         {
-            
-            //check if builtin cmd
-            //if (is_builtin_fn(token->cmd) == 1)
-            //{
-                
-                printf("cmd: %s\n", token->cmd);
-                child_args = get_child_args(cmd_list);
-                /*if (child_args == NULL)
-                    printf("--1--\n");
-                int i = 0;
-                while (child_args[i])
-                {
-                    printf("args: %s\n", child_args[i]);
-                    i++;
-                }*/
-               output = execute_cmd(cmd_list, child_args);
-               if (output)
-                    ft_putstr_fd(output, STDOUT_FILENO);
-	            //ft_putstr_fd("\n", STDOUT_FILENO);
-            //}
-            
+            inout = (t_inout *)(inout_list->content);
 
-        }
-        else if (token->type == 2)//operator
-        {
-
+            if (inout->type == 3)                               //3=heredoc
+            {
+                do_heredoc(inout, i);
+            }
+            i++;
+            inout_list = inout_list->next;
         }
         cmd_list = cmd_list->next;
     }
-    return (NULL);
-
 }
 
-/*execute the pipeline of commands*/
-void    execute_list(t_list *token_list)
+/*static t_cmd *populate_cmd(t_cmd *cmd)
 {
-    t_token *token;
-    t_list  *cmd_list;
+    char    *command;
 
+    command = get_command_path(cmd->cmd);
+ 
+    if (command == NULL)
+    {
+        cmd->cmd = NULL;
+        //printf("No such command\n");                     //exit after this?
+    }
+    else
+    {
+        cmd->cmd = command;
+    }
+    return (cmd);
+}*/
 
-    //while (token_list != NULL)
-    // {
-        token = (t_token *)(token_list->content);
-        if (token->type == 0)//cmd
-        {
-            cmd_list = token_list;
-            process_cmd(cmd_list);
-        }
-        else if (token->type == 2)//operator
-        {
-            cmd_list = token_list;
-            //process_operator(cmd_list);
-        }
-        /*else if(token->type == 1)//arg - skip
-        {
-            ;
-        }*/
-        //token_list = token_list->next;
-    //}
+static void wait_process_end(pid_t *pidt, int size)
+{
+    int i;
+
+    i = 0;
+    while (i < size)
+    {
+        waitpid(pidt[i], NULL, 0);
+        i++;
+    }
 }
 
+void process_cmd_list(t_list *cmd_list)
+{
+    t_cmd   *cmd;
+    int     **pipefd;
+    int     size;
+    int     i;
+    pid_t   *pidt;
+
+    size = ft_lstsize(cmd_list);
+
+    pipefd = get_pipe(size - 1);
+    pidt = get_pidt(size);
+
+    process_heredoc(cmd_list);
+
+    i = 0;
+    if (size == 1)                               //only 1 command
+    {
+        cmd = (t_cmd *)(cmd_list->content);
+        do_single_cmd(cmd);
+    }
+    else if (size > 1)                          //multiple command
+    {
+        while (cmd_list != NULL)
+        {
+            cmd = (t_cmd *)(cmd_list->content);
+
+            if (i != (size-1))
+            {
+                if (pipe(pipefd[i]) == -1) 
+                {
+                    perror("pipe1 failed");
+                    exit(EXIT_FAILURE);
+                }
+            }
+
+            if(i == 0)                                              //first cmd
+            {                                  
+                do_command_first(cmd, pipefd[i], pidt[i]);
+            }
+            else if (i == (size-1))                                   //last cmd
+            {
+                do_command_last(cmd, pipefd[i-1], pidt[i]);
+            }
+            else                                                      //middle cmd
+            {
+                do_command_mid(cmd, pipefd[i-1], pipefd[i], pidt[i]);
+            }
+            cmd_list = cmd_list->next;
+            i++;
+        }
+
+        wait_process_end(pidt, size);
+    }
+
+    free_pidt(pidt);
+    free_pipefd_all(pipefd, size - 1);
+}

@@ -1,0 +1,92 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   executor_helper2.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ssian <ssian@student.42singapore.sg>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/09 20:26:53 by ssian             #+#    #+#             */
+/*   Updated: 2024/09/09 20:26:58 by ssian            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+#include "../minishell.h"
+
+void print_inout_list(t_list *inout_list);
+void print_args(char **args);
+void print_cmd(t_list *cmd_list);
+t_cmd *create_cmd(char *command, char **args, t_list *inout_list);
+t_inout *create_inout(int type, char *file, char *heredoc, char *delimiter);
+
+void print_inout_list(t_list *inout_list)
+{
+	t_inout *inout;
+	
+	while (inout_list != NULL)
+	{
+		inout = (t_inout *)(inout_list->content);
+		printf("inout->type: %d\n", inout->type);
+		printf("inout->file: %s\n", inout->file);
+		printf("inout->heredoc: %s\n", inout->heredoc);
+		printf("inout->delimiter: %s\n", inout->delimiter);
+		inout_list = inout_list->next;
+	}
+}
+
+void print_args(char **args)
+{
+	int i;
+
+	i = 0;
+	while (args[i])
+	{
+		printf("args[%d]: %s\n", i, args[i]);
+		i++;
+	}
+}
+
+void print_cmd(t_list *cmd_list)
+{
+	t_cmd	*cmd;
+
+	while (cmd_list != NULL)
+	{
+		cmd = (t_cmd *)(cmd_list->content);
+		
+		printf("cmd->cmd: %s\n", cmd->cmd);
+		print_args(cmd->args);
+		print_inout_list(cmd->inout_list);
+
+		cmd_list = cmd_list->next;
+	}
+}
+
+t_cmd *create_cmd(char *command, char **args, t_list *inout_list)
+{
+    t_cmd 	*cmd;
+
+    cmd = malloc(sizeof(t_cmd));                                              //malloc failed?
+    if (cmd == NULL)
+        return (NULL);
+
+    cmd->cmd = command;
+    cmd->args = args;
+    cmd->inout_list = inout_list;
+
+    return (cmd);
+}
+
+t_inout *create_inout(int type, char *file, char *heredoc, char *delimiter)
+{
+    t_inout *inout;
+
+    inout = malloc(sizeof(t_inout));                                            //malloc failed?
+    if (inout == NULL)
+        return (NULL);
+
+    inout->type = type;
+	inout->file = file;
+	inout->heredoc = heredoc;
+	inout->delimiter = delimiter;
+
+    return (inout);
+}
