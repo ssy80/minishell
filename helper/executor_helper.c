@@ -16,6 +16,8 @@ int equals(char *s1, char *s2)
 {
     int i;
 
+    if (s1 == NULL || s2 == NULL)
+        return (0);
     i = 0;
     while(s1[i] || s2[i])
     {
@@ -44,25 +46,22 @@ int **get_pipe(int size)
     int **pipefd;
     int i;
 
-    pipefd = malloc(sizeof(int *) * size); //??
-
-    ft_bzero(pipefd, sizeof(int *) * size); //??
-
+    pipefd = malloc(sizeof(int *) * size);                //malloc failed??
     if (pipefd == NULL)
         return (NULL);
+
+    ft_bzero(pipefd, sizeof(int *) * size);               
+
     i = 0;
     while (i < size)
     {
         pipefd[i] = malloc(sizeof(int) * 2);
-        
-
         if (pipefd[i] == NULL)
         {
             free_pipefd(pipefd, i);
             return (NULL);
         }
-        ft_bzero(pipefd[i], sizeof(int) * 2); //??
-
+        ft_bzero(pipefd[i], sizeof(int) * 2);              //??
         i++;
     }
     return (pipefd);
@@ -72,20 +71,20 @@ pid_t *get_pidt(int size)
 {
     pid_t *pidt;
 
-    pidt = malloc(sizeof(pid_t) * size);
-
-    ft_bzero(pidt, sizeof(pid_t) * size); //??
-
+    pidt = malloc(sizeof(pid_t) * size);          //malloc failed ??
     if (pidt == NULL)
         return (NULL);
+
+    ft_bzero(pidt, sizeof(pid_t) * size); 
+    
     return (pidt);
 }
 
-static char *get_env_path()
+static char *get_env_path(t_data *data)
 {
     char *path;
 
-    path = getenv("PATH");
+    path = getenvvar("PATH", data);
     return (path);
 }
 
@@ -147,14 +146,14 @@ static char *get_filepath(char *env_path, char *cmd)
     return (NULL);
 }
 
-char *get_command_path(char *cmd)
+char *get_command_path(char *cmd, t_data *data)
 {
     char *command;
     char *env_path;
 
     if (is_cmd_path(cmd) == 1)                      //  "/usr/bin/ls", "../../usr/bin/ls", "../usr/bin/"
         return (cmd);
-    env_path = get_env_path();                      //need check NULL?
+    env_path = get_env_path(data);                      //need check NULL?
     command = get_filepath(env_path, cmd);
     return (command);
 }
@@ -194,15 +193,16 @@ int do_heredoc(t_inout *inout, int i)
 
     file = ft_itoa(i);
     tmp_file = ft_strjoin("/tmp/", file);                           // "/tmp/1"
+    if (tmp_file == NULL)
+        return (free(file), 0);
     free(file);
 
     filefd = open(tmp_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);    //write to tmp file
     if (filefd < 0) 
     {
-        perror("here doc - error open file");
-        return (0);
+        //perror("here doc - error open file");
+        return (free(tmp_file), 0);
     }
-
     while ((line = readline("> ")) != NULL) 
     {
         if (equals(line, inout->delimiter) == 1) 

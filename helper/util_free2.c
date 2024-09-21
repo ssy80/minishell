@@ -56,7 +56,7 @@ void free_charchar_str(char **str)
     }
 }
 
-void	ft_freelist(t_list *lst)
+void	ft_freelist(t_list *lst)                  //may need update
 {
 	t_list	*tmp_lst;
 
@@ -70,3 +70,6 @@ void	ft_freelist(t_list *lst)
 	}
 	tmp_lst = NULL;
 }
+
+
+

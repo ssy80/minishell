@@ -155,6 +155,9 @@ void	exitcommand(char *input, t_data *data);
 void	getcd(char *buf);
 int		builtin_func(char *buf, t_data *data);
 char	*getenvvar(char *var, t_data *data);
+
+int	addenvvar(char *var, t_data *data);
+
 // init
 void	initfd(char *dir);
 void	initdata(char buf[MAXLEN], char **env, t_data *data);
@@ -195,8 +198,8 @@ char **add_arg(char **args, char *arg);
 char **get_null_args();
 t_list *create_cmd_list(t_data *data);
 
-void process_cmd_list(t_list *cmd_list);
-char *get_command_path(char *cmd);
+int process_cmd_list(t_list *cmd_list, t_data *data);
+char *get_command_path(char *cmd, t_data *data);
 char **form_args(char *command, char **args);
 int **get_pipe(int size);
 int do_heredoc(t_inout *inout, int i);
@@ -222,4 +225,20 @@ char	*ft_strdup(const char *s);
 void	ft_freelist(t_list *lst);
 
 int is_dir(char *command);
+
+int is_builtin_fn(char *cmd);
+
+void builtin_get_env(t_data *data);
+int builtin_export(char **args, t_data *data);
+
+char	*ft_substr(char const *s, unsigned int start_, size_t len);
+
+int builtin_unset(char **args, t_data *data);
+
+void unlink_file(char *filepath);
+
+int is_spaces(char *str);
+
+void builtin_exit(t_data *data);
+
 #endif

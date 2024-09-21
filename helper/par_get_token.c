@@ -27,7 +27,7 @@ _Bool	is_whitesp(char s)
 // check for symbol	<|>&;()
 bool	is_sym(char s)
 {
-	if (s == '<' || s == '|' || s == '>' || s == '=')
+	if (s == '<' || s == '|' || s == '>') // || s == '=')
 		return (true);
 	return (false);
 }

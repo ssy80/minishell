@@ -52,9 +52,15 @@ int	getcmd(char *buf, int size, char *dir, t_data *data)
 	len = ft_strlen(input);
 	if (len > size - 1)
 		return (freenull(input), ft_putstr_fd("str too long\n", 1), -1);
-	exitcommand(input, data);
-	ft_strlcpy(buf, input, len + 1);
-	add_history(buf);
+
+//	exitcommand(input, data);
+
+	if (is_spaces(input) == 0)
+	{
+		ft_strlcpy(buf, input, len + 1);
+		add_history(buf);
+	}
+
 	return (freenull(input), 0);
 }
 
@@ -73,7 +79,8 @@ int	main(int ac, char *av[], char **envp)
 	server();
 	while (getcmd(buf, MAXLEN, dir, &data) >= 0)
 	{
-		if(ft_strlen(buf) == 0)//empty input
+
+		if(ft_strlen(buf) == 0)         //empty input or is spaces
 			continue ;
 
 		gettkn(&data, 0, 0);
@@ -86,27 +93,37 @@ int	main(int ac, char *av[], char **envp)
 			write(1, "true\n", 5);
 		else
 			write(1, "false\n", 6);
-		
-
+			
 
 		cmd_list = NULL;
 		cmd_list = create_cmd_list(&data);
 		if (cmd_list == NULL)                    //malloc failed ?
 		{
 			free_datacmd(&data);
-			exit(EXIT_FAILURE);
+			freenullall(&data);
+			break;
+			//exit(EXIT_FAILURE);
 		}
 
 //print_cmd(cmd_list);
 
-		process_cmd_list(cmd_list);
+		if (process_cmd_list(cmd_list, &data) == -9)              //-9 = exit 
+		{
+			free_cmdlist(cmd_list);
+			ft_freelist(cmd_list);
+			cmd_list = NULL;
+
+			free_datacmd(&data);
+			freenullall(&data);
+
+			break;
+		}
 	
 		free_cmdlist(cmd_list);
 		ft_freelist(cmd_list);
 		cmd_list = NULL;
 
 		free_datacmd(&data);
-
 
 		// tree = parsepipe(&data, 0);
 		//(void) tree;

@@ -86,6 +86,8 @@ void free_inout(t_inout *inout)
 {
     if (inout != NULL)
     {
+        if (inout->heredoc != NULL)
+            unlink_file(inout->heredoc);
         free(inout->heredoc);
         free(inout);
         inout = NULL;
