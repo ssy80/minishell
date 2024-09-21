@@ -239,6 +239,8 @@ void unlink_file(char *filepath);
 
 int is_spaces(char *str);
 
-void builtin_exit(t_data *data);
+void builtin_exit();
+
+int builtin_cd(char **args, t_data *data);
 
 #endif

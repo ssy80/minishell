@@ -90,8 +90,14 @@ static void do_builtin(t_cmd *cmd, t_data *data)
 {
     //if (equals(cmd->cmd, "echo") == 1)
         //return (builtin_echo(cmd, data));
-    //if (equals(cmd, "cd") == 1)
-    //    return (1);
+    if (equals(cmd->cmd, "cd") == 1)
+    {
+        if (builtin_cd(cmd->args, data) == 0)                   //0 = failure
+        {
+            ft_putstr_fd("cd: ", STDERR_FILENO);
+            ft_putstr_fd("malloc failed!\n", STDERR_FILENO);
+        }
+    }
     if (equals(cmd->cmd, "pwd") == 1)
         getpwd();
     if (equals(cmd->cmd, "export") == 1)

@@ -134,7 +134,7 @@ int is_var_in_env(char *str, t_data *data)
 	while (env_list != NULL)
 	{
         env_var = (char *)env_list->content;
-		if (starts_with(env_var, start) == 1)           //yes already have var, do replaced it
+		if (starts_with(env_var, start) == 1)           //yes ahave
             return (free(start), 1);
 		env_list = env_list->next;
 	}
@@ -234,8 +234,114 @@ int builtin_unset(char **args, t_data *data)
     return (1);
 }
 
-void builtin_exit(t_data *data)
+void builtin_exit()
 {
-    freenullall(data);
+    //freenullall(data);
     exit(0);
+}
+
+static char *get_pwd()
+{
+    char *path;
+
+    path = malloc(sizeof(char) * MAXLEN);                 //malloc failed ??
+    if (path == NULL)
+        return (NULL);
+    else
+    {
+        getcwd(path, sizeof(char) * MAXLEN);
+        return (path);
+    }
+}
+
+
+static int check_cd_args_len(char **args)
+{
+    int i;
+    int count;
+
+    i = 1;
+    count = 0;
+    while (args[i])
+    {
+        count++;
+        i++;
+    }
+    return (count);
+}
+
+int builtin_cd(char **args, t_data *data)
+{
+    int count;
+    char *new_pwd;
+    char *new_path;
+
+    count = check_cd_args_len(args);
+    if (count == 0)                                                           //cd to HOME dir
+    {
+        if (is_var_in_env("HOME=", data) == 0)
+        {
+            ft_putstr_fd("cd: ", STDERR_FILENO);
+            ft_putstr_fd("HOME not set\n", STDERR_FILENO);
+        }
+        else
+        {
+            if (chdir(getenvvar("HOME", data)) == 0)
+            {
+               
+                new_pwd = ft_strjoin("PWD=", getenvvar("HOME", data));       //get "PWD=$HOME" //set pwd to HOME path
+                if (new_pwd == NULL)
+                        return (0);
+                if (is_var_in_env(new_pwd, data) == 1)                        //replace tmp later
+                {
+                    if (replace_var_in_env(new_pwd, data) == 0)               //error malloc??
+                        return (free(new_pwd), 0);                        
+                }
+                else                                                         //add new env var to list
+                {
+                    if (addenvvar(new_pwd, data) == -1)
+                        return (free(new_pwd), 0);
+                }
+                free(new_pwd);
+            }
+            else
+            {
+                perror("cd");
+            }
+        }
+    }
+    else if (count == 1)                                                 //cd to args[1]
+    {
+        if (chdir(args[1]) == 0) 
+        {
+            new_path = get_pwd();
+            if (new_path == NULL)
+                return (0);
+            new_pwd = ft_strjoin("PWD=", new_path);
+            if (new_pwd == NULL)
+                return (free(new_path), 0);
+            free(new_path);
+            if (is_var_in_env(new_pwd, data) == 1)                        //replace tmp later
+            {
+                if (replace_var_in_env(new_pwd, data) == 0)               //error malloc??
+                    return (free(new_pwd), 0);                        
+            }
+            else                                                         //add new env var to list
+            {
+                if (addenvvar(new_pwd, data) == -1)
+                    return (free(new_pwd), 0);
+            }
+            free(new_pwd);
+        }
+        else
+        {
+            perror("cd");
+        }
+    }
+    else if (count > 1)                                                 //error too many arguments
+    {
+        ft_putstr_fd("cd: ", STDERR_FILENO);
+        ft_putstr_fd("too many arguments\n", STDERR_FILENO);
+    }
+    return (1);
 }
