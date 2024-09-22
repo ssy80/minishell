@@ -243,4 +243,8 @@ void builtin_exit();
 
 int builtin_cd(char **args, t_data *data);
 
+void builtin_echo(char **args);
+
+char **get_current_env(t_data *data);
+
 #endif

@@ -88,8 +88,10 @@ static void do_inout(t_list *inout_list)
 
 static void do_builtin(t_cmd *cmd, t_data *data)
 {
-    //if (equals(cmd->cmd, "echo") == 1)
-        //return (builtin_echo(cmd, data));
+    if (equals(cmd->cmd, "echo") == 1)
+    {
+        builtin_echo(cmd->args);
+    }
     if (equals(cmd->cmd, "cd") == 1)
     {
         if (builtin_cd(cmd->args, data) == 0)                   //0 = failure
@@ -125,7 +127,9 @@ static void do_builtin(t_cmd *cmd, t_data *data)
 static void do_command(t_cmd *cmd, t_data *data)
 {
     char *command;
-    char    **envp = { NULL };
+    char    **envp;  // = { NULL };
+
+    
 
     if (is_dir(cmd->cmd) == 1)
     {
@@ -146,12 +150,23 @@ static void do_command(t_cmd *cmd, t_data *data)
     }
     else
     {
+        envp = get_current_env(data);
+        if (envp == NULL)
+        {
+            ft_putstr_fd(cmd->cmd, STDERR_FILENO);
+            ft_putstr_fd(": ", STDERR_FILENO);
+            ft_putstr_fd("malloc failed!\n", STDERR_FILENO);
+            exit(EXIT_FAILURE);
+        }
+
         if (execve(command, cmd->args, envp) == -1) 
         {
             perror(cmd->cmd);
+            free(envp);
             free(command);
             exit(EXIT_FAILURE);
         }
+        free(envp);
         free(command);
     }
 }
@@ -177,6 +192,18 @@ static int do_single_cmd(t_cmd *cmd, t_data *data)
         {
             if (is_builtin_fn(cmd->cmd) == 1)
             {
+                if(equals(cmd->cmd, "env") == 1)
+                {
+                    builtin_get_env(data);
+                }
+                
+                if (equals(cmd->cmd, "pwd") == 1)
+                    getpwd();
+
+                if (equals(cmd->cmd, "echo") == 1)
+                {
+                    builtin_echo(cmd->args);
+                }
             }
             else
             {
@@ -188,7 +215,33 @@ static int do_single_cmd(t_cmd *cmd, t_data *data)
     }
     else
     {
-        do_builtin(cmd, data);
+                                                                    //export here, unset here, cd
+        if(equals(cmd->cmd, "export") == 1)
+        {
+            if (builtin_export(cmd->args, data) == 0)                 //0 = failure
+            {
+                ft_putstr_fd("export: ", STDERR_FILENO);
+                ft_putstr_fd("malloc failed!\n", STDERR_FILENO);
+            }
+        }
+        if(equals(cmd->cmd, "unset") == 1)
+        {
+            if (builtin_unset(cmd->args, data) == 0)                  //0 = failure
+            {
+                ft_putstr_fd("unset: ", STDERR_FILENO);
+                ft_putstr_fd("malloc failed!\n", STDERR_FILENO);
+            }
+        }
+        if(equals(cmd->cmd, "cd") == 1)
+        {
+            if (builtin_cd(cmd->args, data) == 0)                   //0 = failure
+            {
+                ft_putstr_fd("cd: ", STDERR_FILENO);
+                ft_putstr_fd("malloc failed!\n", STDERR_FILENO);
+            }
+        }
+
+                                                                          //do_builtin(cmd, data);
         wait(NULL);
     }
     return (1);
