@@ -30,6 +30,7 @@
 # include <bits/sigaction.h>
 
 // # define PROMPT "ftShell :"
+# define MAXEXP 5000
 # define MAXLEN 512
 # define PTMAX 1024
 # define CDERR "No such file or directory\n"
@@ -172,6 +173,9 @@ int		parsechar(t_data *data, int i, int start);
 int		parsesym(t_data *data, int i, int start);
 int		parsespace(t_data *data, int i, int start);
 bool	syn_check(t_data *data);
+// expander
+void	exptkn(char *s, int a[2], char *line, t_data *data);
+void	expander(char *s, t_data *data);
 //lexer/parser/executor
 //t_list *process_raw_input(char *str);
 t_list	*ft_lstlast(t_list *lst);

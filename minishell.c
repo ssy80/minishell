@@ -90,10 +90,12 @@ int	main(int ac, char *av[], char **envp)
 		for (int i =0; i<data.itr;i++)
 			printf("%s\n", data.cmd[i]);
 		if (syn_check(&data))
-			write(1, "true\n", 5);
+			write(1, "syntax checker: true\n", 21);
 		else
-			write(1, "false\n", 6);
-			
+			write(1, "syntax checker:false\n", 21);
+		printf("\nThis is expander\n");
+		for (int i =0; i<data.itr;i++)
+			expander(data.cmd[i], &data);
 
 		cmd_list = NULL;
 		cmd_list = create_cmd_list(&data);
