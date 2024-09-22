@@ -36,6 +36,33 @@ void builtin_get_env(t_data *data)
    getmyenv(data);
 }
 
+char **get_current_env(t_data *data)
+{
+    char **env;
+    t_list  *env_list;
+    char    *env_var;
+    int size;
+    int i;
+
+    env_list = data->env;
+    size = ft_lstsize(env_list);
+    env = malloc(sizeof(char *) * (size + 1));                 //malloc failed?
+    if(env == NULL)
+        return (NULL);
+
+    i = 0;
+	while (env_list != NULL)
+	{
+        env_var = (char *)env_list->content;
+        env[i] = env_var;
+        i++;
+        env_list = env_list->next;
+    }
+    env[i] = NULL;                                        //last = NULL
+
+    return (env);
+}
+
 /*static char *remove_quote(char *str)
 {
     int i;
@@ -63,7 +90,6 @@ static int get_matched_idx(char *str, char c)
     }
     return (-1);
 }
-
 
 int starts_with(char *str, char *start)
 {
@@ -344,4 +370,29 @@ int builtin_cd(char **args, t_data *data)
         ft_putstr_fd("too many arguments\n", STDERR_FILENO);
     }
     return (1);
+}
+
+void builtin_echo(char **args)
+{
+    int i;
+    int flag_n;
+
+    flag_n = 1;
+    i = 1;
+    if (equals(args[i], "-n") == 1)                           //0 = no \n at the end
+    {
+        flag_n = 0;
+        i++;
+    }
+    while (args[i])
+    {
+        ft_putstr_fd(args[i], STDOUT_FILENO);
+        if (args[i + 1] != NULL)
+            ft_putstr_fd(" ", STDOUT_FILENO);
+        i++;
+    }
+    if (flag_n == 1)                                       //1 = \n at the end
+    {
+        ft_putstr_fd("\n", STDOUT_FILENO);
+    }
 }
