@@ -100,6 +100,11 @@ typedef struct s_data
 	int		itr;
 	char	*cmd[MAXLEN];
 	int		tkn_no;
+
+	t_list	*cmd_list;
+	pid_t	*pidt;
+	int		**pipefd;
+
 }	t_data;
 
 typedef struct s_inout
@@ -123,6 +128,15 @@ typedef struct s_cmd
 	char		**args;         //     {"-l", "-a", NULL}
 	t_list	    *inout_list;    //list of inout = < a > b >>c <<E in a command
 }   t_cmd;
+
+typedef struct s_ccmd
+{
+	t_list  *cmd_list;
+	t_list *inout_list;
+	char	*command;
+    char	**args;
+}   t_ccmd;
+
 
 extern int	g_var;
 
@@ -175,7 +189,9 @@ int		parsespace(t_data *data, int i, int start);
 bool	syn_check(t_data *data);
 // expander
 void	exptkn(char *s, int a[2], char *line, t_data *data);
-void	expander(char *s, t_data *data);
+//void	expander(char *s, t_data *data);
+int	expander(char *s, t_data *data, int i);
+
 //lexer/parser/executor
 //t_list *process_raw_input(char *str);
 t_list	*ft_lstlast(t_list *lst);
@@ -232,12 +248,13 @@ int is_dir(char *command);
 
 int is_builtin_fn(char *cmd);
 
-void builtin_get_env(t_data *data);
-int builtin_export(char **args, t_data *data);
+void builtin_get_env(char **args, t_data *data);
+
+void builtin_export(char **args, t_data *data);
 
 char	*ft_substr(char const *s, unsigned int start_, size_t len);
 
-int builtin_unset(char **args, t_data *data);
+void builtin_unset(char **args, t_data *data);
 
 void unlink_file(char *filepath);
 
@@ -245,10 +262,37 @@ int is_spaces(char *str);
 
 void builtin_exit();
 
-int builtin_cd(char **args, t_data *data);
+void builtin_cd(char **args, t_data *data);
 
 void builtin_echo(char **args);
 
 char **get_current_env(t_data *data);
+
+//char *get_pwd();
+
+int is_var_in_env(char *str, t_data *data);
+int replace_var_in_env(char *str, t_data *data);
+
+void builtin_pwd(void);
+
+int remove_var_in_env(char *start, t_data *data);
+
+//int starts_with(char *str, char *start);
+
+void free_all(t_data *data);
+
+int update_exit_status(int status, t_data *data);
+
+int	ft_isdigit(int c);
+
+long long	ft_atoll(const char *str);
+unsigned long long	ft_atoull(const char *str);
+
+long double	ft_atold(const char *str);
+
+int add_inout(t_list **inout_list, int inout_type, char *inout_value);
+int add_cmd(char *command, char **args, t_list *inout_list, t_list **cmd_list);
+
+void print_error_create_cmdlist();
 
 #endif

@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 #include "../minishell.h"
 
-
 int equals(char *s1, char *s2)
 {
     int i;
@@ -41,6 +40,18 @@ static void free_pipefd(int **pipefd, int i)
     free(pipefd);
 }
 
+static void print_error_pipe()
+{
+    ft_putstr_fd("pipe: ", STDERR_FILENO);
+    ft_putstr_fd("create pipe failed !\n", STDERR_FILENO);
+}
+
+static void print_error_pidt()
+{
+    ft_putstr_fd("pidt: ", STDERR_FILENO);
+    ft_putstr_fd("create pidt failed !\n", STDERR_FILENO);
+}
+
 int **get_pipe(int size)
 {
     int **pipefd;
@@ -48,7 +59,7 @@ int **get_pipe(int size)
 
     pipefd = malloc(sizeof(int *) * size);                //malloc failed??
     if (pipefd == NULL)
-        return (NULL);
+        return (print_error_pipe(), NULL);
 
     ft_bzero(pipefd, sizeof(int *) * size);               
 
@@ -59,7 +70,7 @@ int **get_pipe(int size)
         if (pipefd[i] == NULL)
         {
             free_pipefd(pipefd, i);
-            return (NULL);
+            return (print_error_pipe(), NULL);
         }
         ft_bzero(pipefd[i], sizeof(int) * 2);              //??
         i++;
@@ -73,7 +84,7 @@ pid_t *get_pidt(int size)
 
     pidt = malloc(sizeof(pid_t) * size);          //malloc failed ??
     if (pidt == NULL)
-        return (NULL);
+        return (print_error_pidt(), NULL);
 
     ft_bzero(pidt, sizeof(pid_t) * size); 
     
@@ -110,9 +121,7 @@ static char *get_filepath(char *env_path, char *cmd)
     char    **split_path;
     char    *command;                                        //with filepath /usr/bin/ls
     char    *copy_command;
-    int     is_exist_cmd;
-    //int     is_permission_ex;
-    
+
     command = NULL;
     copy_command = NULL;
     split_path = ft_split(env_path, ':');                   //need free?
@@ -129,15 +138,8 @@ static char *get_filepath(char *env_path, char *cmd)
         command = ft_strjoin(copy_command, cmd);
         free(copy_command);
 
-        is_exist_cmd = access(command, F_OK);                    //check exe is exists
-        if (is_exist_cmd == 0)                                   //yes
-        {
-            //is_permission_ex = access(pathexe, X_OK);         // check exe is excutable 
-            //if (is_permission_ex == 0)//yes
-            
-            free_charchar_str(split_path);
-            return (command);
-        }
+        if (access(command, F_OK) == 0)
+            return (free_charchar_str(split_path), command);
         i++;
     }
 
@@ -152,7 +154,12 @@ char *get_command_path(char *cmd, t_data *data)
     char *env_path;
 
     if (is_cmd_path(cmd) == 1)                      //  "/usr/bin/ls", "../../usr/bin/ls", "../usr/bin/"
-        return (cmd);
+    {
+        command = ft_strdup(cmd);
+        if (command == NULL)
+            return (NULL);
+        return (command);
+    }
     env_path = get_env_path(data);                      //need check NULL?
     command = get_filepath(env_path, cmd);
     return (command);
@@ -184,25 +191,41 @@ char **form_args(char *command, char **args)
     return (argv);
 }
 
-int do_heredoc(t_inout *inout, int i)
+static void print_error_heredoc()
 {
-    char *line;
+    ft_putstr_fd("here doc: ", STDERR_FILENO);
+    ft_putstr_fd("here doc failed !\n", STDERR_FILENO);
+}
+
+static char *get_tmp_file(int i)
+{
     char *tmp_file;
     char *file;
-    int  filefd;
 
     file = ft_itoa(i);
     tmp_file = ft_strjoin("/tmp/", file);                           // "/tmp/1"
     if (tmp_file == NULL)
-        return (free(file), 0);
-    free(file);
-
-    filefd = open(tmp_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);    //write to tmp file
-    if (filefd < 0) 
     {
-        //perror("here doc - error open file");
-        return (free(tmp_file), 0);
+        print_error_heredoc();
+        return (free(file), NULL);
     }
+    free(file);
+    return (tmp_file);
+} 
+
+int do_heredoc(t_inout *inout, int i)
+{
+    char *line;
+    char *tmp_file;
+    int  filefd;
+
+    tmp_file = get_tmp_file(i);
+    if (tmp_file == NULL)
+        return (0);
+
+    filefd = open(tmp_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+    if (filefd < 0)
+        return (print_error_heredoc(), free(tmp_file), 0);
     while ((line = readline("> ")) != NULL) 
     {
         if (equals(line, inout->delimiter) == 1) 

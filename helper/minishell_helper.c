@@ -47,11 +47,10 @@ char **add_arg(char **args, char *arg)
 	size = size + 1 + 1;                         //1 for NULL, 1 for new arg
 
 	new_args = malloc(sizeof(char *) * size);    //malloc failed?
-    if (new_args == NULL)                       
-    {
+    if (new_args == NULL)
+    {                    
         return (free(args), NULL);
     }
-
 	i = 0;
 	while (i < (size - 2))
 	{
@@ -83,7 +82,7 @@ char **get_null_args()
 }
 
 
-static int add_inout(t_list **inout_list, int inout_type, char *inout_value)
+/*static int add_inout(t_list **inout_list, int inout_type, char *inout_value)
 {
     t_inout *inout;
     t_list *inout_node;
@@ -235,4 +234,4 @@ t_list *create_cmd_list(t_data *data)
 		i++;
 	}
 	return (cmd_list);
-}
+}*/

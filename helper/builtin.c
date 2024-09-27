@@ -31,12 +31,12 @@ int is_builtin_fn(char *cmd)
     return (0);
 }
 
-void builtin_get_env(t_data *data)
+/*void builtin_get_env(t_data *data)
 {
    getmyenv(data);
-}
+}*/
 
-char **get_current_env(t_data *data)
+/*char **get_current_env(t_data *data)
 {
     char **env;
     t_list  *env_list;
@@ -61,7 +61,7 @@ char **get_current_env(t_data *data)
     env[i] = NULL;                                        //last = NULL
 
     return (env);
-}
+}*/
 
 /*static char *remove_quote(char *str)
 {
@@ -77,7 +77,7 @@ char **get_current_env(t_data *data)
     return (sub_str);
 }*/
 
-static int get_matched_idx(char *str, char c)
+/*static int get_matched_idx(char *str, char c)
 {
     int i;
 
@@ -91,7 +91,7 @@ static int get_matched_idx(char *str, char c)
     return (-1);
 }
 
-int starts_with(char *str, char *start)
+static int starts_with(char *str, char *start)
 {
     int i;
 
@@ -105,10 +105,10 @@ int starts_with(char *str, char *start)
         i++;
     }
     return (1);
-}
+}*/
 
 /*check is AA= is already in env list, if yes, replace witht the new var*/
-int replace_var_in_env(char *str, t_data *data)
+/*int replace_var_in_env(char *str, t_data *data)
 {
     char *start;
     t_list *env_list;
@@ -141,9 +141,9 @@ printf("str: %s\n", str);
 	}
     free(start); 
     return (0);
-}
+}*/
 
-int is_var_in_env(char *str, t_data *data)
+/*int is_var_in_env(char *str, t_data *data)
 {
     char    *start;
     t_list  *env_list;
@@ -165,14 +165,14 @@ int is_var_in_env(char *str, t_data *data)
 		env_list = env_list->next;
 	}
     return (free(start), 0);
-}
+}*/
 
 /*if starts with a= already in list, replace with new a=... 
   if not in list then add args[i] to it.
   if invalid format "export a"? - will be ignored no error msg. 
   if invalid format "=" or "=aaa"? will have error msg.
 */
-int builtin_export(char **args, t_data *data)
+/*int builtin_export(char **args, t_data *data)
 {
     int i;
 
@@ -207,9 +207,9 @@ int builtin_export(char **args, t_data *data)
         i++;
     }
     return (1);
-}
+}*/
 
-int remove_var_in_env(char *start, t_data *data)
+/*int remove_var_in_env(char *start, t_data *data)
 {
     t_list  *env_list;
     char    *env_var;
@@ -237,10 +237,10 @@ int remove_var_in_env(char *start, t_data *data)
     data->env = new_list;
     ft_lstclear(&env_list, free);
     return (1);
-}
+}*/
 
 /*look for the arg AA=aaa - AA in the env list, remove it if have*/
-int builtin_unset(char **args, t_data *data)
+/*int builtin_unset(char **args, t_data *data)
 {
     char *tmp;
     int i;
@@ -258,15 +258,14 @@ int builtin_unset(char **args, t_data *data)
         i++;
     }
     return (1);
-}
+}*/
 
-void builtin_exit()
+/*void builtin_exit()
 {
-    //freenullall(data);
     exit(0);
-}
+}*/
 
-static char *get_pwd()
+/*char *get_pwd()
 {
     char *path;
 
@@ -278,10 +277,10 @@ static char *get_pwd()
         getcwd(path, sizeof(char) * MAXLEN);
         return (path);
     }
-}
+}*/
 
 
-static int check_cd_args_len(char **args)
+/*static int check_cd_args_len(char **args)
 {
     int i;
     int count;
@@ -294,9 +293,9 @@ static int check_cd_args_len(char **args)
         i++;
     }
     return (count);
-}
+}*/
 
-int builtin_cd(char **args, t_data *data)
+/*int builtin_cd(char **args, t_data *data)
 {
     int count;
     char *new_pwd;
@@ -370,9 +369,9 @@ int builtin_cd(char **args, t_data *data)
         ft_putstr_fd("too many arguments\n", STDERR_FILENO);
     }
     return (1);
-}
+}*/
 
-void builtin_echo(char **args)
+/*void builtin_echo(char **args)
 {
     int i;
     int flag_n;
@@ -395,4 +394,4 @@ void builtin_echo(char **args)
     {
         ft_putstr_fd("\n", STDOUT_FILENO);
     }
-}
+}*/

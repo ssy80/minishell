@@ -32,9 +32,11 @@ void free_pipefd_all(int **pipefd, int size)
     while (i < size)
     {
         free(pipefd[i]);
+        pipefd[i] = NULL;
         i++;
     }
     free(pipefd);
+    pipefd = NULL;
 }
 
 void free_charchar_str(char **str)
@@ -71,5 +73,22 @@ void	ft_freelist(t_list *lst)                  //may need update
 	tmp_lst = NULL;
 }
 
+void free_all(t_data *data)
+{
+    free_pidt(data->pidt);
+    free_pipefd_all(data->pipefd, ft_lstsize(data->cmd_list) - 1);
+    free_cmdlist(data->cmd_list);
+    ft_freelist(data->cmd_list);
+    //data->cmd_list = NULL;
+
+//do a loop to print out data->cmd
+    //for (int i =0; i<data->itr;i++)
+		//printf("s:%s\n", data->cmd[0]);
+        //free(data->cmd[0]);
+
+    free_datacmd(data);
+    //freedatacmd(data);
+    freenullall(data);
+}
 
 

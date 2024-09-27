@@ -49,6 +49,9 @@ void free_cmd_args(char **args)
 void free_cmdlist(t_list *cmd_list)
 {
     t_cmd	*cmd;
+    //t_list *tmp;
+
+    //tmp = cmd_list;
 
     while (cmd_list != NULL)
 	{
@@ -60,8 +63,10 @@ void free_cmdlist(t_list *cmd_list)
         cmd = NULL;
 		cmd_list = cmd_list->next;
 	}
-    //ft_freelist(cmd_list);
-    cmd_list = NULL;
+
+    //ft_freelist(tmp);
+    //free(tmp);
+    //cmd_list = NULL;
 }
 
 void free_inoutlist(t_list *inout_list)
@@ -100,13 +105,15 @@ void	free_datacmd(t_data *data)
 	int	i;
 
 	i = 0;
-	while (i < data->itr)
-	{
+
+    while (i < data->itr)
+    {
         if (data->cmd[i] != NULL)
         {
             free(data->cmd[i]);
             data->cmd[i] = NULL;
+
         }
         i++;
-	}
+    }
 }
