@@ -39,7 +39,7 @@ void	exp_s(char *s, int a[2], char *line, t_data *data)
 	{
 		if (s[a[0]] == '"' || s[a[0]] == '\'' || s[a[0]] == ' ' || s[a[0]] == '$')
 		{
-			a[0]++;
+			// a[0]++;
 			break ;
 		}
 		buf[i++] = s[a[0]++];
@@ -58,11 +58,13 @@ void	exp2q(char *s, int a[2], char *line, t_data *data)
 	while (s[a[0]] && s[a[0]] !='"')
 	{
 		if (s[a[0]] == '$')
-			return exp_s(s, a, line, data), exp2q(s, a, line, data);
+			return a[0]++, exp_s(s, a, line, data), exp2q(s, a, line, data);
 		line[a[1]] = s[a[0]];
 		a[1]++;
 		a[0]++;
 	}
+	if (s[a[0]] && s[a[0]] =='"')
+		a[0]++;
 }
 
 void	exptkn(char *s, int a[2], char *line, t_data *data)
