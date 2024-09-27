@@ -29,16 +29,35 @@ bool	syn_str(t_data *data, int i)
 
 	j = 0;
 	if (!data->cmd[i])
+	{
+		ft_putstr_fd("syntax error near unexpected token ", STDERR_FILENO);
+		ft_putstr_fd("'", STDERR_FILENO);
+		write(STDERR_FILENO, "newline", 7);
+		ft_putstr_fd("'\n", STDERR_FILENO);	
 		return (false);
+	}                                                                      //how to hit this?
+		
 	if (is_sym(data->cmd[i][j]))
+	{
+		ft_putstr_fd("syntax error near unexpected token ", STDERR_FILENO);
+		ft_putstr_fd("'", STDERR_FILENO);
+		write(STDERR_FILENO, &data->cmd[i][j], 1);
+		ft_putstr_fd("'\n", STDERR_FILENO);	
 		return (false);
+	}
 	while (data->cmd[i][j])
 	{
 		if (data->cmd[i][j] == '\'' || data->cmd[i][j] == '"')
 		{
 			res = syn_q(data->cmd[i], j + 1, data->cmd[i][j]);
 			if (res < 0)
+			{
+				ft_putstr_fd("syntax error near unexpected token ", STDERR_FILENO);
+				ft_putstr_fd("'", STDERR_FILENO);
+				write(STDERR_FILENO, &data->cmd[i][j], 1);
+				ft_putstr_fd("'\n", STDERR_FILENO);	
 				return (false);
+			}
 			j = res;
 		}
 		j++;
@@ -76,7 +95,13 @@ bool	syn_check(t_data *data)
 	while (data->cmd[++i])
 	{
 		if (i == 0 && ft_strncmp("|", data->cmd[i], 2) == 0)
+		{
+			ft_putstr_fd("syntax error near unexpected token ", STDERR_FILENO);
+            ft_putstr_fd("'", STDERR_FILENO);
+            ft_putstr_fd("|", STDERR_FILENO);
+            ft_putstr_fd("'\n", STDERR_FILENO);
 			return (false);
+		}
 		else if (is_redirsym(data->cmd[i]))
 		{
 			if (!data->cmd[i + 1] || ft_strncmp("|", data->cmd[i + 1], 2) == 0)
@@ -85,7 +110,13 @@ bool	syn_check(t_data *data)
 		else if (is_pipesym(data->cmd[i]))
 		{
 			if (!data->cmd[i + 1] || ft_strncmp("|", data->cmd[i + 1], 2) == 0)
+			{
+				ft_putstr_fd("syntax error near unexpected token ", STDERR_FILENO);
+				ft_putstr_fd("'", STDERR_FILENO);
+				ft_putstr_fd("|", STDERR_FILENO);
+				ft_putstr_fd("'\n", STDERR_FILENO);
 				return (false);
+			}
 		}
 		else if (!syn_str(data, i))
 			return (false);

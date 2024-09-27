@@ -20,7 +20,6 @@ void	getprompt(char *dir)
 	ft_bzero(dir, sizeof(char) * MAXLEN);
 	getcwd(dir, sizeof(char) * MAXLEN);
 	i = ft_strlen(dir);
-//printf("%d\n", i);
 	if (MAXLEN - 2 < i)
 	{
 		*dir = 0;
@@ -48,7 +47,11 @@ int	getcmd(char *buf, int size, char *dir, t_data *data)
 	input = readline(dir);
 	printf("input: %s\n", input);
 	if (!input)
-		return (freenull(input), -1);
+	{
+		printf("--need free data struct before exit--\n");
+		return (free_all(data), -1);
+		//return (freenull(input), free_all(data), -1);
+	}
 	len = ft_strlen(input);
 	if (len > size - 1)
 		return (freenull(input), ft_putstr_fd("str too long\n", 1), -1);
@@ -69,7 +72,6 @@ int	main(int ac, char *av[], char **envp)
 	char	buf[MAXLEN];
 	char	dir[MAXLEN];
 	t_data	data;
-	//t_cmd	*tree;
 	t_list	*cmd_list;
 
 	(void)av;
@@ -86,52 +88,60 @@ int	main(int ac, char *av[], char **envp)
 		gettkn(&data, 0, 0);
 		loadcmdtkn(&data);
 
-		printf("buffer: %s\n", data.buf);
-		for (int i =0; i<data.itr;i++)
-			printf("%s\n", data.cmd[i]);
-		if (syn_check(&data))
+		//printf("buffer: %s\n", data.buf);
+		//for (int i =0; i<data.itr;i++)
+		//	printf("%s\n", data.cmd[i]);
+		
+		if (!syn_check(&data))
+		{
+			free_datacmd(&data);
+			continue;
+		}
+			
+		/*if (syn_check(&data))
 			write(1, "syntax checker: true\n", 21);
 		else
-			write(1, "syntax checker:false\n", 21);
-		printf("\nThis is expander\n");
-		for (int i =0; i<data.itr;i++)
-			expander(data.cmd[i], &data);
+			write(1, "syntax checker:false\n", 21);*/
 
-		cmd_list = NULL;
+		//printf("\nThis is expander\n");
+		for (int i =0; i<data.itr;i++)
+		{
+			if (expander(data.cmd[i], &data, i) == 0)
+			{
+				free_datacmd(&data);
+				freenullall(&data);
+				exit(EXIT_FAILURE);
+			}
+		}
+
+		//cmd_list = NULL;
 		cmd_list = create_cmd_list(&data);
 		if (cmd_list == NULL)                    //malloc failed ?
 		{
 			free_datacmd(&data);
 			freenullall(&data);
-			break;
-			//exit(EXIT_FAILURE);
+			//ft_putstr_fd("cmd_list: ", STDERR_FILENO);
+            //ft_putstr_fd("malloc failed!\n", STDERR_FILENO);
+			//break;
+			exit(EXIT_FAILURE);
 		}
+
+		data.cmd_list = cmd_list;
 
 //print_cmd(cmd_list);
 
-		if (process_cmd_list(cmd_list, &data) == -9)              //-9 = exit 
+		if (process_cmd_list(cmd_list, &data) == 0)
 		{
 			free_cmdlist(cmd_list);
 			ft_freelist(cmd_list);
-			cmd_list = NULL;
-
 			free_datacmd(&data);
-			freenullall(&data);
-
-			break;
+			exit(EXIT_FAILURE);
 		}
 	
 		free_cmdlist(cmd_list);
 		ft_freelist(cmd_list);
-		cmd_list = NULL;
-
 		free_datacmd(&data);
 
-		// tree = parsepipe(&data, 0);
-		//(void) tree;
-		//if (builtin_func(buf, &data) == 0)
-		//	continue ;
-		//freedatacmd(&data);
 	}
 	exitcl(0);
 }

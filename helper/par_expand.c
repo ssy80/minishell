@@ -83,13 +83,23 @@ void	exptkn(char *s, int a[2], char *line, t_data *data)
 	}
 }
 
-void	expander(char *s, t_data *data)
+int	expander(char *s, t_data *data, int i)
 {
 	int	a[2];
 	char line[MAXEXP];
+	char *str;
 
 	ft_bzero(a, sizeof(int) * 2);
 	ft_bzero(line, sizeof(char) * MAXEXP);
 	exptkn(s, a, line, data);
-	printf("%s\n", line);
+	//printf("%s\n", line);
+
+	str = ft_strdup(line);
+	if (str == NULL)
+		return (0);
+	free(data->cmd[i]);
+	data->cmd[i] = str;
+	//printf("s: %s\n", data->cmd[i]);
+	return (1);
+
 }

@@ -19,7 +19,7 @@ void unlink_file(char *filepath)
     }
 }
 
-static void do_inout(t_list *inout_list)
+static void do_inout(t_list *inout_list, t_data *data)
 {
     t_inout *inout;
     int filefd;
@@ -33,6 +33,7 @@ static void do_inout(t_list *inout_list)
             if (filefd < 0) 
             {
                 perror(inout->file);
+                free_all(data);
                 exit(EXIT_FAILURE);
             }
             dup2(filefd, STDIN_FILENO);
@@ -44,6 +45,7 @@ static void do_inout(t_list *inout_list)
             if (filefd < 0) 
             {
                 perror(inout->file);
+                free_all(data);
                 exit(EXIT_FAILURE);
             }
             dup2(filefd, STDOUT_FILENO);
@@ -55,6 +57,7 @@ static void do_inout(t_list *inout_list)
             if (filefd < 0) 
             {
                 perror(inout->file);
+                free_all(data);
                 exit(EXIT_FAILURE);
             }
             dup2(filefd, STDOUT_FILENO);
@@ -69,6 +72,7 @@ static void do_inout(t_list *inout_list)
                 //unlink_file(inout->heredoc);
                 //free(inout->heredoc);
                 //inout->heredoc = NULL;
+                free_all(data);
                 exit(EXIT_FAILURE);
             }
             dup2(filefd, STDIN_FILENO);
@@ -89,196 +93,234 @@ static void do_inout(t_list *inout_list)
 static void do_builtin(t_cmd *cmd, t_data *data)
 {
     if (equals(cmd->cmd, "echo") == 1)
-    {
         builtin_echo(cmd->args);
-    }
-    if (equals(cmd->cmd, "cd") == 1)
-    {
-        if (builtin_cd(cmd->args, data) == 0)                   //0 = failure
+    else if (equals(cmd->cmd, "cd") == 1)
+        builtin_cd(cmd->args, data);
+        /*if (builtin_cd(cmd->args, data) == 0)                   //0 = failure
         {
             ft_putstr_fd("cd: ", STDERR_FILENO);
             ft_putstr_fd("malloc failed!\n", STDERR_FILENO);
-        }
-    }
-    if (equals(cmd->cmd, "pwd") == 1)
-        getpwd();
-    if (equals(cmd->cmd, "export") == 1)
-    {
-        if (builtin_export(cmd->args, data) == 0)                 //0 = failure
+        }*/
+    else if (equals(cmd->cmd, "pwd") == 1)
+        builtin_pwd();
+    else if (equals(cmd->cmd, "export") == 1)
+        builtin_export(cmd->args, data);
+        /*if (builtin_export(cmd->args, data) == 0)                 //0 = failure
         {
             ft_putstr_fd("export: ", STDERR_FILENO);
             ft_putstr_fd("malloc failed!\n", STDERR_FILENO);
-        }
-    }
-    if (equals(cmd->cmd, "unset") == 1)
-    {
-        if (builtin_unset(cmd->args, data) == 0)                  //0 = failure
+        }*/
+    else if (equals(cmd->cmd, "unset") == 1)
+        builtin_unset(cmd->args, data);
+        /*if (builtin_unset(cmd->args, data) == 0)                  //0 = failure
         {
             ft_putstr_fd("unset: ", STDERR_FILENO);
             ft_putstr_fd("malloc failed!\n", STDERR_FILENO);
+        }*/
+    else if (equals(cmd->cmd, "env") == 1)
+        builtin_get_env(cmd->args, data);
+    else if (equals(cmd->cmd, "exit") == 1)
+        builtin_exit(cmd->args, data);
+}
+
+
+/*static char **dup_args(char **args)
+{
+    char **new_args;
+    char *arg;
+    int size;
+    int i;
+
+    size = get_args_len(args);
+    new_args = malloc(sizeof(char *) * (size + 1));
+
+print_args(args);
+
+    i = 0;
+    while (args[i])
+    {
+        arg = ft_strdup(args[i]);
+        printf("arg: %s\n", arg);
+        if (arg == NULL)
+        {
+            free_charchar_str(new_args);
+            return(NULL);
         }
+        new_args[i] = arg;
+        i++;
     }
-    if (equals(cmd->cmd, "env") == 1)
-        builtin_get_env(data);
-    if (equals(cmd->cmd, "exit") == 1)
-        builtin_exit(data);
+    new_args[i] = NULL;
+
+    print_args(new_args);
+    return (new_args);
+}*/
+
+static void error_command_is_dir(t_cmd *cmd, t_data *data)
+{
+    ft_putstr_fd(cmd->cmd, STDERR_FILENO);
+    ft_putstr_fd(": ", STDERR_FILENO);
+    ft_putstr_fd("Is a directory\n", STDERR_FILENO);
+    free_all(data);
+    exit(126);
+}
+
+static void error_no_command(t_cmd *cmd, t_data *data)
+{
+    ft_putstr_fd(cmd->cmd, STDERR_FILENO);
+    ft_putstr_fd(": ", STDERR_FILENO);
+    ft_putstr_fd("command not found\n", STDERR_FILENO);
+    free_all(data);
+    exit(127);
+}
+
+static void error_no_env(t_cmd *cmd, t_data *data)
+{
+    ft_putstr_fd(cmd->cmd, STDERR_FILENO);
+    ft_putstr_fd(": ", STDERR_FILENO);
+    ft_putstr_fd("malloc failed!\n", STDERR_FILENO);
+    free_all(data);
+    exit(EXIT_FAILURE);
 }
 
 static void do_command(t_cmd *cmd, t_data *data)
 {
     char *command;
-    char    **envp;  // = { NULL };
-
-    
+    char    **envp;
 
     if (is_dir(cmd->cmd) == 1)
-    {
-        ft_putstr_fd(cmd->cmd, STDERR_FILENO);
+        error_command_is_dir(cmd, data);
+        /*ft_putstr_fd(cmd->cmd, STDERR_FILENO);
         ft_putstr_fd(": ", STDERR_FILENO);
         ft_putstr_fd("Is a directory\n", STDERR_FILENO);
-        exit(EXIT_FAILURE);
-    }
-
+        free_all(data);
+        exit(126);*/
+    
     command = get_command_path(cmd->cmd, data);
-
     if (command == NULL)
-    {
-        ft_putstr_fd(cmd->cmd, STDERR_FILENO);
+    //{
+        error_no_command(cmd, data);
+        /*ft_putstr_fd(cmd->cmd, STDERR_FILENO);
         ft_putstr_fd(": ", STDERR_FILENO);
         ft_putstr_fd("command not found\n", STDERR_FILENO);
-        exit(EXIT_FAILURE);
-    }
+        free_all(data);
+        exit(127);*/
+    //}
     else
     {
         envp = get_current_env(data);
         if (envp == NULL)
-        {
-            ft_putstr_fd(cmd->cmd, STDERR_FILENO);
+            error_no_env(cmd, data);
+            /*ft_putstr_fd(cmd->cmd, STDERR_FILENO);
             ft_putstr_fd(": ", STDERR_FILENO);
             ft_putstr_fd("malloc failed!\n", STDERR_FILENO);
-            exit(EXIT_FAILURE);
-        }
-
+            free_all(data);
+            exit(EXIT_FAILURE);*/
         if (execve(command, cmd->args, envp) == -1) 
         {
             perror(cmd->cmd);
             free(envp);
             free(command);
-            exit(EXIT_FAILURE);
+            free_all(data);
+            if (errno == 2)
+                exit(127);
+            else
+                exit(EXIT_FAILURE);
         }
-        free(envp);
-        free(command);
     }
 }
 
 static int do_single_cmd(t_cmd *cmd, t_data *data)
 {
     pid_t pidt;
+    int status;
     
     pidt = fork();
     if (pidt == -1) 
     {
         perror("fork failed!");
-        return (0);
-        //exit(EXIT_FAILURE);
+        free_all(data);    
+        exit(EXIT_FAILURE);
     }
 
     if (pidt == 0)
     {
         if (cmd->inout_list != NULL)
-            do_inout(cmd->inout_list);
+            do_inout(cmd->inout_list, data);
 
         if (cmd->cmd != NULL)
         {
             if (is_builtin_fn(cmd->cmd) == 1)
             {
                 if(equals(cmd->cmd, "env") == 1)
-                {
-                    builtin_get_env(data);
-                }
+                   builtin_get_env(cmd->args, data);
                 
                 if (equals(cmd->cmd, "pwd") == 1)
                     getpwd();
 
                 if (equals(cmd->cmd, "echo") == 1)
-                {
                     builtin_echo(cmd->args);
-                }
+            
             }
             else
-            {
                 do_command(cmd, data);
-            }
         }
 
+        free_all(data);        
         exit(EXIT_SUCCESS);
     }
     else
     {
-                                                                    //export here, unset here, cd
+                                                                   
         if(equals(cmd->cmd, "export") == 1)
+            builtin_export(cmd->args, data);
+        else if(equals(cmd->cmd, "unset") == 1)
+            builtin_unset(cmd->args, data);
+        else if(equals(cmd->cmd, "cd") == 1)
+            builtin_cd(cmd->args, data);
+        else if(equals(cmd->cmd, "exit") == 1)
+            builtin_exit(cmd->args, data);
+
+        
+        //wait(NULL);
+        wait(&status);
+        if (WIFEXITED(status))
         {
-            if (builtin_export(cmd->args, data) == 0)                 //0 = failure
-            {
-                ft_putstr_fd("export: ", STDERR_FILENO);
-                ft_putstr_fd("malloc failed!\n", STDERR_FILENO);
-            }
-        }
-        if(equals(cmd->cmd, "unset") == 1)
-        {
-            if (builtin_unset(cmd->args, data) == 0)                  //0 = failure
-            {
-                ft_putstr_fd("unset: ", STDERR_FILENO);
-                ft_putstr_fd("malloc failed!\n", STDERR_FILENO);
-            }
-        }
-        if(equals(cmd->cmd, "cd") == 1)
-        {
-            if (builtin_cd(cmd->args, data) == 0)                   //0 = failure
-            {
-                ft_putstr_fd("cd: ", STDERR_FILENO);
-                ft_putstr_fd("malloc failed!\n", STDERR_FILENO);
-            }
+            printf("exit status: %d\n", WEXITSTATUS(status));
+            update_exit_status(WEXITSTATUS(status), data);
         }
 
-                                                                          //do_builtin(cmd, data);
-        wait(NULL);
     }
     return (1);
 }
 
-static int do_command_first(t_cmd *cmd, int pipefd_out[], pid_t pidt, t_data *data)
+static void do_command_first(t_cmd *cmd, int pipefd_out[], pid_t pidt, t_data *data)
 {
     pidt = fork();
     if (pidt == -1) 
     {
         perror("fork failed!");
-        return (0);
-        //exit(EXIT_FAILURE);
+        free_all(data); 
+        exit(EXIT_FAILURE);
     }
 
     if (pidt == 0) 
     {
         close(pipefd_out[0]);
-
         dup2(pipefd_out[1], STDOUT_FILENO);     
         close(pipefd_out[1]);
 
         if (cmd->inout_list != NULL)
-            do_inout(cmd->inout_list);
+            do_inout(cmd->inout_list, data);
 
         if (cmd->cmd != NULL)
         {
             if (is_builtin_fn(cmd->cmd) == 1)
-            {
                 do_builtin(cmd, data);
-            }
             else
-            {
                 do_command(cmd, data);
-            }
         }
 
+        free_all(data);
         exit(EXIT_SUCCESS);
 
     }
@@ -286,18 +328,18 @@ static int do_command_first(t_cmd *cmd, int pipefd_out[], pid_t pidt, t_data *da
     {
         //1st cmd no need close pipe
     }
-    return (1);
+    //return (1);
     
 }
 
-static int do_command_mid(t_cmd *cmd, int pipefd_in[], int pipefd_out[], pid_t pidt, t_data *data)  
+static void do_command_mid(t_cmd *cmd, int pipefd_in[], int pipefd_out[], pid_t pidt, t_data *data)  
 {
     pidt = fork();
     if (pidt == -1) 
     {
         perror("fork failed!");
-        return (0);
-        //exit(EXIT_FAILURE);
+        free_all(data);
+        exit(EXIT_FAILURE);
     }
 
     if (pidt == 0) 
@@ -311,20 +353,17 @@ static int do_command_mid(t_cmd *cmd, int pipefd_in[], int pipefd_out[], pid_t p
         close(pipefd_out[1]);
 
         if (cmd->inout_list != NULL)
-            do_inout(cmd->inout_list);
+            do_inout(cmd->inout_list, data);
 
         if (cmd->cmd != NULL)
         {
             if (is_builtin_fn(cmd->cmd) == 1)
-            {
                 do_builtin(cmd, data);
-            }
             else
-            {
                 do_command(cmd, data);
-            }
         }
 
+        free_all(data);
         exit(EXIT_SUCCESS);
     }
     else
@@ -335,17 +374,17 @@ static int do_command_mid(t_cmd *cmd, int pipefd_in[], int pipefd_out[], pid_t p
         close(pipefd_in[1]);
     }
 
-    return (1);
+    //return (1);
 }
 
-static int do_command_last(t_cmd *cmd, int pipefd_in[], pid_t pidt, t_data *data)          
+static void do_command_last(t_cmd *cmd, int pipefd_in[], pid_t pidt, t_data *data)          
 {
     pidt = fork();
     if (pidt == -1) 
     {
         perror("fork failed!");
-        return (0);
-        //exit(EXIT_FAILURE);
+        free_all(data); 
+        exit(EXIT_FAILURE);
     }
 
     if (pidt == 0) 
@@ -356,20 +395,17 @@ static int do_command_last(t_cmd *cmd, int pipefd_in[], pid_t pidt, t_data *data
         close(pipefd_in[0]);
 
         if (cmd->inout_list != NULL)
-            do_inout(cmd->inout_list);
+            do_inout(cmd->inout_list, data);
 
         if (cmd->cmd != NULL)
         {
             if (is_builtin_fn(cmd->cmd) == 1)
-            {
                 do_builtin(cmd, data);
-            }
             else
-            {
                 do_command(cmd, data);
-            }
         }
 
+        free_all(data);
         exit(EXIT_SUCCESS);
     }
     else
@@ -379,7 +415,7 @@ static int do_command_last(t_cmd *cmd, int pipefd_in[], pid_t pidt, t_data *data
         close(pipefd_in[0]);
         close(pipefd_in[1]);
     }
-    return (1);
+    //return (1);
     
 }
 
@@ -403,11 +439,12 @@ static int process_heredoc(t_list *cmd_list)
             if (inout->type == 3)                               //3=heredoc
             {
                 if (do_heredoc(inout, i) == 0)
-                {
+                    return (0);
+                /*{
                     ft_putstr_fd("here doc: ", STDERR_FILENO);
                     ft_putstr_fd("here doc failed !\n", STDERR_FILENO);
                     return (0);
-                }
+                }*/
             }
             i++;
             inout_list = inout_list->next;
@@ -435,14 +472,21 @@ static int process_heredoc(t_list *cmd_list)
     return (cmd);
 }*/
 
-static void wait_process_end(pid_t *pidt, int size)
+static void wait_process_end(pid_t *pidt, int size, t_data *data)
 {
     int i;
+    int status;
 
     i = 0;
     while (i < size)
     {
-        waitpid(pidt[i], NULL, 0);
+        //waitpid(pidt[i], NULL, 0);
+        waitpid(pidt[i], &status, 0);
+        if (WIFEXITED(status))
+        {
+            printf("exit status: %d\n", WEXITSTATUS(status));
+            update_exit_status(WEXITSTATUS(status), data);
+        }
         i++;
     }
 }
@@ -468,18 +512,14 @@ int process_cmd_list(t_list *cmd_list, t_data *data)
     if (pidt == NULL)
         return (0);
 
+    data->pipefd = pipefd;
+    data->pidt = pidt;
+
     i = 0;
     if (size == 1)                                    //only 1 command
     {
         cmd = (t_cmd *)(cmd_list->content);
-        if (equals(cmd->cmd, "exit") == 1)
-        {
-            free_pidt(pidt);
-            free_pipefd_all(pipefd, size - 1);
-            return (-9);
-        }
         do_single_cmd(cmd, data);
-
     }
     else if (size > 1)                               //multiple command
     {
@@ -497,25 +537,28 @@ int process_cmd_list(t_list *cmd_list, t_data *data)
             }
 
             if(i == 0)                                                        //first cmd
-            {                                  
+                do_command_first(cmd, pipefd[i], pidt[i], data);
+            /*{                                  
                 if (do_command_first(cmd, pipefd[i], pidt[i], data) == 0)
                     break;
-            }
+            }*/
             else if (i == (size-1))                                           //last cmd
-            {
+                do_command_last(cmd, pipefd[i-1], pidt[i], data);
+            /*{
                 if (do_command_last(cmd, pipefd[i-1], pidt[i], data) == 0)
                     break;
-            }
+            }*/
             else                                                              //middle cmd
-            {
+                do_command_mid(cmd, pipefd[i-1], pipefd[i], pidt[i], data);
+            /*{
                 if (do_command_mid(cmd, pipefd[i-1], pipefd[i], pidt[i], data) == 0)
                     break;
-            }
+            }*/
             cmd_list = cmd_list->next;
             i++;
         }
 
-        wait_process_end(pidt, size);
+        wait_process_end(pidt, size, data);
     }
 
     free_pidt(pidt);
