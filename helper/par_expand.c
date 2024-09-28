@@ -25,6 +25,32 @@ void	exp1q(char *s, int a[2], char *line, t_data *data)
 	a[0]++;
 }
 
+void	exp_1s(char *s, int a[2], char *line)
+{
+	if (s[a[0]] == '\0' || s[a[0]] == ' ' || (a[0] > 0 && \
+	s[a[0]] == '"' && (s[a[0] - 2] == '"' || s[a[0] - 2] == ' ') ))
+	{
+		line[a[1]] = '$';
+		a[1]++;
+	}
+}
+
+void 	exp_sq(int a[2], char *line, t_data *data)
+{
+	int i;
+	char *exit;
+
+	i = 0;
+	exit = getenvvar("EXIT_STATUS", data);
+	while (exit[i])
+		i++;
+	if (i == 0)
+		exit = "0";
+	i = -1;
+	while (exit[++i])
+		line[a[1]++] = exit[i];
+}
+
 // special character are being treated as normal character. will differ from bash behaviour
 void	exp_s(char *s, int a[2], char *line, t_data *data)
 {
@@ -32,21 +58,19 @@ void	exp_s(char *s, int a[2], char *line, t_data *data)
 	int		i;
 
 	i = 0;
-	// a[0]++;
 	if (s[a[0]] >= '0' && s[a[0]] <= '9')
 		return (a[0]++, (void) 0);
+	if (s[a[0]] == '?')
+		return (a[0]++, exp_sq(a, line, data));
 	while (s[a[0]])
 	{
 		if (s[a[0]] == '"' || s[a[0]] == '\'' || s[a[0]] == ' ' || s[a[0]] == '$')
-		{
-			// a[0]++;
 			break ;
-		}
 		buf[i++] = s[a[0]++];
 	}
 	buf[i] = '\0';
 	if (i == 0)
-		return ;
+		return exp_1s(s, a, line);
 	i = -1;
 	s = getenvvar(buf, data);
 	while (s[++i] && a[1] < MAXLEN)
