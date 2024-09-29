@@ -17,8 +17,8 @@ static void	copyenv(char **env, t_data *data)
 {
 	int		i;
 	int		len;
-	t_list*	ll;
-	t_list*	tmp;
+	t_list	*ll;
+	t_list	*tmp;
 
 	i = -1;
 	len = 0;

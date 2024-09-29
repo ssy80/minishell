@@ -49,10 +49,9 @@
 	return ((t_cmd *)cmd);
 }*/
 
-
 int	parsetype(char *tkn)
 {
-	int l;
+	int	l;
 
 	if (!tkn)
 		return (ERRSYM);
@@ -71,7 +70,6 @@ int	parsetype(char *tkn)
 		return (PIPESYM);
 	return (ERRSYM);
 }
-
 
 /*t_cmd	*parseredir(t_cmd *cmd, t_data *data, int i)
 {
@@ -125,16 +123,16 @@ int	parsetype(char *tkn)
 	return (ret);
 }*/
 
-/*t_cmd	*parsepipe(t_data *data, int i)
+/* t_cmd	*parsepipe(t_data *data, int i)
 {
 	t_cmd	*cmd;
 
 	cmd = parseexec(data, i);
-	if (data->cmd[data->tkn_no] && data->cmd[data->tkn_no][0] == '|' && data->cmd[data->tkn_no][1] == '\0')
+	if (data->cmd[data->tkn_no] && data->cmd[data->tkn_no][0] == '|' \
+	&& data->cmd[data->tkn_no][1] == '\0')
 	{
 		data->tkn_no++;
 		cmd = pipecmd(data, cmd, parsepipe(data, data->tkn_no));
 	}
 	return cmd;
-}*/
-
+} */
