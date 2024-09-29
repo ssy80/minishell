@@ -27,23 +27,24 @@ _Bool	is_whitesp(char s)
 // check for symbol	<|>&;()
 bool	is_sym(char s)
 {
-	if (s == '<' || s == '|' || s == '>') // || s == '=')
+	if (s == '<' || s == '|' || s == '>')
 		return (true);
 	return (false);
 }
 
 void	setdatatkn(t_data *data, int i, int start)
 {
-		data->tkn[data->itr][0] = start;
-		data->tkn[data->itr][1] = i;
-		data->itr++;
+	data->tkn[data->itr][0] = start;
+	data->tkn[data->itr][1] = i;
+	data->itr++;
 }
 
 int	parse1q(t_data *data, int i, int start)
 {
 	if (!data->buf[i])
 		return (setdatatkn(data, i, start), i);
-	if (data->buf[i] == '\'' && !is_sym(data->buf[i + 1]) && !is_whitesp(data->buf[i + 1]))
+	if (data->buf[i] == '\'' && !is_sym(data->buf[i + 1]) && \
+	!is_whitesp(data->buf[i + 1]))
 		return (parsechar(data, i + 1, start));
 	if (data->buf[i] == '\'')
 		return (setdatatkn(data, i + 1, start), i + 1);
@@ -54,13 +55,13 @@ int	parse2q(t_data *data, int i, int start)
 {
 	if (!data->buf[i])
 		return (setdatatkn(data, i, start), i);
-	if (data->buf[i] == '"' && !is_sym(data->buf[i + 1]) && !is_whitesp(data->buf[i + 1]))
+	if (data->buf[i] == '"' && !is_sym(data->buf[i + 1]) && \
+	!is_whitesp(data->buf[i + 1]))
 		return (parsechar(data, i + 1, start));
 	if (data->buf[i] == '"')
 		return (setdatatkn(data, i + 1, start), i + 1);
 	return (parse2q(data, i + 1, start));
 }
-
 
 int	parsesym(t_data *data, int i, int start)
 {
@@ -130,13 +131,14 @@ void	loadcmdtkn(t_data *data)
 	i = -1;
 	while (++i < data->itr)
 	{
-		data->cmd[i] = ft_calloc(data->tkn[i][1] - data->tkn[i][0] + 1, sizeof(char));
+		data->cmd[i] = ft_calloc(data->tkn[i][1] - data->tkn[i][0] + 1, \
+		sizeof(char));
 		if (!data->cmd[i])
 			return (freedatacmd(data), freenullall(data), exitcl(1));
 		j = data->tkn[i][0];
 		while (j < data->tkn[i][1])
 		{
-			data->cmd[i][j-data->tkn[i][0]] = data->buf[j];
+			data->cmd[i][j - data->tkn[i][0]] = data->buf[j];
 			j++;
 		}
 	}

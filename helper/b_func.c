@@ -62,8 +62,8 @@ void	exitcommand(char *input, t_data *data)
 char	*getenvvar(char *var, t_data *data)
 {
 	size_t	i;
-	t_list *cp;
-	
+	t_list	*cp;
+
 	cp = data->env;
 	while (cp)
 	{
@@ -74,7 +74,7 @@ char	*getenvvar(char *var, t_data *data)
 				break ;
 		}
 		if (i == ft_strlen(var) && ((char *)cp->content)[i] == '=' && !var[i])
-			return (&((char *)cp->content)[i+1]);
+			return (&((char *)cp->content)[i + 1]);
 		cp = cp->next;
 	}
 	return ("");
@@ -89,7 +89,7 @@ bool	isvalidenvkey(char *var)
 	int	i;
 
 	i = 0;
-	if (var[i] != '_' && ft_isalpha(var[i]) ==0)
+	if (var[i] != '_' && ft_isalpha(var[i]) == 0)
 		return (false);
 	i++;
 	while (var[i] && var[i] != '=')
@@ -100,7 +100,6 @@ bool	isvalidenvkey(char *var)
 	}
 	return (true);
 }
-
 
 int	addenvvar(char *var, t_data *data)
 {
@@ -115,7 +114,8 @@ int	addenvvar(char *var, t_data *data)
 	ft_strlcpy(tmp, var, l + 1);
 	envnode = ft_lstnew(tmp);
 	if (!envnode)
-		return (free(tmp), ft_putstr_fd(MFAIL, 1), freenullall(data), exit(1), -1);
+		return (free(tmp), ft_putstr_fd(MFAIL, 1), freenullall(data), \
+		exit(1), -1);
 	ft_lstadd_back(&(data->env), envnode);
 	return (0);
 }
