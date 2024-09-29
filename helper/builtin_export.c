@@ -37,9 +37,11 @@ static int is_valid_var_name(char *str)
     if (str[i] != '_' && ft_isalpha(str[i]) == 0)
         return (0);
     i++;
-    while (str[i] != '=')
+    while (str[i])
     {
-        if (str[i] != '_' && str[i] != '=' && ft_isalnum(str[i]) == 0)
+        if (str[i] == '=')
+            break;
+        if (str[i] != '_' && (ft_isalnum(str[i]) == 0))
             return (0);
         i++;
     }
@@ -54,8 +56,6 @@ static int check_error_args(char *str)
         print_not_valid_error(str);
         return (1);
     }
-    if (ft_strchr(str, '=') == NULL)
-        return (1);
     if (str[0] == '=')
     {
         print_not_valid_error(str);
