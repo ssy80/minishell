@@ -11,20 +11,6 @@
 /* ************************************************************************** */
 #include "../minishell.h"
 
-static char *get_pwd()
-{
-    char *path;
-
-    path = malloc(sizeof(char) * MAXLEN);                 //malloc failed ??
-    if (path == NULL)
-        return (NULL);
-    else
-    {
-        getcwd(path, sizeof(char) * MAXLEN);
-        return (path);
-    }
-}
-
 static int check_cd_args_len(char **args)
 {
     int i;
@@ -40,40 +26,41 @@ static int check_cd_args_len(char **args)
     return (count);
 }
 
-static void error_cd(t_data *data)
+static int update_env_var(char *new_pwd, t_data *data)
 {
-    ft_putstr_fd("cd: ", STDERR_FILENO);
-    ft_putstr_fd("malloc failed!\n", STDERR_FILENO);
-    free_all(data);
-    exit(EXIT_FAILURE);
+    if (is_var_in_env(new_pwd, data) == 1)                        //replace tmp later
+    {
+        if (replace_var_in_env(new_pwd, data) == 0)               //error malloc??
+            return (0);                        
+    }
+    else                                                         //add new env var to list
+    {
+        if (addenvvar(new_pwd, data) == -1)
+            return (0);
+    }
+    return (1);
 }
 
 static int cd_home(t_data *data)
 {
     char *new_pwd;
+    char *new_path;
 
     if (is_var_in_env("HOME=", data) == 0)
-    {
-        ft_putstr_fd("cd: ", STDERR_FILENO);
-        ft_putstr_fd("HOME not set\n", STDERR_FILENO);
-    }
+        error_no_home();
     else
     {
         if (chdir(getenvvar("HOME", data)) == 0)
         {
-            new_pwd = ft_strjoin("PWD=", getenvvar("HOME", data));       //get "PWD=$HOME" //set pwd to HOME path
+            new_path = get_pwd();
+            if (new_path == NULL)
+                return (0);
+            new_pwd = ft_strjoin("PWD=", new_path);
+            free(new_path);
             if (new_pwd == NULL)
                 error_cd(data);
-            if (is_var_in_env(new_pwd, data) == 1)                        
-            {
-                if (replace_var_in_env(new_pwd, data) == 0)               //error malloc??
-                    return (free(new_pwd), 0);                       
-            }
-            else                                                         //add new env var to list
-            {
-                if (addenvvar(new_pwd, data) == -1)
-                    return (free(new_pwd), 0);
-            }
+            if (update_env_var(new_pwd, data) == 0)
+                return (free(new_pwd), 0);
             free(new_pwd);
         }
         else
@@ -82,6 +69,7 @@ static int cd_home(t_data *data)
     return (1);
 }
 
+
 static int cd_dir(char **args, t_data *data)
 {
     char *new_pwd;
@@ -89,23 +77,15 @@ static int cd_dir(char **args, t_data *data)
 
     if (chdir(args[1]) == 0) 
     {
-        new_path = get_pwd();                                         //need free
+        new_path = get_pwd();
         if (new_path == NULL)
             return (0);
-        new_pwd = ft_strjoin("PWD=", new_path);                       //need free
+        new_pwd = ft_strjoin("PWD=", new_path);
         if (new_pwd == NULL)
             return (free(new_path), 0);
         free(new_path);
-        if (is_var_in_env(new_pwd, data) == 1)                        //replace tmp later
-        {
-            if (replace_var_in_env(new_pwd, data) == 0)               //error malloc??
-                return (free(new_pwd), 0);                        
-        }
-        else                                                         //add new env var to list
-        {
-            if (addenvvar(new_pwd, data) == -1)
-                return (free(new_pwd), 0);
-        }
+        if (update_env_var(new_pwd, data) == 0)
+            return (free(new_pwd), 0);
         free(new_pwd);
     }
     else
@@ -118,18 +98,17 @@ void builtin_cd(char **args, t_data *data)
     int count;
 
     count = check_cd_args_len(args);
-    if (count == 0)                                                           //cd to HOME dir
+    if (count == 0)
     {
-        
         if (cd_home(data) == 0)
             error_cd(data);
     }
-    else if (count == 1)                                                 //cd to args[1]
+    else if (count == 1)
     {
         if (cd_dir(args, data) == 0)
             error_cd(data);
     }
-    else if (count > 1)                                                 //error too many arguments
+    else if (count > 1)
     {
         ft_putstr_fd("cd: ", STDERR_FILENO);
         ft_putstr_fd("too many arguments\n", STDERR_FILENO);

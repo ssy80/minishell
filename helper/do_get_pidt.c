@@ -1,31 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_atoull.c                                        :+:      :+:    :+:   */
+/*   do_get_pidt.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ssian <ssian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/26 15:32:24 by ssian             #+#    #+#             */
-/*   Updated: 2024/09/26 15:32:27 by ssian            ###   ########.fr       */
+/*   Created: 2024/09/28 11:12:32 by ssian             #+#    #+#             */
+/*   Updated: 2024/09/28 11:12:34 by ssian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../minishell.h"
 
-unsigned long long	ft_atoull(const char *str)
+static void print_error_pidt()
 {
-	int			i;
-	unsigned long long	n;
-
-	i = 0;
-	while ((str[i] >= 9 && str[i] <= 13) || str[i] == 32)
-		i++;
-	if (str[i] == '+')
-		i++;
-	n = 0;
-	while (str[i] >= '0' && str[i] <= '9')
-	{
-		n = (n * 10) + (str[i] - 48);
-		i++;
-	}
-	return (n);
+    ft_putstr_fd("pidt: ", STDERR_FILENO);
+    ft_putstr_fd("create pidt failed !\n", STDERR_FILENO);
 }
+
+pid_t   *get_pidt(int size)
+{
+    pid_t *pidt;
+
+    pidt = malloc(sizeof(pid_t) * size);
+    if (pidt == NULL)
+        return (print_error_pidt(), NULL);
+    ft_bzero(pidt, sizeof(pid_t) * size); 
+    return (pidt);
+}
+

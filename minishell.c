@@ -45,10 +45,10 @@ int	getcmd(char *buf, int size, char *dir, t_data *data)
 	if (!dir)
 		return (ft_putstr_fd("dir too long to print\n", 1), -1);
 	input = readline(dir);
-	printf("input: %s\n", input);
+	//printf("input: %s\n", input);
 	if (!input)
 	{
-		printf("--need free data struct before exit--\n");
+		//printf("--need free data struct before exit--\n");
 		return (free_all(data), -1);
 		//return (freenull(input), free_all(data), -1);
 	}
@@ -67,12 +67,56 @@ int	getcmd(char *buf, int size, char *dir, t_data *data)
 	return (freenull(input), 0);
 }
 
+static int do_expander(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	while (i < data->itr)
+	{
+		if (expander(data->cmd[i], data, i) == 0)
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+static void error_main(t_data *data)
+{
+	free_datacmd(data);
+	freenullall(data);
+	exit(EXIT_FAILURE);
+}
+
+static void	free_main_last(t_list *cmd_list, t_data *data)
+{
+	free_cmdlist(cmd_list);
+	ft_freelist(cmd_list);
+	free_datacmd(data);
+}
+
+static void	create_and_process(t_data *data)
+{
+	t_list	*cmd_list;
+
+	cmd_list = create_cmd_list(data);
+	if (cmd_list == NULL)
+		error_main(data);
+	data->cmd_list = cmd_list;
+	if (process_cmd_list(cmd_list, data) == 0)
+	{
+		free_all(data);
+		exit(EXIT_FAILURE);
+	}
+	free_main_last(cmd_list, data);
+}
+
 int	main(int ac, char *av[], char **envp)
 {
 	char	buf[MAXLEN];
 	char	dir[MAXLEN];
 	t_data	data;
-	t_list	*cmd_list;
+	//t_list	*cmd_list;
 
 	(void)av;
 	(void)ac;
@@ -81,67 +125,30 @@ int	main(int ac, char *av[], char **envp)
 	server();
 	while (getcmd(buf, MAXLEN, dir, &data) >= 0)
 	{
-
-		if(ft_strlen(buf) == 0)         //empty input or is spaces
+		if(ft_strlen(buf) == 0)
 			continue ;
-
 		gettkn(&data, 0, 0);
 		loadcmdtkn(&data);
-
-		//printf("buffer: %s\n", data.buf);
-		//for (int i =0; i<data.itr;i++)
-		//	printf("%s\n", data.cmd[i]);
-		
 		if (!syn_check(&data))
 		{
 			free_datacmd(&data);
 			continue;
 		}
-			
-		/*if (syn_check(&data))
-			write(1, "syntax checker: true\n", 21);
-		else
-			write(1, "syntax checker:false\n", 21);*/
+		if (do_expander(&data) == 0)
+			error_main(&data);
 
-		//printf("\nThis is expander\n");
-		for (int i =0; i<data.itr;i++)
-		{
-			if (expander(data.cmd[i], &data, i) == 0)
-			{
-				free_datacmd(&data);
-				freenullall(&data);
-				exit(EXIT_FAILURE);
-			}
-		}
+		create_and_process(&data);
 
-		//cmd_list = NULL;
-		cmd_list = create_cmd_list(&data);
-		if (cmd_list == NULL)                    //malloc failed ?
-		{
-			free_datacmd(&data);
-			freenullall(&data);
-			//ft_putstr_fd("cmd_list: ", STDERR_FILENO);
-            //ft_putstr_fd("malloc failed!\n", STDERR_FILENO);
-			//break;
-			exit(EXIT_FAILURE);
-		}
-
+		/*cmd_list = create_cmd_list(&data);
+		if (cmd_list == NULL)
+			error_main(&data);
 		data.cmd_list = cmd_list;
-
-//print_cmd(cmd_list);
-
 		if (process_cmd_list(cmd_list, &data) == 0)
 		{
-			free_cmdlist(cmd_list);
-			ft_freelist(cmd_list);
-			free_datacmd(&data);
+			free_all(&data);
 			exit(EXIT_FAILURE);
 		}
-	
-		free_cmdlist(cmd_list);
-		ft_freelist(cmd_list);
-		free_datacmd(&data);
-
+		free_main_last(cmd_list, &data);*/
 	}
 	exitcl(0);
 }

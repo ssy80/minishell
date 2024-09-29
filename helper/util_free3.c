@@ -1,37 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_atold.c                                         :+:      :+:    :+:   */
+/*   util_free3.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ssian <ssian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/26 16:18:24 by ssian             #+#    #+#             */
-/*   Updated: 2024/09/26 16:18:27 by ssian            ###   ########.fr       */
+/*   Created: 2024/09/29 16:26:20 by ssian             #+#    #+#             */
+/*   Updated: 2024/09/29 16:26:22 by ssian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../minishell.h"
 
-long double	ft_atold(const char *str)
+void free_inoutlist(t_list *inout_list)
 {
-	int			i;
-	int			sign;
-	long double	n;
-
-	i = 0;
-	sign = 1;
-	while ((str[i] >= 9 && str[i] <= 13) || str[i] == 32)
-		i++;
-	if (str[i] == '-' || str[i] == '+')
-	{
-		if (str[i] == '-')
-			sign = -1;
-		i++;
-	}
-	n = 0;
-	while (str[i] >= '0' && str[i] <= '9')
-	{
-		n = (n * 10) + (str[i] - 48);
-		i++;
-	}
-	return (n * sign);
+    t_inout *inout;
+   
+    while (inout_list != NULL)
+    {
+        inout = (t_inout *)(inout_list->content);
+        free_inout(inout);
+        inout = NULL;
+        inout_list = inout_list->next;
+    }
 }
+
+void free_inout(t_inout *inout)
+{
+    if (inout != NULL)
+    {
+        free(inout->heredoc);
+        free(inout);
+        inout = NULL;
+    }
+}
+

@@ -11,13 +11,6 @@
 /* ************************************************************************** */
 #include "../minishell.h"
 
-//? check malloc
-//? check open error
-//? check exec error
-//? command not found
-//? EXIT_SUCCCESS
-//? EXIT_ERROR
-
 void free_cmd_cmd(char *cmd)
 {
     if (cmd != NULL)
@@ -49,10 +42,7 @@ void free_cmd_args(char **args)
 void free_cmdlist(t_list *cmd_list)
 {
     t_cmd	*cmd;
-    //t_list *tmp;
-
-    //tmp = cmd_list;
-
+  
     while (cmd_list != NULL)
 	{
 		cmd = (t_cmd *)(cmd_list->content);
@@ -63,42 +53,7 @@ void free_cmdlist(t_list *cmd_list)
         cmd = NULL;
 		cmd_list = cmd_list->next;
 	}
-
-    //ft_freelist(tmp);
-    //free(tmp);
-    //cmd_list = NULL;
 }
-
-void free_inoutlist(t_list *inout_list)
-{
-    t_inout *inout;
-    //t_list *tmp;
-
-    //tmp = inout_list;
-    while (inout_list != NULL)
-    {
-        inout = (t_inout *)(inout_list->content);
-        free_inout(inout);
-        inout = NULL;
-        inout_list = inout_list->next;
-    }
-    //ft_freelist(tmp);
-    //tmp = NULL; 
-    //inout_list = NULL;
-}
-
-void free_inout(t_inout *inout)
-{
-    if (inout != NULL)
-    {
-        if (inout->heredoc != NULL)
-            unlink_file(inout->heredoc);
-        free(inout->heredoc);
-        free(inout);
-        inout = NULL;
-    }
-}
-
 
 void	free_datacmd(t_data *data)
 {
@@ -108,12 +63,8 @@ void	free_datacmd(t_data *data)
 
     while (i < data->itr)
     {
-        if (data->cmd[i] != NULL)
-        {
-            free(data->cmd[i]);
-            data->cmd[i] = NULL;
-
-        }
+        free(data->cmd[i]);
+        data->cmd[i] = NULL;
         i++;
     }
 }

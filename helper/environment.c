@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 #include "../minishell.h"
 
-static int get_matched_idx(char *str, char c)
+static int  get_matched_idx(char *str, char c)
 {
     int i;
 
@@ -25,7 +25,7 @@ static int get_matched_idx(char *str, char c)
     return (-1);
 }
 
-static int starts_with(char *str, char *start)
+static int  starts_with(char *str, char *start)
 {
     int i;
 
@@ -47,36 +47,28 @@ int replace_var_in_env(char *str, t_data *data)
     char *start;
     t_list *env_list;
     char *env_var;
-    int idx;
     char *tmp;
 
-    start = NULL;
-    idx = get_matched_idx(str, '=');
-    start = ft_substr(str, 0, (idx + 1));                // get A=
-    if (start == NULL)
+    start = ft_substr(str, 0, (get_matched_idx(str, '=') + 1));
+    if(start == NULL)
+    {
         return (0);
-
-printf("start: %s\n", start);
-printf("str: %s\n", str);
-
+    }
 	env_list = data->env;
-
 	while (env_list != NULL)
 	{
         env_var = (char *)env_list->content;
-		if (starts_with(env_var, start) == 1)             //yes already have var, do replaced it
+		if (starts_with(env_var, start) == 1)
         {
-            free(env_var);
-            env_var = NULL;
-            free(start);                                   //need free prev str in env_list[i]??
             tmp = ft_strdup(str);
+            if (tmp == NULL)
+                return (free(start), 0);
             env_list->content = tmp;
-            return (1);
+            return (free(env_var), free(start), 1);
         }
 		env_list = env_list->next;
 	}
-    free(start); 
-    return (0);
+    return (free(start), 0);
 }
 
 int is_var_in_env(char *str, t_data *data)
@@ -87,7 +79,7 @@ int is_var_in_env(char *str, t_data *data)
     int     idx;
 
     idx = get_matched_idx(str, '=');
-    start = ft_substr(str, 0, (idx + 1));                // get A=, malloc failed ?
+    start = ft_substr(str, 0, (idx + 1));
     if (start == NULL)
     {
         return (0);
@@ -96,7 +88,7 @@ int is_var_in_env(char *str, t_data *data)
 	while (env_list != NULL)
 	{
         env_var = (char *)env_list->content;
-		if (starts_with(env_var, start) == 1)           //yes ahave
+		if (starts_with(env_var, start) == 1)
             return (free(start), 1);
 		env_list = env_list->next;
 	}
@@ -117,10 +109,10 @@ int remove_var_in_env(char *start, t_data *data)
         env_var = (char *)env_list->content;
 		if (starts_with(env_var, start) == 0)                         
         {
-            env_var = ft_strdup(env_var);                                  //reuse var env_var
+            env_var = ft_strdup(env_var);
             if (env_var == NULL)
                 return(ft_lstclear(&new_list, free), 0);
-            envnode = ft_lstnew(env_var);                                  //malloc failed?
+            envnode = ft_lstnew(env_var);
             if (envnode == NULL)
                 return (free(env_var), ft_lstclear(&new_list, free), 0);
             ft_lstadd_back(&new_list, envnode);
@@ -129,7 +121,5 @@ int remove_var_in_env(char *start, t_data *data)
 	}
     env_list = data->env;
     data->env = new_list;
-    ft_lstclear(&env_list, free);
-    return (1);
+    return (ft_lstclear(&env_list, free), 1);
 }
-

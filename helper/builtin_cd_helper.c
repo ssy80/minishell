@@ -1,43 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtin_unset.c                                    :+:      :+:    :+:   */
+/*   builtin_cd_helper.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ssian <ssian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/22 16:12:38 by ssian             #+#    #+#             */
-/*   Updated: 2024/09/22 16:12:40 by ssian            ###   ########.fr       */
+/*   Created: 2024/09/28 23:15:39 by ssian             #+#    #+#             */
+/*   Updated: 2024/09/28 23:15:42 by ssian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../minishell.h"
 
-static void error_unset(t_data *data)
+void error_no_home()
 {
-    ft_putstr_fd("unset: ", STDERR_FILENO);
+    ft_putstr_fd("cd: ", STDERR_FILENO);
+    ft_putstr_fd("HOME not set\n", STDERR_FILENO);
+}
+
+void error_cd(t_data *data)
+{
+    ft_putstr_fd("cd: ", STDERR_FILENO);
     ft_putstr_fd("malloc failed!\n", STDERR_FILENO);
     free_all(data);
     exit(EXIT_FAILURE);
 }
 
-/*look for the arg AA=aaa - AA in the env list, remove it if have*/
-void    builtin_unset(char **args, t_data *data)
+char *get_pwd()
 {
-    char *tmp;
-    int i;
+    char *path;
 
-    i = 1;
-    while (args[i])
+    path = malloc(sizeof(char) * MAXLEN);                 //malloc failed ??
+    if (path == NULL)
+        return (NULL);
+    else
     {
-        tmp = ft_strjoin(args[i], "=");
-        if (is_var_in_env(tmp, data) == 1)
-        {
-            if (remove_var_in_env(tmp, data) == 0)
-            {
-                free(tmp);
-                error_unset(data);
-            }
-        }
-        free(tmp);
-        i++;
+        getcwd(path, sizeof(char) * MAXLEN);
+        return (path);
     }
 }

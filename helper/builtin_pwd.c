@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 #include "../minishell.h"
 
-void builtin_pwd()
+void    builtin_pwd()
 {
     getpwd();
 }
