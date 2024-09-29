@@ -18,7 +18,7 @@ void builtin_echo(char **args)
 
     flag_n = 1;
     i = 1;
-    if (equals(args[i], "-n") == 1)                           //0 = no \n at the end
+    if (equals(args[i], "-n") == 1)
     {
         flag_n = 0;
         i++;
@@ -30,6 +30,6 @@ void builtin_echo(char **args)
             ft_putstr_fd(" ", STDOUT_FILENO);
         i++;
     }
-    if (flag_n == 1)                                       //1 = \n at the end
+    if (flag_n == 1)
         ft_putstr_fd("\n", STDOUT_FILENO);
 }

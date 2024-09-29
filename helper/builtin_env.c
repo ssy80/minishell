@@ -27,18 +27,17 @@ void builtin_get_env(char **args, t_data *data)
 
 char **get_current_env(t_data *data)
 {
-    char **env;
+    char    **env;
     t_list  *env_list;
     char    *env_var;
-    int size;
-    int i;
+    int     size;
+    int     i;
 
     env_list = data->env;
     size = ft_lstsize(env_list);
-    env = malloc(sizeof(char *) * (size + 1));                 //malloc failed?
+    env = malloc(sizeof(char *) * (size + 1));
     if(env == NULL)
         return (NULL);
-
     i = 0;
 	while (env_list != NULL)
 	{
@@ -47,8 +46,7 @@ char **get_current_env(t_data *data)
         i++;
         env_list = env_list->next;
     }
-    env[i] = NULL;                                        //last = NULL
-
+    env[i] = NULL;
     return (env);
 }
 

@@ -1,28 +1,49 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   is_spaces.c                                        :+:      :+:    :+:   */
+/*   util_common.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ssian <ssian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/20 23:17:30 by ssian             #+#    #+#             */
-/*   Updated: 2024/09/20 23:17:34 by ssian            ###   ########.fr       */
+/*   Created: 2024/09/28 10:59:27 by ssian             #+#    #+#             */
+/*   Updated: 2024/09/28 10:59:29 by ssian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../minishell.h"
 
-int is_spaces(char *str)
+int equals(char *s1, char *s2)
 {
     int i;
 
+    if (s1 == NULL || s2 == NULL)
+        return (0);
     i = 0;
-    while (str[i])
+    while(s1[i] || s2[i])
     {
-        if ( (str[i] < 9 || str[i] > 13) && str[i] != 32)
-        {
+        if (s1[i] != s2[i])
             return (0);
-        }
         i++;
     }
     return (1);
+}
+
+int is_dir(char *command) 
+{
+    struct stat sbuf;
+
+    if (stat(command, &sbuf) != 0) 
+        return (0);
+    return S_ISDIR(sbuf.st_mode);
+}
+
+int	get_args_len(char **args)
+{
+	int i;
+
+	if (args == NULL)
+		return (0);
+	i = 0;
+	while (args[i])
+		i++;
+	return (i);
 }

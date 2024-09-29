@@ -219,8 +219,8 @@ char **get_null_args();
 t_list *create_cmd_list(t_data *data);
 
 int process_cmd_list(t_list *cmd_list, t_data *data);
-char *get_command_path(char *cmd, t_data *data);
-char **form_args(char *command, char **args);
+//char *get_command_path(char *cmd, t_data *data);
+//char **form_args(char *command, char **args);
 int **get_pipe(int size);
 int do_heredoc(t_inout *inout, int i);
 int equals(char *s1, char *s2);
@@ -256,7 +256,7 @@ char	*ft_substr(char const *s, unsigned int start_, size_t len);
 
 void builtin_unset(char **args, t_data *data);
 
-void unlink_file(char *filepath);
+//void unlink_file(char *filepath);
 
 int is_spaces(char *str);
 
@@ -286,7 +286,6 @@ int update_exit_status(int status, t_data *data);
 int	ft_isdigit(int c);
 
 long long	ft_atoll(const char *str);
-unsigned long long	ft_atoull(const char *str);
 
 long double	ft_atold(const char *str);
 
@@ -294,5 +293,28 @@ int add_inout(t_list **inout_list, int inout_type, char *inout_value);
 int add_cmd(char *command, char **args, t_list *inout_list, t_list **cmd_list);
 
 void print_error_create_cmdlist();
+
+//void do_single_cmd(t_cmd *cmd, t_data *data);
+void do_single_cmd(t_data *data);
+
+int do_is_inout(t_data *data, t_ccmd *ccmd, int *i);
+void do_inout(t_list *inout_list, t_data *data);
+void do_command(t_cmd *cmd, t_data *data);
+void do_command_first(t_cmd *cmd, int pipefd_out[], pid_t pidt, t_data *data);
+void do_builtin(t_cmd *cmd, t_data *data);
+void do_command_last(t_cmd *cmd, int pipefd_in[], pid_t pidt, t_data *data);
+void do_command_mid(t_cmd *cmd, int pipefd_in[], int pipefd_out[], pid_t pidt, t_data *data);
+void do_multiple_command(t_list *cmd_list, int size, t_data *data);
+
+void error_command_is_dir(t_cmd *cmd, t_data *data);
+void error_no_command(t_cmd *cmd, t_data *data);
+void error_no_env(t_cmd *cmd, t_data *data);
+
+char *get_env_path(t_data *data);
+void error_no_home();
+void error_cd(t_data *data);
+char *get_pwd();
+
+void error_fork(t_data *data);
 
 #endif

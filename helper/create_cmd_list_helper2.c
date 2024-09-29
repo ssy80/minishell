@@ -11,45 +11,63 @@
 /* ************************************************************************** */
 #include "../minishell.h"
 
-void print_inout_list(t_list *inout_list)
+void	print_error_create_cmdlist()
 {
-	t_inout *inout;
-	
-	while (inout_list != NULL)
-	{
-		inout = (t_inout *)(inout_list->content);
-		printf("inout->type: %d\n", inout->type);
-		printf("inout->file: %s\n", inout->file);
-		printf("inout->heredoc: %s\n", inout->heredoc);
-		printf("inout->delimiter: %s\n", inout->delimiter);
-		inout_list = inout_list->next;
-	}
+    ft_putstr_fd("cmd_list: ", STDERR_FILENO);
+    ft_putstr_fd("malloc failed!\n", STDERR_FILENO);
 }
 
-void print_args(char **args)
+char	**get_null_args()
 {
-	int i;
+	char	**new_args;
 
+	new_args = malloc(sizeof(char *));
+    if (new_args == NULL)
+        return (NULL);
+    else
+    {
+        new_args[0] = NULL;
+        return (new_args);
+    }
+}
+
+char	**add_arg(char **args, char *arg)
+{
+	int		i;
+	int		size;
+	char	**new_args;
+	
+	size = get_args_len(args);
+	size = size + 1 + 1;
+	new_args = malloc(sizeof(char *) * size);
+    if (new_args == NULL)
+    {                    
+        return (free(args), NULL);
+    }
 	i = 0;
-	while (args[i])
+	while (i < (size - 2))
 	{
-		printf("args[%d]: %s\n", i, args[i]);
+		new_args[i] = args[i];
 		i++;
 	}
+	new_args[i] = arg;
+	i++;
+	new_args[i] = NULL;
+    free(args);
+    args = NULL;
+	return (new_args);
 }
 
-void print_cmd(t_list *cmd_list)
+int is_inout(char *token)
 {
-	t_cmd	*cmd;
-
-	while (cmd_list != NULL)
-	{
-		cmd = (t_cmd *)(cmd_list->content);
-		
-		printf("cmd->cmd: %s\n", cmd->cmd);
-		print_args(cmd->args);
-		print_inout_list(cmd->inout_list);
-
-		cmd_list = cmd_list->next;
-	}
+	if (equals(token, "<"))
+		return (2);
+	else if (equals(token, "<<"))
+		return (3);
+	else if (equals(token, ">"))
+		return (0);
+	else if (equals(token, ">>"))
+		return (1);
+	else
+		return (-1);
 }

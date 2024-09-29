@@ -11,10 +11,6 @@
 /* ************************************************************************** */
 #include "../minishell.h"
 
-void free_pidt(pid_t *pidt);
-void free_pipefd_all(int **pipefd, int size);
-void free_charchar_str(char **str);
-
 void free_pidt(pid_t *pidt)
 {
     if (pidt != NULL)
@@ -58,7 +54,7 @@ void free_charchar_str(char **str)
     }
 }
 
-void	ft_freelist(t_list *lst)                  //may need update
+void	ft_freelist(t_list *lst)
 {
 	t_list	*tmp_lst;
 
@@ -79,16 +75,6 @@ void free_all(t_data *data)
     free_pipefd_all(data->pipefd, ft_lstsize(data->cmd_list) - 1);
     free_cmdlist(data->cmd_list);
     ft_freelist(data->cmd_list);
-    //data->cmd_list = NULL;
-
-//do a loop to print out data->cmd
-    //for (int i =0; i<data->itr;i++)
-		//printf("s:%s\n", data->cmd[0]);
-        //free(data->cmd[0]);
-
     free_datacmd(data);
-    //freedatacmd(data);
     freenullall(data);
 }
-
-

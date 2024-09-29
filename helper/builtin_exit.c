@@ -16,7 +16,6 @@ static int is_all_digit(char *str)
     int i;
 
     i = 0;
-
     if (str[i] == '+' || str[i] == '-')
         i++;
     while(str[i])
@@ -28,7 +27,8 @@ static int is_all_digit(char *str)
     return (1);
 }
 
-static int is_valid_code(char *str)   //−9223372036854775808, +9223372036854775807 [LLONG_MIN, LLONG_MAX] long long
+/*−9223372036854775808, +9223372036854775807 [LLONG_MIN, LLONG_MAX] long long*/
+static int is_valid_code(char *str)   
 {
     int zeros;
     int i;
@@ -49,6 +49,23 @@ static int is_valid_code(char *str)   //−9223372036854775808, +922337203685477
 	return (1);
 }
 
+static void error_need_numeric(char *arg, t_data *data)
+{
+    ft_putstr_fd("exit: ", STDERR_FILENO);
+    ft_putstr_fd(arg, STDERR_FILENO);
+    ft_putstr_fd(": numeric argument required\n", STDERR_FILENO);
+    free_all(data);
+    exit(2);
+}
+
+static void error_many_args(t_data *data)
+{
+    ft_putstr_fd("exit: ", STDERR_FILENO);
+    ft_putstr_fd("too many arguments\n", STDERR_FILENO);
+    free_all(data);
+    exit(1);
+}
+
 void builtin_exit(char **args, t_data *data)
 {
     int size;
@@ -60,39 +77,15 @@ void builtin_exit(char **args, t_data *data)
         free_all(data);
         exit(0);
     }
-
     if (is_all_digit(args[1]) == 0)
-    {
-        ft_putstr_fd("exit: ", STDERR_FILENO);
-        ft_putstr_fd(args[1], STDERR_FILENO);
-        ft_putstr_fd(": numeric argument required\n", STDERR_FILENO);
-        free_all(data);
-        exit(2);
-    }
-
+        error_need_numeric(args[1], data);
     if (is_valid_code(args[1]) == 0)
-    {
-        ft_putstr_fd("exit: ", STDERR_FILENO);
-        ft_putstr_fd(args[1], STDERR_FILENO);
-        ft_putstr_fd(": numeric argument required\n", STDERR_FILENO);
-        free_all(data);
-        exit(2);
-        //return ;
-    }
-
-                           //{"exit", "123", NULL}  = 2 ok
-    if (size > 2)                                       // //{"exit", "123", "123", NULL} == 3 NOT ok     //max 0 - 9223372036854775807 [LLONG_MIN, LLONG_MAX] long long
-    {
-        ft_putstr_fd("exit: ", STDERR_FILENO);
-        ft_putstr_fd("too many arguments\n", STDERR_FILENO);
-        free_all(data);
-        exit(1);
-    }
-
+        error_need_numeric(args[1], data);
+    if (size > 2)                                       
+        error_many_args(data);
     code = ft_atoll(args[1]);
     if (code > 255)
         code = code % 256;
     free_all(data);
     exit(code);
-    //return ;
 }

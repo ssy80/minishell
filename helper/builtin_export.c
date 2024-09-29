@@ -28,7 +28,8 @@ static void error_export(t_data *data)
     exit(EXIT_FAILURE);
 }
 
-static int is_valid_var_name(char *str)       //only valid if start with _ or alphabets
+/* only valid if start with _ or alphabets */
+static int is_valid_var_name(char *str)
 {
     int i;
 
@@ -45,16 +46,17 @@ static int is_valid_var_name(char *str)       //only valid if start with _ or al
     return (1);
 }
 
+/* ignored arg without '=', [0] first char '=' is invalid format */
 static int check_error_args(char *str)
 {
-    if (ft_strchr(str, '=') == NULL)                          //ignored arg without '='
-        return (1);
-    if (str[0] == '=')                                        //[0] first char '=' is invalid format 
+    if (is_valid_var_name(str) == 0)
     {
         print_not_valid_error(str);
         return (1);
     }
-    if (is_valid_var_name(str) == 0)                     //only valid if start with _ or alphabets
+    if (ft_strchr(str, '=') == NULL)
+        return (1);
+    if (str[0] == '=')
     {
         print_not_valid_error(str);
         return (1);
@@ -81,10 +83,10 @@ void builtin_export(char **args, t_data *data)
         }
         if (is_var_in_env(args[i], data) == 1)                        
         {
-            if (replace_var_in_env(args[i], data) == 0)               //error malloc??
+            if (replace_var_in_env(args[i], data) == 0)
                 error_export(data);                      
         }
-        else                                                         //add new env var to list
+        else
         {
             if (addenvvar(args[i], data) == -1)
                 error_export(data);
