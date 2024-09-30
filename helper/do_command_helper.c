@@ -20,6 +20,12 @@ void    error_command_is_dir(t_cmd *cmd, t_data *data)
     exit(126);
 }
 
+void    error_empty_command(t_data *data)
+{
+    free_all(data);
+    exit(EXIT_SUCCESS);
+}
+
 void    error_no_command(t_cmd *cmd, t_data *data)
 {
     ft_putstr_fd(cmd->cmd, STDERR_FILENO);

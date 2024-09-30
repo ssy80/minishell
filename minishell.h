@@ -316,5 +316,7 @@ void error_cd(t_data *data);
 char *get_pwd();
 
 void error_fork(t_data *data);
+void    error_empty_command(t_data *data);
+void    error_execve(t_cmd *cmd, t_data *data);
 
 #endif

@@ -134,6 +134,7 @@ int	main(int ac, char *av[], char **envp)
 		loadcmdtkn(&data);
 		if (!syn_check(&data))
 		{
+			ft_putstr_fd("syntax error\n", STDERR_FILENO);
 			free_datacmd(&data);
 			continue;
 		}
