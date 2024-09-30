@@ -109,17 +109,19 @@ int	parsespace(t_data *data, int i, int start)
 // serparator is |, > and <, result stored in data.tkn
 void	gettkn(t_data *data, int i, int start)
 {
+	int	k;
+	
 	if (!data->buf[i])
 		return ;
 	i = parsespace(data, i, start);
 	if (data->buf[i] && data->buf[i] == '\'')
-		return (gettkn(data, i = parse1q(data, i + 1, i), i));
+		return (k = parse1q(data, i + 1, i), gettkn(data, k, k));
 	if (data->buf[i] && data->buf[i] == '"')
-		return (gettkn(data, i = parse2q(data, i + 1, i), i));
+		return (k = parse2q(data, i + 1, i), gettkn(data, k, k));
 	if (data->buf[i] && !is_sym(data->buf[i]))
-		return (gettkn(data, i = parsechar(data, i, i), i));
+		return (k = parsechar(data, i, i), gettkn(data, k, k));
 	if (data->buf[i] && is_sym(data->buf[i]))
-		return (gettkn(data, i = parsesym(data, i, i), i));
+		return (k = parsesym(data, i, i), gettkn(data, k, k));
 	return (gettkn(data, i + 1, i));
 }
 

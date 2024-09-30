@@ -51,25 +51,18 @@ void    do_single_cmd(t_data *data)
     int status;
     t_cmd   *cmd;
 
+	ft_bzero(&status, sizeof(int));
     cmd = (t_cmd *)(data->cmd_list->content); 
     pidt = fork();
     if (pidt == -1) 
-    {
-        perror("fork failed!");
-        free_all(data);    
-        exit(EXIT_FAILURE);
-    }
-
+        return (perror("fork failed!"), free_all(data), exit(EXIT_FAILURE));
     if (pidt == 0)
-    {
         do_in_child(cmd, data);
-    }
     else
     {
         do_in_parent(cmd, data);
         wait(&status);
         if (WIFEXITED(status))
             update_exit_status(WEXITSTATUS(status), data);
-
     }
 }

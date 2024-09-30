@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+int g_var = 0;
+
 /* dir is the cwd + :  eq the prompt to print*/
 void	getprompt(char *dir)
 {
@@ -49,8 +51,8 @@ int	getcmd(char *buf, int size, char *dir, t_data *data)
 	if (!input)
 	{
 		//printf("--need free data struct before exit--\n");
-		return (free_all(data), -1);
-		//return (freenull(input), free_all(data), -1);
+		// return (free_all(data), -1);
+		return (freenullall(data), -1);
 	}
 	len = ft_strlen(input);
 	if (len > size - 1)
@@ -123,6 +125,7 @@ int	main(int ac, char *av[], char **envp)
 	initfd(dir);
 	initdata(buf, envp, &data);
 	server();
+	g_var = 1;
 	while (getcmd(buf, MAXLEN, dir, &data) >= 0)
 	{
 		if(ft_strlen(buf) == 0)
