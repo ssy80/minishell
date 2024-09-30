@@ -23,10 +23,14 @@ static int  do_is_pipe(t_ccmd *ccmd)
 
 static int  do_last(t_data *data, t_ccmd *ccmd, int *i)
 {
+    /*if (ft_strlen(data->cmd[*i]) == 0)
+    {
+        printf("l: %lu\n", ft_strlen(data->cmd[*i]));
+    }
+    else*/
     if (ccmd->command == NULL)
     {
         ccmd->command = data->cmd[*i];
-
         ccmd->args = add_arg(ccmd->args, data->cmd[*i]);
         if (ccmd->args == NULL)
             return (print_error_create_cmdlist(), 0);
@@ -37,7 +41,6 @@ static int  do_last(t_data *data, t_ccmd *ccmd, int *i)
         if (ccmd->args == NULL)
             return (print_error_create_cmdlist(), 0);
     }
-
     if (add_cmd(ccmd->command, ccmd->args, ccmd->inout_list, &(ccmd->cmd_list)) == 0)
         return (print_error_create_cmdlist(), 0);
     ccmd->command = NULL;
@@ -48,6 +51,11 @@ static int  do_last(t_data *data, t_ccmd *ccmd, int *i)
 
 static int  do_others(t_data *data, t_ccmd *ccmd, int *i)
 {
+    /*if (ft_strlen(data->cmd[*i]) == 0)
+    {
+        printf("l: %lu\n", ft_strlen(data->cmd[*i]));
+    }
+    else*/ 
     if (ccmd->command == NULL)
     {
         ccmd->command = data->cmd[*i];
