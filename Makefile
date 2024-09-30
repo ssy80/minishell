@@ -34,3 +34,6 @@ run : $(NAME)
 
 g: $(NAME)
 	gdb ./$(NAME)
+
+deep : $(NAME)
+	valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes --suppressions=readline.supp ./$(NAME)

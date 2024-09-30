@@ -35,28 +35,28 @@ static char *get_tmp_file(int i)
 
 int do_heredoc(t_inout *inout, int i)
 {
-    char *line;
-    char *tmp_file;
-    int  filefd;
+	char	*line;
+	char	*tmp_file;
+	int		filefd;
 
-    tmp_file = get_tmp_file(i);
-    if (tmp_file == NULL)
-        return (0);
-    filefd = open(tmp_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-    if (filefd < 0)
-        return (print_error_heredoc(), free(tmp_file), 0);
-    while ((line = readline("> ")) != NULL) 
-    {
-        if (equals(line, inout->delimiter) == 1) 
-        {
-            free(line);
-            break;
-        }
-        write(filefd, line, ft_strlen(line));
-        write(filefd, "\n", 1);
-        free(line);
-    }
-    close(filefd);
-    inout->heredoc = tmp_file;
-    return (1);
+	tmp_file = get_tmp_file(i);
+	if (tmp_file == NULL)
+		return (0);
+	filefd = open(tmp_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (filefd < 0)
+		return (print_error_heredoc(), free(tmp_file), 0);
+	while ((line = readline("> ")) != NULL) 
+	{
+		if (equals(line, inout->delimiter) == 1)
+		{
+			free(line);
+			break;
+		}
+		write(filefd, line, ft_strlen(line));
+		write(filefd, "\n", 1);
+		free(line);
+	}
+	close(filefd);
+	inout->heredoc = tmp_file;
+	return (1);
 }

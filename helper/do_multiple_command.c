@@ -25,6 +25,7 @@ static void wait_process_end(pid_t *pidt, int size, t_data *data)
     int status;
 
     i = 0;
+	ft_bzero(&status, sizeof(int));
     while (i < size)
     {
         waitpid(pidt[i], &status, 0);
