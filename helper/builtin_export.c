@@ -54,33 +54,39 @@ static int check_error_args(char *str)
     if (is_valid_var_name(str) == 0)
     {
         print_not_valid_error(str);
-        return (1);
+        return (0);
     }
     if (str[0] == '=')
     {
         print_not_valid_error(str);
-        return (1);
+        return (0);
     }
-    return (0);
+    return (1);
 }
 
 /*if starts with a= already in list, replace with new a=... 
   if not in list then add args[i] to it.
   if invalid format "export a"? - will be ignored no error msg. 
   if invalid format "=" or "=aaa"? will have error msg.
+  success = 1, failed = 0
 */
-void builtin_export(char **args, t_data *data)
+int builtin_export(char **args, t_data *data)
 {
     int i;
+    int status;
 
+    status = 1;
     i = 1;
     while (args[i])
     {
-        if (check_error_args(args[i]) == 1)
+        if (check_error_args(args[i]) == 0)
         {
+            status = 0;
             i++;
             continue;
         }
+        else
+            status = 1;
         if (is_var_in_env(args[i], data) == 1)                        
         {
             if (replace_var_in_env(args[i], data) == 0)
@@ -93,4 +99,5 @@ void builtin_export(char **args, t_data *data)
         }
         i++;
     }
+    return (status);
 }

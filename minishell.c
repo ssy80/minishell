@@ -49,23 +49,15 @@ int	getcmd(char *buf, int size, char *dir, t_data *data)
 	input = readline(dir);
 	//printf("input: %s\n", input);
 	if (!input)
-	{
-		//printf("--need free data struct before exit--\n");
-		// return (free_all(data), -1);
 		return (freenullall(data), -1);
-	}
 	len = ft_strlen(input);
 	if (len > size - 1)
 		return (freenull(input), ft_putstr_fd("str too long\n", 1), -1);
-
-//	exitcommand(input, data);
-
 	if (is_spaces(input) == 0)
 	{
 		ft_strlcpy(buf, input, len + 1);
 		add_history(buf);
 	}
-
 	return (freenull(input), 0);
 }
 
@@ -118,7 +110,6 @@ int	main(int ac, char *av[], char **envp)
 	char	buf[MAXLEN];
 	char	dir[MAXLEN];
 	t_data	data;
-	//t_list	*cmd_list;
 
 	(void)av;
 	(void)ac;
@@ -140,19 +131,7 @@ int	main(int ac, char *av[], char **envp)
 		}
 		if (do_expander(&data) == 0)
 			error_main(&data);
-
 		create_and_process(&data);
-
-		/*cmd_list = create_cmd_list(&data);
-		if (cmd_list == NULL)
-			error_main(&data);
-		data.cmd_list = cmd_list;
-		if (process_cmd_list(cmd_list, &data) == 0)
-		{
-			free_all(&data);
-			exit(EXIT_FAILURE);
-		}
-		free_main_last(cmd_list, &data);*/
 	}
 	exitcl(0);
 }

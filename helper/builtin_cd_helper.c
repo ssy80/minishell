@@ -29,7 +29,7 @@ char *get_pwd()
 {
     char *path;
 
-    path = malloc(sizeof(char) * MAXLEN);                 //malloc failed ??
+    path = malloc(sizeof(char) * MAXLEN);
     if (path == NULL)
         return (NULL);
     else
