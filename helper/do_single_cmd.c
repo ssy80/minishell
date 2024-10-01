@@ -33,14 +33,21 @@ static void do_in_child(t_cmd *cmd, t_data *data)
     exit(EXIT_SUCCESS);
 }
 
+/* success status = 0, failed status = 1 */
 static void do_in_parent(t_cmd *cmd, t_data *data)
 {
     if(equals(cmd->cmd, "export") == 1)
-        builtin_export(cmd->args, data);
+    {
+        if (builtin_export(cmd->args, data) == 0)
+            update_exit_status(1, data);
+    }
     else if(equals(cmd->cmd, "unset") == 1)
         builtin_unset(cmd->args, data);
     else if(equals(cmd->cmd, "cd") == 1)
-        builtin_cd(cmd->args, data);
+    {
+        if (builtin_cd(cmd->args, data) == 0)
+            update_exit_status(1, data);
+    }
     else if(equals(cmd->cmd, "exit") == 1)
         builtin_exit(cmd->args, data);
 }
@@ -60,9 +67,11 @@ void    do_single_cmd(t_data *data)
         do_in_child(cmd, data);
     else
     {
-        do_in_parent(cmd, data);
+        
         wait(&status);
         if (WIFEXITED(status))
             update_exit_status(WEXITSTATUS(status), data);
+
+        do_in_parent(cmd, data);
     }
 }

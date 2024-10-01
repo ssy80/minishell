@@ -20,6 +20,9 @@ void    error_fork(t_data *data)
 
 void    do_command_last(t_cmd *cmd, int pipefd_in[], pid_t pidt, t_data *data)          
 {
+    int exit_status;
+
+    exit_status = 0;
     pidt = fork();
     if (pidt == -1) 
         error_fork(data);
@@ -33,12 +36,12 @@ void    do_command_last(t_cmd *cmd, int pipefd_in[], pid_t pidt, t_data *data)
         if (cmd->cmd != NULL)
         {
             if (is_builtin_fn(cmd->cmd) == 1)
-                do_builtin(cmd, data);
+                exit_status = do_builtin(cmd, data);
             else
                 do_command(cmd, data);
         }
         free_all(data);
-        exit(EXIT_SUCCESS);
+        exit(exit_status);
     }
     else
     {

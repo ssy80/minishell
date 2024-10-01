@@ -250,7 +250,7 @@ int is_builtin_fn(char *cmd);
 
 void builtin_get_env(char **args, t_data *data);
 
-void builtin_export(char **args, t_data *data);
+int builtin_export(char **args, t_data *data);
 
 char	*ft_substr(char const *s, unsigned int start_, size_t len);
 
@@ -262,7 +262,7 @@ int is_spaces(char *str);
 
 void builtin_exit();
 
-void builtin_cd(char **args, t_data *data);
+int builtin_cd(char **args, t_data *data);
 
 void builtin_echo(char **args);
 
@@ -301,7 +301,7 @@ int do_is_inout(t_data *data, t_ccmd *ccmd, int *i);
 void do_inout(t_list *inout_list, t_data *data);
 void do_command(t_cmd *cmd, t_data *data);
 void do_command_first(t_cmd *cmd, int pipefd_out[], pid_t pidt, t_data *data);
-void do_builtin(t_cmd *cmd, t_data *data);
+int do_builtin(t_cmd *cmd, t_data *data);
 void do_command_last(t_cmd *cmd, int pipefd_in[], pid_t pidt, t_data *data);
 void do_command_mid(t_cmd *cmd, int pipefd_in[], int pipefd_out[], pid_t pidt, t_data *data);
 void do_multiple_command(t_list *cmd_list, int size, t_data *data);

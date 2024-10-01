@@ -91,16 +91,6 @@ void    do_command(t_cmd *cmd, t_data *data)
     char *command;
     char    **envp;
 
-    if (ft_strlen(cmd->cmd) == 0)
-        error_empty_command(data);
-    //{
-        //ft_putstr_fd(cmd->cmd, STDERR_FILENO);
-        //ft_putstr_fd(": ", STDERR_FILENO);
-        //ft_putstr_fd("No such file!\n", STDERR_FILENO);
-    //    free_all(data);
-    //    exit(EXIT_SUCCESS);
-    //}
-
     if (is_dir(cmd->cmd) == 1)
         error_command_is_dir(cmd, data);
     command = get_command_path(cmd->cmd, data);
@@ -113,18 +103,9 @@ void    do_command(t_cmd *cmd, t_data *data)
             error_no_env(cmd, data);
         if (execve(command, cmd->args, envp) == -1) 
         {
-           
-            
             free(envp);
             free(command);
             error_execve(cmd, data);
-            
-            /*perror(cmd->cmd);
-            free_all(data);
-            if (errno == 2)
-                exit(127);
-            else
-                exit(EXIT_FAILURE);*/
         }
     }
 }

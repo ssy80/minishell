@@ -45,8 +45,20 @@ int do_heredoc(t_inout *inout, int i)
 	filefd = open(tmp_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (filefd < 0)
 		return (print_error_heredoc(), free(tmp_file), 0);
-	while ((line = readline("> ")) != NULL) 
+
+	//while ((line = readline("> ")) != NULL)
+	//while ((line = readline("> ")) != NULL) 
+	while (1)
 	{
+		line = readline("> ");
+
+		//if (g_var == 130)
+		//{
+		//	printf("\nCtrl+C pressed, exiting...\n");
+            //free(input);  // Clean up memory
+        //    break;
+		//}
+		
 		if (equals(line, inout->delimiter) == 1)
 		{
 			free(line);
@@ -55,6 +67,7 @@ int do_heredoc(t_inout *inout, int i)
 		write(filefd, line, ft_strlen(line));
 		write(filefd, "\n", 1);
 		free(line);
+
 	}
 	close(filefd);
 	inout->heredoc = tmp_file;
