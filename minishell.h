@@ -164,15 +164,16 @@ void	setfreept(t_data *data, void *pt);
 void	freenullall(t_data *data);
 void	freedatacmd(t_data *data);
 // built in function
-void	getpwd(void);
 void	getmyenv(t_data *data);
+char	*getenvvar(char *var, t_data *data);
+bool	isvalidenvkey(char *var);
+int		addenvvar(char *var, t_data *data);
+void	lltoarray(t_data *data);
+int		listlength(t_list *a);
 void	exitcommand(char *input, t_data *data);
+void	getpwd(void);
 void	getcd(char *buf);
 int		builtin_func(char *buf, t_data *data);
-char	*getenvvar(char *var, t_data *data);
-
-int	addenvvar(char *var, t_data *data);
-
 // init
 void	initfd(char *dir);
 void	initdata(char buf[MAXLEN], char **env, t_data *data);
@@ -181,16 +182,26 @@ void	getprompt(char *dir);
 void	gettkn(t_data *data, int i, int start);
 void	loadcmdtkn(t_data *data);
 // parsing
-t_cmd	*parsepipe(t_data *data, int i);
-bool	is_sym(char s);
+int		parse1q(t_data *data, int i, int start);
+int		parse2q(t_data *data, int i, int start);
 int		parsechar(t_data *data, int i, int start);
 int		parsesym(t_data *data, int i, int start);
+int		parsenum(t_data *data, int i, int start);
+void	setdatatkn(t_data *data, int i, int start);
+void	gettkn(t_data *data, int i, int start);
+void	loadcmdtkn(t_data *data);
+bool	is_whitesp(char s);
+bool	is_sym(char s);
 int		parsespace(t_data *data, int i, int start);
 bool	syn_check(t_data *data);
 // expander
+void	exp1q(char *s, int a[2], char *line, t_data *data);
+void	exp_1s(char *s, int a[2], char *line);
+void	exp_sq(int a[2], char *line, t_data *data);
+void	exp_s(char *s, int a[2], char *line, t_data *data);
+void	exp2q(char *s, int a[2], char *line, t_data *data);
 void	exptkn(char *s, int a[2], char *line, t_data *data);
-//void	expander(char *s, t_data *data);
-int	expander(char *s, t_data *data, int i);
+int		expander(char *s, t_data *data, int i);
 
 //lexer/parser/executor
 //t_list *process_raw_input(char *str);
