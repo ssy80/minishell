@@ -25,6 +25,7 @@ void	exp1q(char *s, int a[2], char *line, t_data *data)
 	a[0]++;
 }
 
+// when there is only 1 $ ie:echo $ "$" 
 void	exp_1s(char *s, int a[2], char *line)
 {
 	if (s[a[0]] == '\0' || s[a[0]] == ' ' || (a[0] > 0 && \
