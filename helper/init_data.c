@@ -37,6 +37,66 @@ static void	copyenv(char **env, t_data *data)
 	data->env = ll;
 }
 
+//  count length of int
+int	lenint(int l)
+{
+	int	i;
+
+	i = 0;
+	while (l != 0)
+	{
+		i++;
+		l /= 10;
+	}
+	return (i);
+}
+
+// return SHLVL=l in string form
+char	*fillcont(int l)
+{
+	char	*a;
+	int		tmp;
+
+	tmp = lenint(l);
+	a = ft_calloc(6 + 1 + tmp, sizeof(char));
+	if (!a)
+		return (NULL);
+	a[6 + tmp] = '\0';
+	ft_strlcpy(a, "SHLVL=", 7);
+	while (tmp > 0)
+	{
+		a[6 + tmp - 1] = l % 10 + '0';
+		tmp--;
+		l /= 10;
+	}
+	return (a);
+}
+
+// increase shlvl
+void	addshlvl(t_data *data)
+{
+	t_list	*cp;
+	int		i;
+	int		l;
+
+	cp = data->env;
+	i = 5;
+	l = 0;
+	while (cp)
+	{
+		if (ft_strncmp((char *)cp->content, "SHLVL=", 6) == 0)
+		{
+			while (((char *)cp->content)[++i])
+				l += ((char *)cp->content)[i] - '0' + l * 10;
+			free(cp->content);
+			cp->content = fillcont(l + 1);
+			if (!cp->content)
+				return (ft_putstr_fd(MFAIL, 1), freenullall(data), exit(1));
+		}
+		cp = cp->next;
+	}
+}
+
 // initializing all variable in data struct to null
 // prevent valgrind error of uninitialised value being used
 void	initdata(char buf[MAXLEN], char **env, t_data *data)
@@ -44,4 +104,5 @@ void	initdata(char buf[MAXLEN], char **env, t_data *data)
 	ft_bzero(data, sizeof(t_data));
 	data->buf = buf;
 	copyenv(env, data);
+	addshlvl(data);
 }
