@@ -25,7 +25,7 @@ static int  get_matched_idx(char *str, char c)
     return (-1);
 }
 
-static int  starts_with(char *str, char *start)
+int  starts_with(char *str, char *start)
 {
     int i;
 

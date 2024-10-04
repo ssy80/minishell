@@ -32,6 +32,7 @@
 // # define PROMPT "ftShell :"
 # define MAXEXP 5000
 # define MAXLEN 512
+
 # define PTMAX 1024
 # define CDERR "No such file or directory\n"
 # define MFAIL "Malloc failure\n"
@@ -233,7 +234,7 @@ int process_cmd_list(t_list *cmd_list, t_data *data);
 //char *get_command_path(char *cmd, t_data *data);
 //char **form_args(char *command, char **args);
 int **get_pipe(int size);
-int do_heredoc(t_inout *inout, int i);
+//int do_heredoc(t_inout *inout, int i);
 int equals(char *s1, char *s2);
 pid_t *get_pidt(int size);
 
@@ -259,7 +260,7 @@ int is_dir(char *command);
 
 int is_builtin_fn(char *cmd);
 
-void builtin_get_env(char **args, t_data *data);
+int builtin_get_env(char **args, t_data *data);
 
 int builtin_export(char **args, t_data *data);
 
@@ -271,7 +272,8 @@ void builtin_unset(char **args, t_data *data);
 
 int is_spaces(char *str);
 
-void builtin_exit();
+// builtin_exit();
+int builtin_exit(char **args, t_data *data);
 
 int builtin_cd(char **args, t_data *data);
 
@@ -329,5 +331,25 @@ char *get_pwd();
 void error_fork(t_data *data);
 void    error_empty_command(t_data *data);
 void    error_execve(t_cmd *cmd, t_data *data);
+
+char *get_tmp_file(int i);
+
+void handle_signal_in_command(int sig);
+void set_signal_in_command();
+void print_error_heredoc();
+
+void set_sigint_status(t_data *data);
+
+void free_all2(t_data *data);
+void error_no_file(t_cmd *cmd, t_data *data);
+void    error_no_permission(t_cmd *cmd, t_data *data);
+
+int is_cmd_path(char *cmd);
+int check_x_permission(char *command);
+int check_got_file(char *command);
+
+int  do_heredoc(t_list *cmd_list, t_data *data);
+
+int  starts_with(char *str, char *start);
 
 #endif

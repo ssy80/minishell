@@ -22,9 +22,6 @@ void    do_command_mid(t_cmd *cmd, int pipefd_in[], int pipefd_out[], pid_t pidt
     int exit_status;
 
     exit_status = 0;
-    pidt = fork();
-    if (pidt == -1)
-        error_fork(data); 
     if (pidt == 0) 
     {
         close(pipefd_in[1]);

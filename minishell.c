@@ -52,7 +52,12 @@ int	getcmd(char *buf, int size, char *dir, t_data *data)
 		return (freenullall(data), -1);
 	len = ft_strlen(input);
 	if (len > size - 1)
-		return (freenull(input), ft_putstr_fd("str too long\n", 1), -1);
+	{
+		ft_putstr_fd("str too long\n", 1);
+		return (freenull(input), 0);
+	}
+		//return (freenull(input), freenullall(data), ft_putstr_fd("str too long\n", 1), -1);
+
 	if (is_spaces(input) == 0)
 	{
 		ft_strlcpy(buf, input, len + 1);
@@ -97,12 +102,18 @@ static void	create_and_process(t_data *data)
 	if (cmd_list == NULL)
 		error_main(data);
 	data->cmd_list = cmd_list;
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+	set_signal_in_command();
 	if (process_cmd_list(cmd_list, data) == 0)
 	{
 		free_all(data);
 		exit(EXIT_FAILURE);
 	}
 	free_main_last(cmd_list, data);
+	signal(SIGINT, SIG_DFL); 
+	signal(SIGQUIT, SIG_DFL); 
+	server();
 }
 
 int	main(int ac, char *av[], char **envp)
@@ -116,7 +127,8 @@ int	main(int ac, char *av[], char **envp)
 	initfd(dir);
 	initdata(buf, envp, &data);
 	server();
-	g_var = 1;
+	set_sigint_status(&data);
+	update_exit_status(0, &data);
 	while (getcmd(buf, MAXLEN, dir, &data) >= 0)
 	{
 		if(ft_strlen(buf) == 0)
