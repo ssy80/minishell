@@ -17,19 +17,25 @@ static void do_in_child(t_cmd *cmd, t_data *data)
         do_inout(cmd->inout_list, data);
     if (cmd->cmd != NULL)
     {
+        //if (is_builtin_fn(cmd->cmd) == 0)
+
         if (is_builtin_fn(cmd->cmd) == 1)
         {
-            if(equals(cmd->cmd, "env") == 1)
+            if (equals(cmd->cmd, "pwd") == 1)
+                getpwd();
+            else if (equals(cmd->cmd, "echo") == 1)
+                builtin_echo(cmd->args);
+            /*if(equals(cmd->cmd, "env") == 1)
                 builtin_get_env(cmd->args, data);
             else if (equals(cmd->cmd, "pwd") == 1)
                 getpwd();
             else if (equals(cmd->cmd, "echo") == 1)
-                builtin_echo(cmd->args);
+                builtin_echo(cmd->args);*/
         }
         else
             do_command(cmd, data);
     }
-    free_all(data);        
+    free_all(data);
     exit(EXIT_SUCCESS);
 }
 
@@ -49,7 +55,15 @@ static void do_in_parent(t_cmd *cmd, t_data *data)
             update_exit_status(1, data);
     }
     else if(equals(cmd->cmd, "exit") == 1)
-        builtin_exit(cmd->args, data);
+    {
+        if (builtin_exit(cmd->args, data) == 0)
+            update_exit_status(1, data);
+    }
+    else if(equals(cmd->cmd, "env") == 1)
+    {
+        if (builtin_get_env(cmd->args, data) == 0)
+            update_exit_status(127, data);
+    }
 }
 
 void    do_single_cmd(t_data *data)
@@ -58,7 +72,7 @@ void    do_single_cmd(t_data *data)
     int status;
     t_cmd   *cmd;
 
-	ft_bzero(&status, sizeof(int));
+	status = 0;
     cmd = (t_cmd *)(data->cmd_list->content); 
     pidt = fork();
     if (pidt == -1) 
@@ -67,11 +81,11 @@ void    do_single_cmd(t_data *data)
         do_in_child(cmd, data);
     else
     {
-        
         wait(&status);
-        if (WIFEXITED(status))
+        if (WIFSIGNALED(status))
+            update_exit_status(128 + WTERMSIG(status), data);
+        else if (WIFEXITED(status)) 
             update_exit_status(WEXITSTATUS(status), data);
-
         do_in_parent(cmd, data);
     }
 }

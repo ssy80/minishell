@@ -14,7 +14,7 @@
 void    error_fork(t_data *data)
 {
     perror("fork failed!");
-    free_all(data); 
+    free_all(data);
     exit(EXIT_FAILURE);
 }
 
@@ -23,9 +23,6 @@ void    do_command_last(t_cmd *cmd, int pipefd_in[], pid_t pidt, t_data *data)
     int exit_status;
 
     exit_status = 0;
-    pidt = fork();
-    if (pidt == -1) 
-        error_fork(data);
     if (pidt == 0) 
     {
         close(pipefd_in[1]);

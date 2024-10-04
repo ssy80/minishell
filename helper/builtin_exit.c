@@ -58,15 +58,15 @@ static void error_need_numeric(char *arg, t_data *data)
     exit(2);
 }
 
-static void error_many_args(t_data *data)
+static void error_many_args()
 {
     ft_putstr_fd("exit: ", STDERR_FILENO);
     ft_putstr_fd("too many arguments\n", STDERR_FILENO);
-    free_all(data);
-    exit(1);
+    //free_all(data);
+    //exit(1);
 }
 
-void builtin_exit(char **args, t_data *data)
+int builtin_exit(char **args, t_data *data)
 {
     int size;
     long long code;
@@ -81,8 +81,13 @@ void builtin_exit(char **args, t_data *data)
         error_need_numeric(args[1], data);
     if (is_valid_code(args[1]) == 0)
         error_need_numeric(args[1], data);
-    if (size > 2)                                       
-        error_many_args(data);
+    
+    if (size > 2)
+    {                                       
+        error_many_args();
+        return (0);
+    }
+
     code = ft_atoll(args[1]);
     if (code > 255)
         code = code % 256;

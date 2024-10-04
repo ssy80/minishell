@@ -11,32 +11,14 @@
 /* ************************************************************************** */
 #include "../minishell.h"
 
-static int  process_heredoc(t_list *cmd_list)
-{
-    t_cmd   *cmd;
-    t_list  *inout_list;
-    t_inout *inout;
-    int     i;
 
-    i = 0;
-    while (cmd_list != NULL)
-    {
-        cmd = (t_cmd *)(cmd_list->content);
-        inout_list = cmd->inout_list;
-        while (inout_list != NULL)
-        {
-            inout = (t_inout *)(inout_list->content);
-            if (inout->type == 3)                               
-            {
-                if (do_heredoc(inout, i) == 0)
-                    return (0);
-            }
-            i++;
-            inout_list = inout_list->next;
-        }
-        cmd_list = cmd_list->next;
-    }
-    return (1);
+
+static void    process_cmd(t_list *cmd_list, int size, t_data *data)
+{
+    if (size == 1)
+        do_single_cmd(data);
+    else if (size > 1)
+        do_multiple_command(cmd_list, size, data);
 }
 
 static void free_pidt_pipe(pid_t *pidt, int **pipefd, int size)
@@ -45,26 +27,61 @@ static void free_pidt_pipe(pid_t *pidt, int **pipefd, int size)
     free_pipefd_all(pipefd, size);
 }
 
+/*static void  init_pipe_pid(pid_t *pidt, int **pipefd, t_data *data)
+{
+    pipefd = NULL;
+    pidt = NULL;
+    data->pipefd = pipefd;
+    data->pidt = pidt;
+}*/
+
 int process_cmd_list(t_list *cmd_list, t_data *data)
 {
     int     **pipefd;
-    int     size;
     pid_t   *pidt;
+    int     size;
+    int     heredoc_status;
 
-    if (process_heredoc(cmd_list) == 0)
-        return (0);
-    size = ft_lstsize(cmd_list);
-    pipefd = get_pipe(size - 1);
-    if (pipefd == NULL)
-        return (0);
-    pidt = get_pidt(size);
-    if (pidt == NULL)
-        return (0);
+    //init_pipe_pid(pidt, pipefd, data);
+    data->pipefd = NULL;
+    data->pidt = NULL;
+    /*pipefd = NULL;
+    pidt = NULL;
     data->pipefd = pipefd;
-    data->pidt = pidt;
-    if (size == 1)
+    data->pidt = pidt;*/
+    //if (process_heredoc(cmd_list, data) <= 0)     //SIGINT termination -9    0 = malloc failed, some fatal error, dont continue
+    //    return(0);
+    heredoc_status = do_heredoc(cmd_list, data);
+    if (heredoc_status <= 0)                               
+        return (heredoc_status);
+    size = ft_lstsize(cmd_list);
+    if (size > 0)
+    {
+        //if (init_pipe_pid(pidt, pipefd, size) == 0)
+        //    return (0);
+        pipefd = get_pipe(size - 1);
+        if (pipefd == NULL)
+            return (0);
+        pidt = get_pidt(size);
+        if (pidt == NULL)
+            return (0);
+        data->pipefd = pipefd;
+        data->pidt = pidt;
+    }
+    //else
+    //{
+    //    pipefd = NULL;
+    //    pidt = NULL;
+    //}
+    //data->pipefd = pipefd;
+    //data->pidt = pidt;
+    
+    process_cmd(cmd_list, size, data);
+
+    /*if (size == 1)
         do_single_cmd(data);
     else if (size > 1)
         do_multiple_command(cmd_list, size, data);
+    */
     return (free_pidt_pipe(pidt, pipefd, size - 1), 1);
 }

@@ -11,20 +11,6 @@
 /* ************************************************************************** */
 #include "../minishell.h"
 
-static int  is_cmd_path(char *cmd)
-{
-    int i;
-
-    i = 0;
-    while (cmd[i])
-    {
-        if (cmd[i] == '/') 
-            return (1);
-        i++;
-    }
-    return(0);
-}
-
 /* ls: /usr/bin + / + ls */
 static char *form_filepath(char *split_path, char *cmd)
 {
@@ -86,18 +72,32 @@ static char *get_command_path(char *cmd, t_data *data)
     return (command);
 }
 
+static void    check_dir(t_cmd *cmd, t_data *data)
+{
+    if (ft_strchr(cmd->cmd, '/') != NULL)
+    {
+        if (is_dir(cmd->cmd) == 1)
+            error_command_is_dir(cmd, data);
+    }
+}
+
 void    do_command(t_cmd *cmd, t_data *data)
 {
     char *command;
     char    **envp;
 
-    if (is_dir(cmd->cmd) == 1)
-        error_command_is_dir(cmd, data);
+    check_dir(cmd, data);
     command = get_command_path(cmd->cmd, data);
-    if (command == NULL)
+    if (ft_strlen(get_env_path(data)) == 0 && command == NULL)
+        error_no_file(cmd, data);
+    else if (command == NULL)
         error_no_command(cmd, data);
     else
     {
+        if (check_got_file(command) == 0)
+            error_no_file(cmd, data);
+        else if (check_x_permission(command) == 0)
+            error_no_permission(cmd, data);
         envp = get_current_env(data);
         if (envp == NULL)
             error_no_env(cmd, data);

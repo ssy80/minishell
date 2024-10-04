@@ -97,6 +97,7 @@ void    do_inout(t_list *inout_list, t_data *data)
         }
         else if (inout->type == 3)
         {
+ //           printf("heredoc: %s\n", inout->heredoc);
             do_heredochere(inout, data);
         }
         inout_list = inout_list->next;

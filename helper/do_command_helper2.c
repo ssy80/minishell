@@ -21,3 +21,30 @@ void    error_execve(t_cmd *cmd, t_data *data)
         exit(EXIT_FAILURE);
 }
 
+int is_cmd_path(char *cmd)
+{
+    int i;
+
+    i = 0;
+    while (cmd[i])
+    {
+        if (cmd[i] == '/') 
+            return (1);
+        i++;
+    }
+    return(0);
+}
+
+int check_x_permission(char *command)
+{
+    if (access(command, X_OK) == -1)
+        return (0);
+    return (1);
+}
+
+int check_got_file(char *command)
+{
+    if (access(command, F_OK) == -1)
+        return (0);
+    return (1);
+}

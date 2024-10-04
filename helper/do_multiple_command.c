@@ -23,14 +23,21 @@ static void wait_process_end(pid_t *pidt, int size, t_data *data)
 {
     int i;
     int status;
-
+    pid_t pid;
+    
     i = 0;
-	ft_bzero(&status, sizeof(int));
+    status = 0;
+    pid = 0;
     while (i < size)
     {
-        waitpid(pidt[i], &status, 0);
-        if (WIFEXITED(status))
-            update_exit_status(WEXITSTATUS(status), data);
+        pid = waitpid(-1, &status, 0);
+        if (pid == pidt[size -1])
+        {
+            if (WIFSIGNALED(status))
+                update_exit_status(128 + WTERMSIG(status), data);
+            else if (WIFEXITED(status))
+                update_exit_status(WEXITSTATUS(status), data);
+        }
         i++;
     }
 }
@@ -44,22 +51,22 @@ void    do_multiple_command(t_list *cmd_list, int size, t_data *data)
     while (cmd_list != NULL)
     {
         cmd = (t_cmd *)(cmd_list->content);
-
         if (i != (size-1))
         {
             if (pipe(data->pipefd[i]) == -1)
                 error_pipe(data);
         }
-
-        if(i == 0)                                                        //first cmd
+        data->pidt[i] = fork();
+        if (data->pidt[i] == -1) 
+            error_fork(data);
+        if(i == 0)
             do_command_first(cmd, data->pipefd[i], data->pidt[i], data);
-        else if (i == (size - 1))                                           //last cmd
+        else if (i == (size - 1))
             do_command_last(cmd, data->pipefd[i-1], data->pidt[i], data);
-        else                                                              //middle cmd
+        else
             do_command_mid(cmd, data->pipefd[i-1], data->pipefd[i], data->pidt[i], data);
         cmd_list = cmd_list->next;
         i++;
     }
     wait_process_end(data->pidt, size, data);
 }
-

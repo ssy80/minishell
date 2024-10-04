@@ -16,9 +16,6 @@ void    do_command_first(t_cmd *cmd, int pipefd_out[], pid_t pidt, t_data *data)
     int exit_status;
 
     exit_status = 0;
-    pidt = fork();
-    if (pidt == -1) 
-        error_fork(data);
     if (pidt == 0) 
     {
         close(pipefd_out[0]);

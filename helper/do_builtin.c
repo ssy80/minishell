@@ -31,9 +31,15 @@ int    do_builtin(t_cmd *cmd, t_data *data)
     else if (equals(cmd->cmd, "unset") == 1)
         builtin_unset(cmd->args, data);
     else if (equals(cmd->cmd, "env") == 1)
-        builtin_get_env(cmd->args, data);
+    {
+        if (builtin_get_env(cmd->args, data) == 0)
+            return (127);
+    }
     else if (equals(cmd->cmd, "exit") == 1)
-        builtin_exit(cmd->args, data);
+    {
+        if (builtin_exit(cmd->args, data) == 0)
+            return (1);
+    }
     return (0);
 }
 

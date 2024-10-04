@@ -78,3 +78,11 @@ void free_all(t_data *data)
     free_datacmd(data);
     freenullall(data);
 }
+
+void free_all2(t_data *data)
+{
+    free_cmdlist(data->cmd_list);
+    ft_freelist(data->cmd_list);
+    free_datacmd(data);
+    freenullall(data);
+}

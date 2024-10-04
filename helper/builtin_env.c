@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 #include "../minishell.h"
 
-void builtin_get_env(char **args, t_data *data)
+int builtin_get_env(char **args, t_data *data)
 {
     if (get_args_len(args) > 1)
     {
@@ -20,9 +20,11 @@ void builtin_get_env(char **args, t_data *data)
         ft_putstr_fd(args[1], STDERR_FILENO);
         ft_putstr_fd("'", STDERR_FILENO);
         ft_putstr_fd(": No such file or directory\n", STDERR_FILENO);
+        return (0);
     }
     else
         getmyenv(data);
+    return (1);
 }
 
 char **get_current_env(t_data *data)

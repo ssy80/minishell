@@ -28,6 +28,20 @@ static void error_export(t_data *data)
     exit(EXIT_FAILURE);
 }
 
+static int is_contain(char *str, char c)
+{
+    int i;
+
+    i = 0;
+    while (str[i])
+    {
+        if (str[i] == c)
+            return (1);
+        i++;
+    }
+    return (0);
+}
+
 /* only valid if start with _ or alphabets */
 static int is_valid_var_name(char *str)
 {
@@ -64,6 +78,19 @@ static int check_error_args(char *str)
     return (1);
 }
 
+static void do_export(char *str, t_data *data)
+{
+    if (is_var_in_env(str, data) == 1)                        
+        {
+            if (replace_var_in_env(str, data) == 0)
+                error_export(data);                      
+        }
+        else
+        {
+            if (addenvvar(str, data) == -1)
+                error_export(data);
+        }
+}
 /*if starts with a= already in list, replace with new a=... 
   if not in list then add args[i] to it.
   if invalid format "export a"? - will be ignored no error msg. 
@@ -85,9 +112,13 @@ int builtin_export(char **args, t_data *data)
             i++;
             continue;
         }
-        else
-            status = 1;
-        if (is_var_in_env(args[i], data) == 1)                        
+        if (is_contain(args[i], '=') == 0)
+        {
+            i++;
+            continue;
+        }
+        do_export(args[i], data);
+        /*if (is_var_in_env(args[i], data) == 1)                        
         {
             if (replace_var_in_env(args[i], data) == 0)
                 error_export(data);                      
@@ -96,7 +127,7 @@ int builtin_export(char **args, t_data *data)
         {
             if (addenvvar(args[i], data) == -1)
                 error_export(data);
-        }
+        }*/
         i++;
     }
     return (status);
