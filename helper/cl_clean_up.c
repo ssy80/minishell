@@ -24,6 +24,8 @@ void	setfreept(t_data *data, void *pt)
 // used when exiting to free all pointer in data.freept
 void	freenullall(t_data *data)
 {
+	if (!data)
+		return ;
 	while (--data->ptno >= 0)
 	{
 		free(data->freept[data->ptno]);
@@ -56,6 +58,8 @@ void	freedatacmd(t_data *data)
 	int	i;
 
 	i = -1;
+	if (!data)
+		return ;
 	while (++i < data->itr)
 	{
 		free(data->cmd[i]);

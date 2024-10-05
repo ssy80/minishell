@@ -28,12 +28,48 @@ void	exptkn(char *s, int a[2], char *line, t_data *data)
 	}
 }
 
+// do not expand "|", '|', "<", '<', ">", '>', "<<", '<<', ">>",'>>'
+bool	ignoreexp(char *s)
+{
+	if (ft_strncmp(s, "\"<\"", 4) == 0 || ft_strncmp(s, "\">\"", 4) == 0 || \
+	ft_strncmp(s, "\"|\"", 4) == 0)
+		return (true);
+	if (ft_strncmp(s, "\'<\'", 4) == 0 || ft_strncmp(s, "\'>\'", 4) == 0 || \
+	ft_strncmp(s, "\'|\'", 4) == 0)
+		return (true);
+	if (ft_strncmp(s, "\"<<\"", 5) == 0 || ft_strncmp(s, "\">>\"", 5) == 0)
+		return (true);
+	if (ft_strncmp(s, "\'<<\'", 5) == 0 || ft_strncmp(s, "\'>>\'", 5) == 0)
+		return (true);
+	return (false);
+}
+
+// use for expanding 1 tkn but need to free after using it
+// if data is not available, set it as NULL
+char	*expand1tkn(char *s, t_data *data)
+{
+	int		a[2];
+	char	line[MAXEXP];
+	char	*str;
+
+	ft_bzero(a, sizeof(int) * 2);
+	ft_bzero(line, sizeof(char) * MAXEXP);
+	exptkn(s, a, line, data);
+	str = ft_strdup(line);
+	if (str == NULL)
+		return (freedatacmd(data), freenullall(data), exitcl(1), NULL);
+	return (str);
+}
+
+// expand ith tkn in the data struct
 int	expander(char *s, t_data *data, int i)
 {
 	int		a[2];
 	char	line[MAXEXP];
 	char	*str;
 
+	if (ignoreexp(s))
+		return (1);
 	ft_bzero(a, sizeof(int) * 2);
 	ft_bzero(line, sizeof(char) * MAXEXP);
 	exptkn(s, a, line, data);
