@@ -21,21 +21,48 @@ static int  do_is_pipe(t_ccmd *ccmd)
     return (1);
 }
 
-int is_operator_in_quotes(char *str)
+int is_valid_to_expand(char *str)
 {
     int i;
 
+    if (is_contain(str, 39) == 0 && is_contain(str, 34) == 0)
+        return (0);
     i = 0;
     while (str[i])
     {
         if (str[i] != 39 && str[i] != 34 && str[i] != '|' && str[i] != '>' && str[i] != '<')
-        {
-            printf("--NO operator in quotes--\n");
             return (0);
-        }
         i++;
     }
     return (1);
+}
+
+int is_operator_in_quotes(char *str)
+{
+    int i;
+
+    if (is_valid_to_expand(str) == 0)
+        return (0);
+    i = 0;
+    while(str[i])
+    {
+        if (str[i] != 39 && str[i] != 34)
+        {
+            if (str[i] == '|' && (str[i + 1] == 39 || str[i + 1] == 34))
+                return (1);
+            if (str[i] == '>' && (str[i + 1] == 39 || str[i + 1] == 34))
+                return (1);
+            if (str[i] == '<' && (str[i + 1] == 39 || str[i + 1] == 34))
+                return (1);
+            if (str[i] == '>' && str[i + 1] == '>' && ((str[i + 2] == 39 || str[i + 2] == 34)))
+                return (1);
+            if (str[i] == '<' && str[i + 1] == '<' && ((str[i + 2] == 39 || str[i + 2] == 34)))
+                return (1);
+            break;
+        }
+        i++;
+    }
+    return (0);
 }
 
 int expand_str(int i, t_data *data)
