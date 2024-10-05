@@ -11,8 +11,6 @@
 /* ************************************************************************** */
 #include "../minishell.h"
 
-
-
 static void    process_cmd(t_list *cmd_list, int size, t_data *data)
 {
     if (size == 1)
@@ -26,14 +24,6 @@ static void free_pidt_pipe(pid_t *pidt, int **pipefd, int size)
     free_pidt(pidt);
     free_pipefd_all(pipefd, size);
 }
-
-/*static void  init_pipe_pid(pid_t *pidt, int **pipefd, t_data *data)
-{
-    pipefd = NULL;
-    pidt = NULL;
-    data->pipefd = pipefd;
-    data->pidt = pidt;
-}*/
 
 int process_cmd_list(t_list *cmd_list, t_data *data)
 {

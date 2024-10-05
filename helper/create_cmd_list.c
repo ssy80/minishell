@@ -21,10 +21,51 @@ static int  do_is_pipe(t_ccmd *ccmd)
     return (1);
 }
 
+int is_operator_in_quotes(char *str)
+{
+    int i;
+
+    i = 0;
+    while (str[i])
+    {
+        if (str[i] != 39 && str[i] != 34 && str[i] != '|' && str[i] != '>' && str[i] != '<')
+        {
+            printf("--NO operator in quotes--\n");
+            return (0);
+        }
+        i++;
+    }
+    return (1);
+}
+
+int expand_str(int i, t_data *data)
+{
+    char    *exp_arg;
+
+printf("--arg: %s\n", data->cmd[i]);
+    if (is_operator_in_quotes(data->cmd[i]) == 0)
+        return (1);
+    exp_arg = expand1tkn(data->cmd[i], data);
+printf("--exp: %s\n", exp_arg);
+    if (exp_arg == NULL)
+        return (0);
+    free(data->cmd[i]);
+    data->cmd[i] = exp_arg;
+    return (1);
+}
+
 static int  do_last(t_data *data, t_ccmd *ccmd, int *i)
 {
     if (ft_strlen(data->cmd[*i]) != 0)
     {
+        if (expand_str(*i, data) == 0)
+            return (print_error_create_cmdlist(), 0);
+        /*if (is_operator_in_quotes(data->cmd[*i]) == 1)
+        {
+            if (expand_str(*i, data) == 0)
+                return (print_error_create_cmdlist(), 0);
+        }*/
+
         if (ccmd->command == NULL)
         {
             ccmd->command = data->cmd[*i];
@@ -44,7 +85,6 @@ static int  do_last(t_data *data, t_ccmd *ccmd, int *i)
     ccmd->command = NULL;
     ccmd->args = NULL;
     ccmd->inout_list = NULL;
-
     return (1);
 }
 
@@ -52,6 +92,9 @@ static int  do_others(t_data *data, t_ccmd *ccmd, int *i)
 {
     if (ft_strlen(data->cmd[*i]) != 0)
     {
+        if (expand_str(*i, data) == 0)
+            return (print_error_create_cmdlist(), 0);
+
         if (ccmd->command == NULL)
         {
             ccmd->command = data->cmd[*i];
@@ -83,12 +126,12 @@ static int  do_parsing(t_data *data, t_ccmd *ccmd, int *i)
     }
     else if (*i == (data->itr - 1))                                                          
     {
-        if (do_last(data, ccmd, i) == 0)
+        if (do_last(data, ccmd, i) == 0)     //expand inside
             return (0);
     }
     else                                                                                        
     {
-        if (do_others(data, ccmd, i) == 0)
+        if (do_others(data, ccmd, i) == 0)   //expand inside
             return (0);
     }
     return (1);

@@ -81,13 +81,11 @@ int builtin_exit(char **args, t_data *data)
         error_need_numeric(args[1], data);
     if (is_valid_code(args[1]) == 0)
         error_need_numeric(args[1], data);
-    
     if (size > 2)
     {                                       
         error_many_args();
         return (0);
     }
-
     code = ft_atoll(args[1]);
     if (code > 255)
         code = code % 256;

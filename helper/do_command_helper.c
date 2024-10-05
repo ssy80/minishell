@@ -57,11 +57,3 @@ void    error_no_env(t_cmd *cmd, t_data *data)
     free_all(data);
     exit(EXIT_FAILURE);
 }
-
-char    *get_env_path(t_data *data)
-{
-    char *path;
-
-    path = getenvvar("PATH", data);
-    return (path);
-}

@@ -48,3 +48,11 @@ int check_got_file(char *command)
         return (0);
     return (1);
 }
+
+char    *get_env_path(t_data *data)
+{
+    char *path;
+
+    path = getenvvar("PATH", data);
+    return (path);
+}

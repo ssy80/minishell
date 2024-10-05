@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-int g_var = 0;
+//int g_var = 0;
 
 /* dir is the cwd + :  eq the prompt to print*/
 void	getprompt(char *dir)
