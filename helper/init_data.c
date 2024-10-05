@@ -87,7 +87,7 @@ void	addshlvl(t_data *data)
 		if (ft_strncmp((char *)cp->content, "SHLVL=", 6) == 0)
 		{
 			while (((char *)cp->content)[++i])
-				l += ((char *)cp->content)[i] - '0' + l * 10;
+				l = ((char *)cp->content)[i] - '0' + l * 10;
 			free(cp->content);
 			cp->content = fillcont(l + 1);
 			if (!cp->content)
