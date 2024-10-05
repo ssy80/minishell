@@ -67,7 +67,7 @@ void	exp_s(char *s, int a[2], char *line, t_data *data)
 	while (s[a[0]])
 	{
 		if (s[a[0]] == '"' || s[a[0]] == '\'' || s[a[0]] == ' ' \
-		|| s[a[0]] == '$' || s[a[0]] == '/')
+		|| s[a[0]] == '$' || s[a[0]] == '/' || s[a[0]] == ':')
 			break ;
 		buf[i++] = s[a[0]++];
 	}
