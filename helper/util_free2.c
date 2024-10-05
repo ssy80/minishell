@@ -54,21 +54,6 @@ void free_charchar_str(char **str)
     }
 }
 
-void	ft_freelist(t_list *lst)
-{
-	t_list	*tmp_lst;
-
-	if (lst == NULL)
-		return ;
-	while (lst != NULL)
-	{
-		tmp_lst = lst;
-		lst = lst->next;
-		free(tmp_lst);
-	}
-	tmp_lst = NULL;
-}
-
 void free_all(t_data *data)
 {
     free_pidt(data->pidt);

@@ -118,10 +118,11 @@ int builtin_cd(char **args, t_data *data)
             return (0);
     }
     else if (count > 1)
-    {
-        ft_putstr_fd("cd: ", STDERR_FILENO);
-        ft_putstr_fd("too many arguments\n", STDERR_FILENO);
-        return (0);
-    }
+        return(error_many_args_cd(), 0);
+    //{
+        //ft_putstr_fd("cd: ", STDERR_FILENO);
+        //ft_putstr_fd("too many arguments\n", STDERR_FILENO);
+        //return (0);
+    //}
     return (1);
 }

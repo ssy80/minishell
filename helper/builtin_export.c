@@ -11,35 +11,13 @@
 /* ************************************************************************** */
 #include "../minishell.h"
 
-static void print_not_valid_error(char *str)
+static void error_not_valid(char *str)
 {
     ft_putstr_fd("export: ", STDERR_FILENO);
     ft_putstr_fd("'", STDERR_FILENO);
     ft_putstr_fd(str, STDERR_FILENO);
     ft_putstr_fd("'", STDERR_FILENO);
     ft_putstr_fd(" not a valid identifier\n", STDERR_FILENO);
-}
-
-static void error_export(t_data *data)
-{
-    ft_putstr_fd("export: ", STDERR_FILENO);
-    ft_putstr_fd("malloc failed!\n", STDERR_FILENO);
-    free_all(data);
-    exit(EXIT_FAILURE);
-}
-
-static int is_contain(char *str, char c)
-{
-    int i;
-
-    i = 0;
-    while (str[i])
-    {
-        if (str[i] == c)
-            return (1);
-        i++;
-    }
-    return (0);
 }
 
 /* only valid if start with _ or alphabets */
@@ -67,12 +45,12 @@ static int check_error_args(char *str)
 {
     if (is_valid_var_name(str) == 0)
     {
-        print_not_valid_error(str);
+        error_not_valid(str);
         return (0);
     }
     if (str[0] == '=')
     {
-        print_not_valid_error(str);
+        error_not_valid(str);
         return (0);
     }
     return (1);
@@ -91,6 +69,7 @@ static void do_export(char *str, t_data *data)
                 error_export(data);
         }
 }
+
 /*if starts with a= already in list, replace with new a=... 
   if not in list then add args[i] to it.
   if invalid format "export a"? - will be ignored no error msg. 

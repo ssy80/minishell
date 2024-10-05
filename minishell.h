@@ -353,4 +353,12 @@ int  do_heredoc(t_list *cmd_list, t_data *data);
 
 int  starts_with(char *str, char *start);
 
+void error_many_args_cd();
+
+void error_export(t_data *data);
+int is_contain(char *str, char c);
+
+int is_operator_in_quotes(char *str);
+int expand_str(int i, t_data *data);
+
 #endif

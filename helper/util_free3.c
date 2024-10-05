@@ -34,3 +34,17 @@ void free_inout(t_inout *inout)
     }
 }
 
+void	ft_freelist(t_list *lst)
+{
+	t_list	*tmp_lst;
+
+	if (lst == NULL)
+		return ;
+	while (lst != NULL)
+	{
+		tmp_lst = lst;
+		lst = lst->next;
+		free(tmp_lst);
+	}
+	tmp_lst = NULL;
+}
