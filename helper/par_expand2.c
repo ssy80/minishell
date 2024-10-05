@@ -34,12 +34,27 @@ bool	ignoreexp(char *s)
 	if (ft_strncmp(s, "\"<\"", 4) == 0 || ft_strncmp(s, "\">\"", 4) == 0 || \
 	ft_strncmp(s, "\"|\"", 4) == 0)
 		return (true);
-	if (ft_strncmp(s, "\'<\'", 4) == 0 || ft_strncmp(s, "\'>\'", 4) == 0 || \
-	ft_strncmp(s, "\'|\'", 4) == 0)
+	if (ft_strncmp(s, "'<'", 4) == 0 || ft_strncmp(s, "'>'", 4) == 0 || \
+	ft_strncmp(s, "'|'", 4) == 0)
 		return (true);
 	if (ft_strncmp(s, "\"<<\"", 5) == 0 || ft_strncmp(s, "\">>\"", 5) == 0)
 		return (true);
-	if (ft_strncmp(s, "\'<<\'", 5) == 0 || ft_strncmp(s, "\'>>\'", 5) == 0)
+	if (ft_strncmp(s, "'<<'", 5) == 0 || ft_strncmp(s, "'>>'", 5) == 0)
+		return (true);
+	return (false);
+}
+
+bool	ignoreexp2(char *s)
+{
+	if (ft_strncmp(s, "'\"<\"'", 4) == 0 || ft_strncmp(s, "'\">\"'", 4) == 0 || \
+	ft_strncmp(s, "'\"|\"'", 4) == 0)
+		return (true);
+	if (ft_strncmp(s, "\"'<'\"", 4) == 0 || ft_strncmp(s, "\"'>'\"", 4) == 0 || \
+	ft_strncmp(s, "\"'|'\"", 4) == 0)
+		return (true);
+	if (ft_strncmp(s, "'\"<<\"'", 5) == 0 || ft_strncmp(s, "'\">>\"'", 5) == 0)
+		return (true);
+	if (ft_strncmp(s, "\"'<<'\"", 5) == 0 || ft_strncmp(s, "\"'>>'\"", 5) == 0)
 		return (true);
 	return (false);
 }
@@ -68,7 +83,7 @@ int	expander(char *s, t_data *data, int i)
 	char	line[MAXEXP];
 	char	*str;
 
-	if (ignoreexp(s))
+	if (ignoreexp(s) || ignoreexp2(s))
 		return (1);
 	ft_bzero(a, sizeof(int) * 2);
 	ft_bzero(line, sizeof(char) * MAXEXP);
