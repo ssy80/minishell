@@ -204,7 +204,10 @@ void	exp2q(char *s, int a[2], char *line, t_data *data);
 void	exptkn(char *s, int a[2], char *line, t_data *data);
 int		expander(char *s, t_data *data, int i);
 bool	ignoreexp(char *s);
+bool	ignoreexp2(char *s);
 char	*expand1tkn(char *s, t_data *data);
+void	clonetkn(char (*copy)[MAXLEN], t_data *data);
+void	expandclone(t_data *data);
 //lexer/parser/executor
 //t_list *process_raw_input(char *str);
 t_list	*ft_lstlast(t_list *lst);
