@@ -83,7 +83,8 @@ int	expander(char *s, t_data *data, int i)
 	char	line[MAXEXP];
 	char	*str;
 
-	if (ignoreexp(s) || ignoreexp2(s))
+	if (ignoreexp(s) || ignoreexp2(s) || \
+	(i > 0 && ft_strncmp(data->cmd[i - 1], "<<", 2)) == 0)
 		return (1);
 	ft_bzero(a, sizeof(int) * 2);
 	ft_bzero(line, sizeof(char) * MAXEXP);
