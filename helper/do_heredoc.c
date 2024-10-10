@@ -115,6 +115,7 @@ static void heredoc_child(t_inout *inout, int i, int pipefd[2], t_data *data)
     char	*line;
 	char	*tmp_file;
 	int		filefd;
+	t_stack	stack;
 
     tmp_file = NULL;
 	tmp_file = get_tmp_file(i);
@@ -137,7 +138,8 @@ static void heredoc_child(t_inout *inout, int i, int pipefd[2], t_data *data)
 			free(line);
 			break;
 		}
-		write(filefd, line, ft_strlen(line));
+		expandss(&stack, line, data);
+		write(filefd, stack.line, ft_strlen(stack.line));
 		write(filefd, "\n", 1);
 		free(line);
 	}
