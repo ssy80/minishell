@@ -39,6 +39,6 @@ void ps(char *s, t_stack *stack, int i)
 // func to be used for quote removal
 void	qremoval(char *s, t_stack *stack)
 {
-	ft_bzero(&stack, sizeof(t_stack));
+	ft_bzero(stack, sizeof(t_stack));
 	ps(s, stack, 0);
 }
