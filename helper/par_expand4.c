@@ -12,6 +12,34 @@
 
 #include "../minishell.h"
 
+bool	isspecialchar1(char *s, int i)
+{
+	if ((i == 0 || s[i - 1] == ' ') && (s[i] == '|' || s[i] == '<' || \
+	s[i] == '>') && (!s[i + 1] || s[i + 1] == ' '))
+		return (true);
+	return (false);
+}
+
+bool	isspecialchar2(char *s, int i)
+{
+	if ((i == 0 || s[i - 1] == ' ') && ((s[i] == '<' && s[i + 1] == '<') || \
+	(s[i] == '>' && s[i + 1] == '>')) && \
+	(!s[i + 1] || !s[i + 2] || s[i + 2] == ' '))
+		return (true);
+	return (false);
+}
+
+void	insertqstack(char s, t_stack *stack, int no)
+{
+	int	i;
+
+	i = -1;
+	stack->line[stack->tail++] = '"';
+	while (++i < no)
+		stack->line[stack->tail++] = s;
+	stack->line[stack->tail++] = '"';
+}
+
 void	expandswrapper(char *s, t_stack *stack)
 {
 	int	l;
@@ -26,60 +54,14 @@ void	expandswrapper(char *s, t_stack *stack)
 		l--;
 	while (++i < l)
 	{
-		stack->line[stack->tail++] = s[i];
-	}
-}
-
-void	copylinetobuf(char *line, t_data *data)
-{
-	int	i;
-
-	i = -1;
-	ft_bzero(data->buf, sizeof(data->buf));
-	while (line[++i])
-		data->buf[i] = line[i];
-}
-
-void	jointkn(t_data *data)
-{
-	char	line[5000];
-	int		i;
-	int		j;
-	int		k;
-
-	i = -1;
-	k = -1;
-	ft_bzero(line, sizeof(line));
-	while (data->cmd[++i])
-	{
-		j = -1;
-		while (data->cmd[i][++j])
-			line[++k] = data->cmd[i][j];
-		if (i < data->itr - 1)
-			line[++k] = ' ';
-	}
-	copylinetobuf(line, data);
-}
-
-void	retokenise(t_data *data)
-{
-	t_stack	stack;
-	int		i;
-
-	i = -1;
-	jointkn(data);
-	free_datacmd(data);
-	data->itr = 0;
-	ft_bzero(data->tkn, sizeof(data->tkn));
-	gettkn(data, 0, 0);
-	loadcmdtkn(data);
-	while (data->cmd[++i])
-	{
-		if (ignoreexp(data->cmd[i]) || ignoreexp2(data->cmd[i]) || \
-		(i > 0 && ft_strncmp(data->cmd[i - 1], "<<", 2) == 0))
-			continue ;
-		qremoval(data->cmd[i], &stack);
-		free(data->cmd[i]);
-		data->cmd[i] = ft_strdup(stack.line);
+		if (isspecialchar1(s, i))
+			insertqstack(s[i], stack, 1);
+		else if (isspecialchar2(s, i))
+		{
+			insertqstack(s[i], stack, 2);
+			i++;
+		}
+		else
+			stack->line[stack->tail++] = s[i];
 	}
 }

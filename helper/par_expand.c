@@ -61,7 +61,7 @@ void	exp_s(char *s, int a[2], char *line, t_data *data)
 {
 	char		buf[MAXLEN];
 	int			i;
-	t_stack	stack;
+	t_stack		stack;
 
 	i = 0;
 	if (s[a[0]] >= '0' && s[a[0]] <= '9')
