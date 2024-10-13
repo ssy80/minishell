@@ -12,17 +12,20 @@
 
 #include "../minishell.h"
 
+// after tokenizing the command, then doing $ expansion, word splitting
+// and lasly quote removal
+
 // a[0] index for s
 // a[1] index for line
 void	exp1q(char *s, int a[2], char *line, t_data *data)
 {
+	line[a[1]++] = s[a[0]++];
 	while (s[a[0]] && s[a[0]] != '\'')
 	{
 		line[a[1]++] = s[a[0]++];
 		if (a[1] >= MAXLEN)
 			return (freedatacmd(data), freenullall(data), exitcl(1));
 	}
-	a[0]++;
 }
 
 // when there is only 1 $ ie:echo $ "$" 
@@ -58,6 +61,7 @@ void	exp_s(char *s, int a[2], char *line, t_data *data)
 {
 	char	buf[MAXLEN];
 	int		i;
+	char	tmp[MAXLEN];
 
 	i = 0;
 	if (s[a[0]] >= '0' && s[a[0]] <= '9')
@@ -75,13 +79,14 @@ void	exp_s(char *s, int a[2], char *line, t_data *data)
 	if (i == 0)
 		return (exp_1s(s, a, line));
 	i = -1;
-	s = getenvvar(buf, data);
-	while (s[++i] && a[1] < MAXLEN)
-		line[a[1]++] = s[i];
+	expandswrapper(getenvvar(buf, data), tmp);
+	while (tmp[++i] && a[1] < MAXLEN)
+		line[a[1]++] = tmp[i];
 }
 
 void	exp2q(char *s, int a[2], char *line, t_data *data)
 {
+	line[a[1]++] = s[a[0]++];
 	while (s[a[0]] && s[a[0]] != '"')
 	{
 		if (s[a[0]] == '$')
@@ -90,6 +95,4 @@ void	exp2q(char *s, int a[2], char *line, t_data *data)
 		a[1]++;
 		a[0]++;
 	}
-	if (s[a[0]] && s[a[0]] == '"')
-		a[0]++;
 }

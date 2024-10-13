@@ -164,6 +164,7 @@ void	ft_lstclear(t_list **lst, void (*del)(void*));
 // signal
 void	handle_signal(int signum, siginfo_t *info, void *context);
 void	server(void);
+void	set_signal_in_command(void);
 // cl - clean up
 void	freenull(void *pt);
 void	exitcl(int code);
@@ -213,9 +214,11 @@ bool	ignoreexp(char *s);
 bool	ignoreexp2(char *s);
 char	*expand1tkn(char *s, t_data *data);
 void	clonetkn(char (*copy)[MAXLEN], t_data *data);
-void	expandclone(t_data *data);
 void	expandss(t_stack *stack, char *s, t_data *data);
 void	qremoval(char *s, t_stack *stack);
+void	jointkn(t_data *data);
+void	retokenise(t_data *data);
+void	expandswrapper(char *s, char *tmp);
 //lexer/parser/executor
 //t_list *process_raw_input(char *str);
 t_list	*ft_lstlast(t_list *lst);
