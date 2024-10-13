@@ -59,9 +59,9 @@ void	exp_sq(int a[2], char *line, t_data *data)
 // will differ from bash behaviour 
 void	exp_s(char *s, int a[2], char *line, t_data *data)
 {
-	char	buf[MAXLEN];
-	int		i;
-	char	tmp[MAXLEN];
+	char		buf[MAXLEN];
+	int			i;
+	t_stack	stack;
 
 	i = 0;
 	if (s[a[0]] >= '0' && s[a[0]] <= '9')
@@ -79,14 +79,15 @@ void	exp_s(char *s, int a[2], char *line, t_data *data)
 	if (i == 0)
 		return (exp_1s(s, a, line));
 	i = -1;
-	expandswrapper(getenvvar(buf, data), tmp);
-	while (tmp[++i] && a[1] < MAXLEN)
-		line[a[1]++] = tmp[i];
+	expandswrapper(getenvvar(buf, data), &stack);
+	while (stack.line[++i] && a[1] < MAXLEN)
+		line[a[1]++] = stack.line[i];
 }
 
 void	exp2q(char *s, int a[2], char *line, t_data *data)
 {
-	line[a[1]++] = s[a[0]++];
+	if (s[a[0]] != '$')
+		line[a[1]++] = s[a[0]++];
 	while (s[a[0]] && s[a[0]] != '"')
 	{
 		if (s[a[0]] == '$')
