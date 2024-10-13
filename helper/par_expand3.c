@@ -12,6 +12,8 @@
 
 #include "../minishell.h"
 
+// clone tkn from data.cmd for word splitting after $ expansion
+// clear all data.cmd and data.itr = 0
 void	clonetkn(char (*copy)[MAXLEN], t_data *data)
 {
 	int	i;
@@ -25,66 +27,113 @@ void	clonetkn(char (*copy)[MAXLEN], t_data *data)
 		while (data->cmd[i][++j])
 			copy[i][j] = data->cmd[i][j];
 	}
+	free_datacmd(data);
+	data->itr = 0;
 }
 
-bool	outer2q(char *s)
+// quote should be " or '
+bool	skipquote(char *s, int *i, char quote, t_data *data)
+{
+	char	line[MAXLEN];
+	int		j;
+
+	j = 0;
+	ft_bzero(&line, sizeof(char) * MAXLEN);
+	if (s[*i] == quote)
+	{
+		line[j] = quote;
+		while (s[++(*i)] && s[*i] != ' ')
+			line[++j] = s[*i];
+	}
+	data->cmd[data->itr++] = ft_strdup(line);
+	return (true);
+}
+
+const char	*tranform(char *line)
 {
 	int	i;
-	int count;
 
-	i = -1;
-	count = 0;
-	if (s[0] == '"' || s[0] == '\'')
+	if (ft_strncmp("|", line, 2) == 0)
+		return ("|");
+	if (ft_strncmp("<", line, 2) == 0)
+		return ("<");
+	if (ft_strncmp(">", line, 2) == 0)
+		return (">");
+	if (ft_strncmp("<<", line, 3) == 0)
+		return ("<<");
+	if (ft_strncmp(">>", line, 3) == 0)
+		return (">>");
+	i = (int)ft_strlen(line);
+	if (i > MAXLEN - 3)
+		return (line);
+	line[i + 1] = '"';
+	while (i > 0)
 	{
-		while (s[++i])
-		{
-			if (s[0] == s[i])
-				count++;
-		}
+		line[i] = line[i - 1];
+		i--;
 	}
-	if (count == 2 && s[i - 1] == s[0])
+	line[0] = '"';
+	return (line);
+}
+
+bool	isoperator(char *line)
+{
+	if (ft_strncmp("|", line, 2) == 0)
+		return (true);
+	if (ft_strncmp("<", line, 2) == 0)
+		return (true);
+	if (ft_strncmp(">", line, 2) == 0)
+		return (true);
+	if (ft_strncmp("<<", line, 3) == 0)
+		return (true);
+	if (ft_strncmp(">>", line, 3) == 0)
 		return (true);
 	return (false);
 }
 
-void	filldata(t_data *data, char (*copy)[MAXLEN], int i, int *j)
+void	wordsplit(char *s, t_data *data)
 {
-	char	**tkn;
-	int		k;
-	int		a[2];
-	char	line[MAXEXP];
+	int		i;
+	int		j;
+	char	line[MAXLEN];
 
-	ft_bzero(a, sizeof(int) * 2);
-	ft_bzero(line, sizeof(char) * MAXEXP);
-	exptkn(copy[i], a, line, data);
-	k = -1;
-	tkn = ft_split(line, ' ');
-	while (tkn[++k])
+	i = 0;
+	while (s[i])
 	{
-		data->cmd[*j] = tkn[k];
-		(*j)++;
-	}
-	free(tkn);
-}
-
-void expandclone(t_data *data)
-{
-	int	i;
-	int	j;
-	char copy[MAXLEN][MAXLEN];
-
-	clonetkn(copy, data);
-	free_datacmd(data);
-	i = -1;
-	j = 0;
-
-	while (copy[++i][0])
-	{
-		if (ignoreexp(copy[i]) || ignoreexp2(copy[i]))
-			data->cmd[j++] = ft_strdup(copy[i]);
-		else if (outer2q(copy[i]))
-			data->cmd[j++] = expand1tkn(copy[i], data);
+		if (s[i] == ' ' || (s[i] == '"' && skipquote(s, &i, '"', data)) \
+		|| (s[i] == '\'' && skipquote(s, &i, '\'', data)))
+			continue ;
+		ft_bzero(line, sizeof(char) * MAXLEN);
+		j = -1;
+		while (++j >= 0 && s[i + j] && s[i + j] != ' ')
+			line[j] = s[i + j];
+		if (isoperator(line))
+			data->cmd[data->itr++] = ft_strdup(tranform(line));
 		else
-			filldata(data, copy, i, &j);
+			data->cmd[data->itr++] = ft_strdup(line);
+		if (j > 0)
+			i += j;
+		else
+			i++;
 	}
 }
+
+// void	filldata(t_data *data, char (*copy)[MAXLEN], int i, int *j)
+// {
+// 	char	**tkn;
+// 	int		k;
+// 	int		a[2];
+// 	char	line[MAXEXP];
+
+// 	ft_bzero(a, sizeof(int) * 2);
+// 	ft_bzero(line, sizeof(char) * MAXEXP);
+// 	exptkn(copy[i], a, line, data);
+// 	k = -1;
+// 	tkn = ft_split(line, ' ');
+// 	while (tkn[++k])
+// 	{
+// 		data->cmd[*j] = tkn[k];
+// 		(*j)++;
+// 	}
+// 	free(tkn);
+// }

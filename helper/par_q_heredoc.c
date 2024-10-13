@@ -24,7 +24,7 @@ int	pq(char *str, int i, t_stack *stack, char s)
 }
 
 // walk the s and perform quote removal
-void ps(char *s, t_stack *stack, int i)
+void	ps(char *s, t_stack *stack, int i)
 {
 	if (!s[i])
 		return ;
@@ -39,6 +39,6 @@ void ps(char *s, t_stack *stack, int i)
 // func to be used for quote removal
 void	qremoval(char *s, t_stack *stack)
 {
-	ft_bzero(&stack, sizeof(t_stack));
+	ft_bzero(stack, sizeof(t_stack));
 	ps(s, stack, 0);
 }

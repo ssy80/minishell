@@ -144,6 +144,7 @@ int	main(int ac, char *av[], char **envp)
 		// expandclone(&data);
 		if (do_expander(&data) == 0)
 			error_main(&data);
+		retokenise(&data);
 		create_and_process(&data);
 	}
 	exitcl(0);

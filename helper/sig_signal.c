@@ -12,20 +12,18 @@
 
 #include "../minishell.h"
 
-void set_sigint_status(t_data *data)
+void	set_sigint_status(t_data *data)
 {
-    static t_data *tmp_data;// = NULL;
-  
-    if (data == NULL)
-    {
-        if (tmp_data != NULL) 
-			update_exit_status(130, tmp_data);
-			//tmp_data = NULL;
-    } 
-    else 
-        tmp_data = data;
-}
+	static t_data	*tmp_data;
 
+	if (data == NULL)
+	{
+		if (tmp_data != NULL)
+			update_exit_status(130, tmp_data);
+	}
+	else
+		tmp_data = data;
+}
 
 /* 
 ctrl-\  SIGQUIT = does nothing
@@ -42,7 +40,6 @@ void	handle_signal(int signum, siginfo_t *info, void *context)
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();
-	//	g_var = 130;
 		set_sigint_status(NULL);
 	}
 }
@@ -74,15 +71,8 @@ void	server(void)
 }
 
 /*handle control D and Control C when executing cmdlist */
-void handle_signal_in_command(int sig)
+void	handle_signal_in_command(int sig)
 {
-	//printf("sig: %d\n", sig);
 	printf("\n");
 	(void)sig;
-}
-
-void set_signal_in_command()
-{
-	signal(SIGINT, handle_signal_in_command);
-	signal(SIGQUIT, handle_signal_in_command);
 }

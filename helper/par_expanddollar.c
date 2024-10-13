@@ -45,11 +45,11 @@ void	expandss(t_stack *stack, char *s, t_data *data)
 		j = 0;
 		if (s[i] == '$')
 		{
-			while (++j >= 0 && s[i+j] && !schar(s[i + j]) && j < MAXLEN - 1)
-				buf[j-1] = s[i + j];
+			while (++j >= 0 && s[i + j] && !schar(s[i + j]) && j < MAXLEN - 1)
+				buf[j - 1] = s[i + j];
 			i += j - 1;
 			fillstack(stack, data, buf);
-			continue;
+			continue ;
 		}
 		stack->line[stack->tail++] = s[i];
 	}
