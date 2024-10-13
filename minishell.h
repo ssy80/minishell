@@ -218,7 +218,7 @@ void	expandss(t_stack *stack, char *s, t_data *data);
 void	qremoval(char *s, t_stack *stack);
 void	jointkn(t_data *data);
 void	retokenise(t_data *data);
-void	expandswrapper(char *s, char *tmp);
+void	expandswrapper(char *s, t_stack *stack);
 //lexer/parser/executor
 //t_list *process_raw_input(char *str);
 t_list	*ft_lstlast(t_list *lst);

@@ -12,24 +12,21 @@
 
 #include "../minishell.h"
 
-void	expandswrapper(char *s, char *tmp)
+void	expandswrapper(char *s, t_stack *stack)
 {
 	int	l;
 	int	i;
-	int	k;
 
-	ft_bzero(tmp, sizeof(char) * MAXLEN);
+	ft_bzero(stack, sizeof(t_stack));
 	l = ft_strlen(s);
-	i = 0;
-	k = -1;
+	i = -1;
 	if (s[0] == '"' || s[0] == '\'')
 		i = 1;
 	if (s[l - 1] == '"' || s[l - 1] == '\'')
 		l--;
-	while (i < l)
+	while (++i < l)
 	{
-		tmp[++k] = s[i];
-		i++;
+		stack->line[stack->tail++] = s[i];
 	}
 }
 
