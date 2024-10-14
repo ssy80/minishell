@@ -12,19 +12,21 @@
 
 #include "../minishell.h"
 
+// if ((i == 0 || s[i - 1] == ' ') && (s[i] == '|' || s[i] == '<' || 
+// s[i] == '>') && (!s[i + 1] || s[i + 1] == ' '))
 bool	isspecialchar1(char *s, int i)
 {
-	if ((i == 0 || s[i - 1] == ' ') && (s[i] == '|' || s[i] == '<' || \
-	s[i] == '>') && (!s[i + 1] || s[i + 1] == ' '))
+	if (s[i] == '|' || s[i] == '<' || s[i] == '>')
 		return (true);
 	return (false);
 }
 
+// if ((i == 0 || s[i - 1] == ' ') && ((s[i] == '<' && s[i + 1] == '<') || 
+// (s[i] == '>' && s[i + 1] == '>')) && 
+// (!s[i + 1] || !s[i + 2] || s[i + 2] == ' '))
 bool	isspecialchar2(char *s, int i)
 {
-	if ((i == 0 || s[i - 1] == ' ') && ((s[i] == '<' && s[i + 1] == '<') || \
-	(s[i] == '>' && s[i + 1] == '>')) && \
-	(!s[i + 1] || !s[i + 2] || s[i + 2] == ' '))
+	if ((s[i] == '<' && s[i + 1] == '<') || (s[i] == '>' && s[i + 1] == '>'))
 		return (true);
 	return (false);
 }
@@ -54,13 +56,13 @@ void	expandswrapper(char *s, t_stack *stack)
 		l--;
 	while (++i < l)
 	{
-		if (isspecialchar1(s, i))
-			insertqstack(s[i], stack, 1);
-		else if (isspecialchar2(s, i))
+		if (isspecialchar2(s, i))
 		{
 			insertqstack(s[i], stack, 2);
 			i++;
 		}
+		else if (isspecialchar1(s, i))
+			insertqstack(s[i], stack, 1);
 		else
 			stack->line[stack->tail++] = s[i];
 	}

@@ -17,7 +17,7 @@ void	copylinetobuf(char *line, t_data *data)
 	int	i;
 
 	i = -1;
-	ft_bzero(data->buf, sizeof(data->buf));
+	ft_bzero(data->buf, sizeof(char) * MAXLEN);
 	while (line[++i])
 		data->buf[i] = line[i];
 }
