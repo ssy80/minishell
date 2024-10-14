@@ -42,7 +42,7 @@ void	free_cmd_args(char **args)
 void	free_cmdlist(t_list *cmd_list)
 {
 	t_cmd	*cmd;
-  
+
 	while (cmd_list != NULL)
 	{
 		cmd = (t_cmd *)(cmd_list->content);
