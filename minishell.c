@@ -142,10 +142,11 @@ int	main(int ac, char *av[], char **envp)
 			free_datacmd(&data);
 			continue;
 		}
-		//expandclone(&data);
 		if (do_expander(&data) == 0)
 			error_main(&data);
 		retokenise(&data);
+		if (!data.cmd[0])
+			continue ;
 		create_and_process(&data);
 	}
 	exitcl(0);
