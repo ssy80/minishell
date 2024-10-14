@@ -13,7 +13,7 @@
 
 void	lstremove_last(t_list **lst)
 {
-	t_list *tmp;
+	t_list	*tmp;
 
 	tmp = *lst;
 	if (lst == NULL)

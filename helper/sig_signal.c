@@ -70,7 +70,7 @@ void	set_sigint_status(t_data *data)
 
 	if (data == NULL)
 	{
-		if (tmp_data != NULL) 
+		if (tmp_data != NULL)
 			update_exit_status(130, tmp_data);
 	}
 	else
