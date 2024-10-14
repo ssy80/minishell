@@ -132,16 +132,17 @@ int	main(int ac, char *av[], char **envp)
 	while (getcmd(buf, MAXLEN, dir, &data) >= 0)
 	{
 		if(ft_strlen(buf) == 0)
-			continue ;
+			continue ;	
 		gettkn(&data, 0, 0);
 		loadcmdtkn(&data);
 		if (!syn_check(&data))
 		{
+			update_exit_status(2, &data);
 			ft_putstr_fd("syntax error\n", STDERR_FILENO);
 			free_datacmd(&data);
 			continue;
 		}
-		// expandclone(&data);
+		//expandclone(&data);
 		if (do_expander(&data) == 0)
 			error_main(&data);
 		retokenise(&data);

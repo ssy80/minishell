@@ -6,15 +6,15 @@
 /*   By: ssian <ssian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/29 19:39:18 by ssian             #+#    #+#             */
-/*   Updated: 2024/09/29 19:39:33 by ssian            ###   ########.fr       */
+/*   Updated: 2024/10/14 12:37:22 by ssian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../minishell.h"
 
-void print_inout_list(t_list *inout_list)
+void	print_inout_list(t_list *inout_list)
 {
-	t_inout *inout;
-	
+	t_inout	*inout;
+
 	while (inout_list != NULL)
 	{
 		inout = (t_inout *)(inout_list->content);
@@ -26,9 +26,9 @@ void print_inout_list(t_list *inout_list)
 	}
 }
 
-void print_args(char **args)
+void	print_args(char **args)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (args[i])
@@ -38,7 +38,7 @@ void print_args(char **args)
 	}
 }
 
-void print_cmd(t_list *cmd_list)
+void	print_cmd(t_list *cmd_list)
 {
 	t_cmd	*cmd;
 

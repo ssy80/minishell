@@ -6,179 +6,176 @@
 /*   By: ssian <ssian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 10:25:59 by ssian             #+#    #+#             */
-/*   Updated: 2024/09/27 10:26:02 by ssian            ###   ########.fr       */
+/*   Updated: 2024/10/14 16:04:54 by ssian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../minishell.h"
 
-static int  do_is_pipe(t_ccmd *ccmd)
+static int	do_is_pipe(t_ccmd *ccmd)
 {
-    if (add_cmd(ccmd->command, ccmd->args, ccmd->inout_list, &(ccmd->cmd_list)) == 0)
-        return (print_error_create_cmdlist(), 0);
-    ccmd->command = NULL;
-    ccmd->args = NULL;
-    ccmd->inout_list = NULL;
-    return (1);
+	if (add_cmd(ccmd->command, ccmd->args, ccmd->inout_list,
+			&(ccmd->cmd_list)) == 0)
+		return (print_error_create_cmdlist(), 0);
+	ccmd->command = NULL;
+	ccmd->args = NULL;
+	ccmd->inout_list = NULL;
+	return (1);
 }
 
-int is_valid_to_expand(char *str)
+int	is_valid_to_expand(char *str)
 {
-    int i;
+	int	i;
 
-    if (is_contain(str, 39) == 0 && is_contain(str, 34) == 0)
-        return (0);
-    i = 0;
-    while (str[i])
-    {
-        if (str[i] != 39 && str[i] != 34 && str[i] != '|' && str[i] != '>' && str[i] != '<')
-            return (0);
-        i++;
-    }
-    return (1);
+	if (is_contain(str, 39) == 0 && is_contain(str, 34) == 0)
+		return (0);
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] != 39 && str[i] != 34
+			&& str[i] != '|' && str[i] != '>' && str[i] != '<')
+			return (0);
+		i++;
+	}
+	return (1);
 }
 
-int is_operator_in_quotes(char *str)
+int	is_operator_in_quotes(char *str)
 {
-    int i;
+	int	i;
 
-    if (is_valid_to_expand(str) == 0)
-        return (0);
-    i = 0;
-    while(str[i])
-    {
-        if (str[i] != 39 && str[i] != 34)
-        {
-            if (str[i] == '|' && (str[i + 1] == 39 || str[i + 1] == 34))
-                return (1);
-            if (str[i] == '>' && (str[i + 1] == 39 || str[i + 1] == 34))
-                return (1);
-            if (str[i] == '<' && (str[i + 1] == 39 || str[i + 1] == 34))
-                return (1);
-            if (str[i] == '>' && str[i + 1] == '>' && ((str[i + 2] == 39 || str[i + 2] == 34)))
-                return (1);
-            if (str[i] == '<' && str[i + 1] == '<' && ((str[i + 2] == 39 || str[i + 2] == 34)))
-                return (1);
-            break;
-        }
-        i++;
-    }
-    return (0);
+	if (is_valid_to_expand(str) == 0)
+		return (0);
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] != 39 && str[i] != 34)
+		{
+			if (str[i] == '|' && (str[i + 1] == 39 || str[i + 1] == 34))
+				return (1);
+			if (str[i] == '>' && (str[i + 1] == 39 || str[i + 1] == 34))
+				return (1);
+			if (str[i] == '<' && (str[i + 1] == 39 || str[i + 1] == 34))
+				return (1);
+			if (str[i] == '>' && str[i + 1] == '>'
+				&& ((str[i + 2] == 39 || str[i + 2] == 34)))
+				return (1);
+			if (str[i] == '<' && str[i + 1] == '<'
+				&& ((str[i + 2] == 39 || str[i + 2] == 34)))
+				return (1);
+			break ;
+		}
+		i++;
+	}
+	return (0);
 }
 
-int expand_str(int i, t_data *data)
+int	expand_str(int i, t_data *data)
 {
-    char    *exp_arg;
+	char	*exp_arg;
 
-printf("--arg: %s\n", data->cmd[i]);
-    if (is_operator_in_quotes(data->cmd[i]) == 0)
-        return (1);
-    exp_arg = expand1tkn(data->cmd[i], data);
-printf("--exp: %s\n", exp_arg);
-    if (exp_arg == NULL)
-        return (0);
-    free(data->cmd[i]);
-    data->cmd[i] = exp_arg;
-    return (1);
+	if (is_operator_in_quotes(data->cmd[i]) == 0)
+		return (1);
+	exp_arg = expand1tkn(data->cmd[i], data);
+	if (exp_arg == NULL)
+		return (0);
+	free(data->cmd[i]);
+	data->cmd[i] = exp_arg;
+	return (1);
 }
 
-static int  do_last(t_data *data, t_ccmd *ccmd, int *i)
+static int	do_last(t_data *data, t_ccmd *ccmd, int *i)
 {
-    if (ft_strlen(data->cmd[*i]) != 0)
-    {
-        if (expand_str(*i, data) == 0)
-            return (print_error_create_cmdlist(), 0);
-        /*if (is_operator_in_quotes(data->cmd[*i]) == 1)
-        {
-            if (expand_str(*i, data) == 0)
-                return (print_error_create_cmdlist(), 0);
-        }*/
-
-        if (ccmd->command == NULL)
-        {
-            ccmd->command = data->cmd[*i];
-            ccmd->args = add_arg(ccmd->args, data->cmd[*i]);
-            if (ccmd->args == NULL)
-                return (print_error_create_cmdlist(), 0);
-        }
-        else
-        {
-            ccmd->args = add_arg(ccmd->args, data->cmd[*i]);                            
-            if (ccmd->args == NULL)
-                return (print_error_create_cmdlist(), 0);
-        }
-    }
-    if (add_cmd(ccmd->command, ccmd->args, ccmd->inout_list, &(ccmd->cmd_list)) == 0)
-        return (print_error_create_cmdlist(), 0);
-    ccmd->command = NULL;
-    ccmd->args = NULL;
-    ccmd->inout_list = NULL;
-    return (1);
+	if (ft_strlen(data->cmd[*i]) != 0)
+	{
+		if (expand_str(*i, data) == 0)
+			return (print_error_create_cmdlist(), 0);
+		if (ccmd->command == NULL)
+		{
+			ccmd->command = data->cmd[*i];
+			ccmd->args = add_arg(ccmd->args, data->cmd[*i]);
+			if (ccmd->args == NULL)
+				return (print_error_create_cmdlist(), 0);
+		}
+		else
+		{
+			ccmd->args = add_arg(ccmd->args, data->cmd[*i]);
+			if (ccmd->args == NULL)
+				return (print_error_create_cmdlist(), 0);
+		}
+	}
+	if (add_cmd(ccmd->command, ccmd->args,
+			ccmd->inout_list, &(ccmd->cmd_list)) == 0)
+		return (print_error_create_cmdlist(), 0);
+	ccmd->command = NULL;
+	ccmd->args = NULL;
+	ccmd->inout_list = NULL;
+	return (1);
 }
 
-static int  do_others(t_data *data, t_ccmd *ccmd, int *i)
+static int	do_others(t_data *data, t_ccmd *ccmd, int *i)
 {
-    if (ft_strlen(data->cmd[*i]) != 0)
-    {
-        if (expand_str(*i, data) == 0)
-            return (print_error_create_cmdlist(), 0);
-
-        if (ccmd->command == NULL)
-        {
-            ccmd->command = data->cmd[*i];
-            ccmd->args = add_arg(ccmd->args, data->cmd[*i]);
-            if (ccmd->args == NULL)
-                return (print_error_create_cmdlist(), 0);
-        }
-        else
-        {
-            ccmd->args = add_arg(ccmd->args, data->cmd[*i]);
-            if (ccmd->args == NULL)
-                return (print_error_create_cmdlist(), 0);
-        }
-    }
-    return (1);
+	if (ft_strlen(data->cmd[*i]) != 0)
+	{
+		if (expand_str(*i, data) == 0)
+			return (print_error_create_cmdlist(), 0);
+		if (ccmd->command == NULL)
+		{
+			ccmd->command = data->cmd[*i];
+			ccmd->args = add_arg(ccmd->args, data->cmd[*i]);
+			if (ccmd->args == NULL)
+				return (print_error_create_cmdlist(), 0);
+		}
+		else
+		{
+			ccmd->args = add_arg(ccmd->args, data->cmd[*i]);
+			if (ccmd->args == NULL)
+				return (print_error_create_cmdlist(), 0);
+		}
+	}
+	return (1);
 }
 
-static int  do_parsing(t_data *data, t_ccmd *ccmd, int *i)
+static int	do_parsing(t_data *data, t_ccmd *ccmd, int *i)
 {
-    if (is_inout(data->cmd[*i]) > -1)
-    {
-        if (do_is_inout(data, ccmd, i) == 0) 
-            return (0);
-    }
-    else if (equals(data->cmd[*i], "|"))
-    {
-        if (do_is_pipe(ccmd) == 0)
-            return (0);
-    }
-    else if (*i == (data->itr - 1))                                                          
-    {
-        if (do_last(data, ccmd, i) == 0)     //expand inside
-            return (0);
-    }
-    else                                                                                        
-    {
-        if (do_others(data, ccmd, i) == 0)   //expand inside
-            return (0);
-    }
-    return (1);
+	if (is_inout(data->cmd[*i]) > -1)
+	{
+		if (do_is_inout(data, ccmd, i) == 0)
+			return (0);
+	}
+	else if (equals(data->cmd[*i], "|"))
+	{
+		if (do_is_pipe(ccmd) == 0)
+			return (0);
+	}
+	else if (*i == (data->itr - 1))
+	{
+		if (do_last(data, ccmd, i) == 0)
+			return (0);
+	}
+	else
+	{
+		if (do_others(data, ccmd, i) == 0)
+			return (0);
+	}
+	return (1);
 }
 
-t_list  *create_cmd_list(t_data *data)
+t_list	*create_cmd_list(t_data *data)
 {
-    int i;
-    t_ccmd ccmd;
+	int		i;
+	t_ccmd	ccmd;
 
-    ft_bzero(&ccmd, sizeof(t_ccmd));
-    ccmd.command = NULL;
-    ccmd.args = NULL;
-    ccmd.cmd_list = NULL;
-    ccmd.inout_list = NULL;
+	ft_bzero(&ccmd, sizeof(t_ccmd));
+	ccmd.command = NULL;
+	ccmd.args = NULL;
+	ccmd.cmd_list = NULL;
+	ccmd.inout_list = NULL;
 	i = 0;
 	while (i < data->itr)
-	{                           
-        if (do_parsing(data, &ccmd, &i) == 0)
-            return (free_inoutlist(ccmd.inout_list), free_cmdlist(ccmd.cmd_list), NULL);
+	{
+		if (do_parsing(data, &ccmd, &i) == 0)
+			return (free_inoutlist(ccmd.inout_list),
+				free_cmdlist(ccmd.cmd_list), NULL);
 		i++;
 	}
 	return (ccmd.cmd_list);
