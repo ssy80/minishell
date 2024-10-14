@@ -375,4 +375,6 @@ int is_contain(char *str, char c);
 int is_operator_in_quotes(char *str);
 int expand_str(int i, t_data *data);
 
+int is_contain_quotes(char *str);
+
 #endif

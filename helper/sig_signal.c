@@ -6,24 +6,11 @@
 /*   By: yoong <yoong@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 19:53:46 by yoong             #+#    #+#             */
-/*   Updated: 2024/08/02 19:54:19 by yoong            ###   ########.fr       */
+/*   Updated: 2024/10/14 15:08:03 by ssian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-void	set_sigint_status(t_data *data)
-{
-	static t_data	*tmp_data;
-
-	if (data == NULL)
-	{
-		if (tmp_data != NULL)
-			update_exit_status(130, tmp_data);
-	}
-	else
-		tmp_data = data;
-}
 
 /* 
 ctrl-\  SIGQUIT = does nothing
@@ -75,4 +62,17 @@ void	handle_signal_in_command(int sig)
 {
 	printf("\n");
 	(void)sig;
+}
+
+void	set_sigint_status(t_data *data)
+{
+	static t_data	*tmp_data;
+
+	if (data == NULL)
+	{
+		if (tmp_data != NULL) 
+			update_exit_status(130, tmp_data);
+	}
+	else
+		tmp_data = data;
 }

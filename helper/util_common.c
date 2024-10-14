@@ -6,39 +6,39 @@
 /*   By: ssian <ssian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 10:59:27 by ssian             #+#    #+#             */
-/*   Updated: 2024/09/28 10:59:29 by ssian            ###   ########.fr       */
+/*   Updated: 2024/10/14 15:54:13 by ssian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../minishell.h"
 
-int equals(char *s1, char *s2)
+int	equals(char *s1, char *s2)
 {
-    int i;
+	int	i;
 
-    if (s1 == NULL || s2 == NULL)
-        return (0);
-    i = 0;
-    while(s1[i] || s2[i])
-    {
-        if (s1[i] != s2[i])
-            return (0);
-        i++;
-    }
-    return (1);
+	if (s1 == NULL || s2 == NULL)
+		return (0);
+	i = 0;
+	while (s1[i] || s2[i])
+	{
+		if (s1[i] != s2[i])
+			return (0);
+		i++;
+	}
+	return (1);
 }
 
-int is_dir(char *command) 
+int	is_dir(char *command)
 {
-    struct stat sbuf;
+	struct stat	sbuf;
 
-    if (stat(command, &sbuf) != 0) 
-        return (0);
-    return S_ISDIR(sbuf.st_mode);
+	if (stat(command, &sbuf) != 0)
+		return (0);
+	return (S_ISDIR(sbuf.st_mode));
 }
 
 int	get_args_len(char **args)
 {
-	int i;
+	int	i;
 
 	if (args == NULL)
 		return (0);

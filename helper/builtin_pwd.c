@@ -6,12 +6,12 @@
 /*   By: ssian <ssian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/22 16:12:15 by ssian             #+#    #+#             */
-/*   Updated: 2024/09/22 16:12:19 by ssian            ###   ########.fr       */
+/*   Updated: 2024/10/14 15:31:46 by ssian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../minishell.h"
 
-void    builtin_pwd()
+void	builtin_pwd(void)
 {
-    getpwd();
+	getpwd();
 }
