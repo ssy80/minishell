@@ -219,6 +219,12 @@ void	qremoval(char *s, t_stack *stack);
 void	jointkn(t_data *data);
 void	retokenise(t_data *data);
 void	expandswrapper(char *s, t_stack *stack);
+// main
+void	getprompt(char *dir);
+int		getcmd(char *buf, int size, char *dir, t_data *data);
+void	error_main(t_data *data);
+void	free_main_last(t_list *cmd_list, t_data *data);
+int		do_expander(t_data *data);
 //lexer/parser/executor
 //t_list *process_raw_input(char *str);
 t_list	*ft_lstlast(t_list *lst);
