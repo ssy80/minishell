@@ -6,7 +6,7 @@
 /*   By: ssian <ssian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 13:18:58 by ssian             #+#    #+#             */
-/*   Updated: 2024/10/14 12:50:31 by ssian            ###   ########.fr       */
+/*   Updated: 2024/10/16 11:26:58 by ssian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../minishell.h"
@@ -28,11 +28,11 @@ int	is_cmd_path(char *cmd)
 	i = 0;
 	while (cmd[i])
 	{
-		if (cmd[i] == '/') 
+		if (cmd[i] == '/')
 			return (1);
 		i++;
 	}
-	return(0);
+	return (0);
 }
 
 int	check_x_permission(char *command)

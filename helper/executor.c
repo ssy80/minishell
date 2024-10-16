@@ -6,7 +6,7 @@
 /*   By: ssian <ssian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/28 16:20:22 by ssian             #+#    #+#             */
-/*   Updated: 2024/10/14 15:36:02 by ssian            ###   ########.fr       */
+/*   Updated: 2024/10/16 14:09:52 by ssian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../minishell.h"
@@ -27,8 +27,6 @@ static void	free_pidt_pipe(pid_t *pidt, int **pipefd, int size)
 
 int	process_cmd_list(t_list *cmd_list, t_data *data)
 {
-	int		**pipefd;
-	pid_t	*pidt;
 	int		size;
 	int		heredoc_status;
 
@@ -37,18 +35,17 @@ int	process_cmd_list(t_list *cmd_list, t_data *data)
 	heredoc_status = do_heredoc(cmd_list, data);
 	if (heredoc_status <= 0)
 		return (heredoc_status);
+	size = 0;
 	size = ft_lstsize(cmd_list);
 	if (size > 0)
 	{
-		pipefd = get_pipe(size - 1);
-		if (pipefd == NULL)
+		data->pipefd = get_pipe(size - 1);
+		if (data->pipefd == NULL)
 			return (0);
-		pidt = get_pidt(size);
-		if (pidt == NULL)
+		data->pidt = get_pidt(size);
+		if (data->pidt == NULL)
 			return (0);
-		data->pipefd = pipefd;
-		data->pidt = pidt;
 	}
 	process_cmd(cmd_list, size, data);
-	return (free_pidt_pipe(pidt, pipefd, size - 1), 1);
+	return (free_pidt_pipe(data->pidt, data->pipefd, size - 1), 1);
 }

@@ -6,7 +6,7 @@
 /*   By: ssian <ssian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 23:04:34 by ssian             #+#    #+#             */
-/*   Updated: 2024/10/14 12:47:50 by ssian            ###   ########.fr       */
+/*   Updated: 2024/10/16 11:26:10 by ssian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../minishell.h"
@@ -16,10 +16,10 @@ void	do_command_first(t_cmd *cmd, int pipefd_out[], pid_t pidt, t_data *data)
 	int	exit_status;
 
 	exit_status = 0;
-	if (pidt == 0) 
+	if (pidt == 0)
 	{
 		close(pipefd_out[0]);
-		dup2(pipefd_out[1], STDOUT_FILENO);     
+		dup2(pipefd_out[1], STDOUT_FILENO);
 		close(pipefd_out[1]);
 		if (cmd->inout_list != NULL)
 			do_inout(cmd->inout_list, data);

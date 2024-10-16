@@ -6,24 +6,10 @@
 /*   By: ssian <ssian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 11:43:29 by ssian             #+#    #+#             */
-/*   Updated: 2024/10/14 15:42:38 by ssian            ###   ########.fr       */
+/*   Updated: 2024/10/16 11:25:32 by ssian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../minishell.h"
-
-int	is_contain_quotes(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == 34 || str[i] == 39)
-			return (1);
-		i++;
-	}
-	return (0);
-}
 
 int	do_is_inout(t_data *data, t_ccmd *ccmd, int *i)
 {
@@ -36,7 +22,7 @@ int	do_is_inout(t_data *data, t_ccmd *ccmd, int *i)
 	if (*i == (data->itr - 1))
 	{
 		if (add_cmd(ccmd->command, ccmd->args, ccmd->inout_list,
-			&(ccmd->cmd_list)) == 0)
+				&(ccmd->cmd_list)) == 0)
 			return (print_error_create_cmdlist(), 0);
 	}
 	return (1);
@@ -51,15 +37,15 @@ int	add_inout(t_list **inout_list, int inout_type, char *inout_value)
 	inout = NULL;
 	inout_node = NULL;
 	if (inout_type == 0)
-		inout = create_inout(inout_type, inout_value, NULL, NULL); 
+		inout = create_inout(inout_type, inout_value, NULL, NULL);
 	else if (inout_type == 1)
-		inout = create_inout(inout_type, inout_value, NULL, NULL); 
+		inout = create_inout(inout_type, inout_value, NULL, NULL);
 	else if (inout_type == 2)
-		inout = create_inout(inout_type, inout_value, NULL, NULL); 
+		inout = create_inout(inout_type, inout_value, NULL, NULL);
 	else if (inout_type == 3)
-		inout = create_inout(inout_type, NULL, NULL, inout_value); 
+		inout = create_inout(inout_type, NULL, NULL, inout_value);
 	if (inout == NULL)
-		return (0); 
+		return (0);
 	inout_node = ft_lstnew(inout);
 	if (inout_node == NULL)
 	{
@@ -88,7 +74,7 @@ int	add_cmd(char *command, char **args, t_list *inout_list, t_list **cmd_list)
 		return (free_charchar_str(args), 0);
 	cmd_node = ft_lstnew(cmd);
 	if (cmd_node == NULL)
-	{   
+	{
 		free_charchar_str(args);
 		free_cmd(cmd);
 		return (0);

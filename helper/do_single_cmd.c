@@ -6,7 +6,7 @@
 /*   By: ssian <ssian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 22:44:00 by ssian             #+#    #+#             */
-/*   Updated: 2024/10/14 13:09:37 by ssian            ###   ########.fr       */
+/*   Updated: 2024/10/16 14:23:08 by ssian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../minishell.h"
@@ -34,24 +34,24 @@ static void	do_in_child(t_cmd *cmd, t_data *data)
 /* success status = 0, failed status = 1 */
 static void	do_in_parent(t_cmd *cmd, t_data *data)
 {
-	if(equals(cmd->cmd, "export") == 1)
+	if (equals(cmd->cmd, "export") == 1)
 	{
 		if (builtin_export(cmd->args, data) == 0)
 			update_exit_status(1, data);
 	}
-	else if(equals(cmd->cmd, "unset") == 1)
+	else if (equals(cmd->cmd, "unset") == 1)
 		builtin_unset(cmd->args, data);
-	else if(equals(cmd->cmd, "cd") == 1)
+	else if (equals(cmd->cmd, "cd") == 1)
 	{
 		if (builtin_cd(cmd->args, data) == 0)
 			update_exit_status(1, data);
 	}
-	else if(equals(cmd->cmd, "exit") == 1)
+	else if (equals(cmd->cmd, "exit") == 1)
 	{
 		if (builtin_exit(cmd->args, data) == 0)
 			update_exit_status(1, data);
 	}
-	else if(equals(cmd->cmd, "env") == 1)
+	else if (equals(cmd->cmd, "env") == 1)
 	{
 		if (builtin_get_env(cmd->args, data) == 0)
 			update_exit_status(127, data);
@@ -65,9 +65,9 @@ void	do_single_cmd(t_data *data)
 	t_cmd	*cmd;
 
 	status = 0;
-	cmd = (t_cmd *)(data->cmd_list->content); 
+	cmd = (t_cmd *)(data->cmd_list->content);
 	pidt = fork();
-	if (pidt == -1) 
+	if (pidt == -1)
 		return (perror("fork failed!"), free_all(data), exit(EXIT_FAILURE));
 	if (pidt == 0)
 		do_in_child(cmd, data);
@@ -76,7 +76,7 @@ void	do_single_cmd(t_data *data)
 		wait(&status);
 		if (WIFSIGNALED(status))
 			update_exit_status(128 + WTERMSIG(status), data);
-		else if (WIFEXITED(status)) 
+		else if (WIFEXITED(status))
 			update_exit_status(WEXITSTATUS(status), data);
 		do_in_parent(cmd, data);
 	}

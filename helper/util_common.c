@@ -6,7 +6,7 @@
 /*   By: ssian <ssian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/28 10:59:27 by ssian             #+#    #+#             */
-/*   Updated: 2024/10/14 15:54:13 by ssian            ###   ########.fr       */
+/*   Updated: 2024/10/16 14:08:35 by ssian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "../minishell.h"
@@ -46,4 +46,18 @@ int	get_args_len(char **args)
 	while (args[i])
 		i++;
 	return (i);
+}
+
+int	is_contain_quotes(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == 34 || str[i] == 39)
+			return (1);
+		i++;
+	}
+	return (0);
 }
