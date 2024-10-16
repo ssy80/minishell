@@ -30,7 +30,7 @@ int	starts_with(char *str, char *start)
 	int	i;
 
 	i = 0;
-	while (start[i] && str[i])
+	while (start[i])
 	{
 		if (start[i] != str[i])
 			return (0);
