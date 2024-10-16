@@ -1,26 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   is_spaces.c                                        :+:      :+:    :+:   */
+/*   ft_atold.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ssian <ssian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/20 23:17:30 by ssian             #+#    #+#             */
-/*   Updated: 2024/10/14 15:39:58 by ssian            ###   ########.fr       */
+/*   Created: 2024/09/26 16:18:24 by ssian             #+#    #+#             */
+/*   Updated: 2024/10/14 15:04:50 by ssian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "minishell.h"
 
-int	is_spaces(char *str)
+long double	ft_atold(const char *str)
 {
-	int	i;
+	int			i;
+	int			sign;
+	long double	n;
 
 	i = 0;
-	while (str[i])
+	sign = 1;
+	while ((str[i] >= 9 && str[i] <= 13) || str[i] == 32)
+		i++;
+	if (str[i] == '-' || str[i] == '+')
 	{
-		if ((str[i] < 9 || str[i] > 13) && str[i] != 32)
-			return (0);
+		if (str[i] == '-')
+			sign = -1;
 		i++;
 	}
-	return (1);
+	n = 0;
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		n = (n * 10) + (str[i] - 48);
+		i++;
+	}
+	return (n * sign);
 }

@@ -9,8 +9,7 @@
 /*   Updated: 2024/08/09 09:12:10 by yoong            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include "../minishell.h"
+#include "minishell.h"
 
 // copy env into linkedlist for easier manipulation when editing env value
 static void	copyenv(char **env, t_data *data)

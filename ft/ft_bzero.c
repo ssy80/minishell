@@ -1,30 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init_initfd.c                                      :+:      :+:    :+:   */
+/*   ft_bzero.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yoong <yoong@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/04 13:35:25 by yoong             #+#    #+#             */
-/*   Updated: 2024/08/04 13:35:32 by yoong            ###   ########.fr       */
+/*   Created: 2024/04/15 05:11:05 by yoong             #+#    #+#             */
+/*   Updated: 2024/04/15 05:11:08 by yoong            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "minishell.h"
 
-// used for opening fd 0, 1 and 2
-void	initfd(char *dir)
+void	ft_bzero(void *b, size_t len)
 {
-	int	fd;
+	size_t	i;
 
-	getprompt(dir);
-	fd = open("console", O_RDWR);
-	while (fd >= 0)
+	i = 0;
+	while (i < len)
 	{
-		if (fd >= 3)
-		{
-			close(fd);
-			break ;
-		}
-		fd = open("console", O_RDWR);
+		*((unsigned char *)b + i) = '\0';
+		i++;
 	}
 }

@@ -9,8 +9,7 @@
 /*   Updated: 2024/10/14 15:08:03 by ssian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include "../minishell.h"
+#include "minishell.h"
 
 /* 
 ctrl-\  SIGQUIT = does nothing

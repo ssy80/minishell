@@ -9,7 +9,7 @@
 /*   Updated: 2024/10/16 14:09:19 by ssian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include "../minishell.h"
+#include "minishell.h"
 
 /* dir is the cwd + :  eq the prompt to print*/
 void	getprompt(char *dir)

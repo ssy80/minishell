@@ -9,8 +9,7 @@
 /*   Updated: 2024/10/13 04:54:44 by yoong            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include "../minishell.h"
+#include "minishell.h"
 
 void	set_signal_in_command(void)
 {

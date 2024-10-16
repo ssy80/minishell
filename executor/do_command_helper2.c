@@ -1,63 +1,58 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   util_common.c                                      :+:      :+:    :+:   */
+/*   do_command_helper2.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ssian <ssian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/28 10:59:27 by ssian             #+#    #+#             */
-/*   Updated: 2024/10/16 14:08:35 by ssian            ###   ########.fr       */
+/*   Created: 2024/09/30 13:18:58 by ssian             #+#    #+#             */
+/*   Updated: 2024/10/16 11:26:58 by ssian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "minishell.h"
 
-int	equals(char *s1, char *s2)
+void	error_execve(t_cmd *cmd, t_data *data)
+{
+	perror(cmd->cmd);
+	free_all(data);
+	if (errno == 2)
+		exit(127);
+	else
+		exit(EXIT_FAILURE);
+}
+
+int	is_cmd_path(char *cmd)
 {
 	int	i;
 
-	if (s1 == NULL || s2 == NULL)
-		return (0);
 	i = 0;
-	while (s1[i] || s2[i])
+	while (cmd[i])
 	{
-		if (s1[i] != s2[i])
-			return (0);
-		i++;
-	}
-	return (1);
-}
-
-int	is_dir(char *command)
-{
-	struct stat	sbuf;
-
-	if (stat(command, &sbuf) != 0)
-		return (0);
-	return (S_ISDIR(sbuf.st_mode));
-}
-
-int	get_args_len(char **args)
-{
-	int	i;
-
-	if (args == NULL)
-		return (0);
-	i = 0;
-	while (args[i])
-		i++;
-	return (i);
-}
-
-int	is_contain_quotes(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == 34 || str[i] == 39)
+		if (cmd[i] == '/')
 			return (1);
 		i++;
 	}
 	return (0);
+}
+
+int	check_x_permission(char *command)
+{
+	if (access(command, X_OK) == -1)
+		return (0);
+	return (1);
+}
+
+int	check_got_file(char *command)
+{
+	if (access(command, F_OK) == -1)
+		return (0);
+	return (1);
+}
+
+char	*get_env_path(t_data *data)
+{
+	char	*path;
+
+	path = getenvvar("PATH", data);
+	return (path);
 }

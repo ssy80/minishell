@@ -1,30 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init_initfd.c                                      :+:      :+:    :+:   */
+/*   ft_strchr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yoong <yoong@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/04 13:35:25 by yoong             #+#    #+#             */
-/*   Updated: 2024/08/04 13:35:32 by yoong            ###   ########.fr       */
+/*   Created: 2024/04/15 05:19:40 by yoong             #+#    #+#             */
+/*   Updated: 2024/04/15 05:19:46 by yoong            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "minishell.h"
 
-// used for opening fd 0, 1 and 2
-void	initfd(char *dir)
+char	*ft_strchr(const char *s, int c)
 {
-	int	fd;
+	int	i;
 
-	getprompt(dir);
-	fd = open("console", O_RDWR);
-	while (fd >= 0)
+	i = 0;
+	while (s[i])
 	{
-		if (fd >= 3)
-		{
-			close(fd);
-			break ;
-		}
-		fd = open("console", O_RDWR);
+		if (s[i] == (unsigned char)c)
+			return ((char *)(s + i));
+		i++;
 	}
+	if ((unsigned char)c == '\0')
+		return ((char *)(s + i));
+	return (NULL);
 }
