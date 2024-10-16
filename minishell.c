@@ -6,13 +6,11 @@
 /*   By: yoong <yoong@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/02 17:41:38 by yoong             #+#    #+#             */
-/*   Updated: 2024/08/02 17:41:41 by yoong            ###   ########.fr       */
+/*   Updated: 2024/10/16 15:03:01 by ssian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 #include "minishell.h"
 
-//int g_var = 0;
 static void	create_and_process(t_data *data)
 {
 	t_list	*cmd_list;
