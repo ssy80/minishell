@@ -1,30 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init_initfd.c                                      :+:      :+:    :+:   */
+/*   builtin_pwd.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yoong <yoong@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ssian <ssian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/04 13:35:25 by yoong             #+#    #+#             */
-/*   Updated: 2024/08/04 13:35:32 by yoong            ###   ########.fr       */
+/*   Created: 2024/09/22 16:12:15 by ssian             #+#    #+#             */
+/*   Updated: 2024/10/14 15:31:46 by ssian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "minishell.h"
 
-// used for opening fd 0, 1 and 2
-void	initfd(char *dir)
+void	builtin_pwd(void)
 {
-	int	fd;
-
-	getprompt(dir);
-	fd = open("console", O_RDWR);
-	while (fd >= 0)
-	{
-		if (fd >= 3)
-		{
-			close(fd);
-			break ;
-		}
-		fd = open("console", O_RDWR);
-	}
+	getpwd();
 }

@@ -1,30 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init_initfd.c                                      :+:      :+:    :+:   */
+/*   ft_lstadd_back_bonus.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yoong <yoong@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/04 13:35:25 by yoong             #+#    #+#             */
-/*   Updated: 2024/08/04 13:35:32 by yoong            ###   ########.fr       */
+/*   Created: 2024/04/15 05:13:13 by yoong             #+#    #+#             */
+/*   Updated: 2024/04/15 05:13:15 by yoong            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "minishell.h"
 
-// used for opening fd 0, 1 and 2
-void	initfd(char *dir)
+void	ft_lstadd_back(t_list **lst, t_list *new)
 {
-	int	fd;
+	t_list	*cp;
 
-	getprompt(dir);
-	fd = open("console", O_RDWR);
-	while (fd >= 0)
+	if (!*lst)
 	{
-		if (fd >= 3)
-		{
-			close(fd);
-			break ;
-		}
-		fd = open("console", O_RDWR);
+		*lst = new;
+		lst[0]->next = NULL;
+		return ;
 	}
+	cp = lst[0];
+	while (cp->next != NULL)
+		cp = cp->next;
+	cp->next = new;
 }

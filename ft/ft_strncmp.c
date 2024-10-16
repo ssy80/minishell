@@ -1,30 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init_initfd.c                                      :+:      :+:    :+:   */
+/*   ft_strncmp.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yoong <yoong@student.42.fr>                +#+  +:+       +#+        */
+/*   By: yoong <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/04 13:35:25 by yoong             #+#    #+#             */
-/*   Updated: 2024/08/04 13:35:32 by yoong            ###   ########.fr       */
+/*   Created: 2024/03/04 15:29:14 by yoong             #+#    #+#             */
+/*   Updated: 2024/03/06 19:00:02 by yoong            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "minishell.h"
 
-// used for opening fd 0, 1 and 2
-void	initfd(char *dir)
+int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
-	int	fd;
+	size_t	i;
 
-	getprompt(dir);
-	fd = open("console", O_RDWR);
-	while (fd >= 0)
+	i = 0;
+	if (n == 0)
+		return (0);
+	while ((s1[i] || s2[i]) && i < n)
 	{
-		if (fd >= 3)
-		{
-			close(fd);
-			break ;
-		}
-		fd = open("console", O_RDWR);
+		if (s1[i] != s2[i])
+			return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+		i++;
 	}
+	return (0);
 }

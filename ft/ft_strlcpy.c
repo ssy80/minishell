@@ -1,30 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init_initfd.c                                      :+:      :+:    :+:   */
+/*   ft_strlcpy.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yoong <yoong@student.42.fr>                +#+  +:+       +#+        */
+/*   By: yoong <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/04 13:35:25 by yoong             #+#    #+#             */
-/*   Updated: 2024/08/04 13:35:32 by yoong            ###   ########.fr       */
+/*   Created: 2024/03/04 13:07:11 by yoong             #+#    #+#             */
+/*   Updated: 2024/03/04 17:28:32 by yoong            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "minishell.h"
 
-// used for opening fd 0, 1 and 2
-void	initfd(char *dir)
+size_t	ft_strlcpy(char *dest, char *src, size_t size)
 {
-	int	fd;
+	size_t	n;
+	size_t	j;
 
-	getprompt(dir);
-	fd = open("console", O_RDWR);
-	while (fd >= 0)
+	n = 0;
+	j = 0;
+	while (src[n] != '\0')
+		n++;
+	if (size < 1)
+		return (n);
+	while (src[j] && j < size - 1)
 	{
-		if (fd >= 3)
-		{
-			close(fd);
-			break ;
-		}
-		fd = open("console", O_RDWR);
+		dest[j] = src[j];
+		j++;
 	}
+	dest[j] = '\0';
+	return (n);
 }
