@@ -19,6 +19,8 @@
 void	exp1q(char *s, int a[2], char *line, t_data *data)
 {
 	line[a[1]++] = s[a[0]++];
+	if ((int)ft_strlen(s) > a[0] && s[a[0]] == '"')
+		return (exp2q(s, a, line, data));
 	while (s[a[0]] && s[a[0]] != '\'')
 	{
 		line[a[1]++] = s[a[0]++];
@@ -87,6 +89,8 @@ void	exp2q(char *s, int a[2], char *line, t_data *data)
 {
 	if ((int)ft_strlen(s) > a[0] && s[a[0]] != '$')
 		line[a[1]++] = s[a[0]++];
+	if ((int)ft_strlen(s) > a[0] && s[a[0]] == '\'')
+		return (exp1q(s, a, line, data));
 	while (s[a[0]] && s[a[0]] != '"')
 	{
 		if (s[a[0]] == '$')
