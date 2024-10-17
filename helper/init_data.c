@@ -12,7 +12,7 @@
 #include "minishell.h"
 
 // copy env into linkedlist for easier manipulation when editing env value
-static void	copyenv(char **env, t_data *data)
+void	copyenv(char **env, t_data *data)
 {
 	int		i;
 	int		len;

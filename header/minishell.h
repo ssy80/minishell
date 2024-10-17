@@ -171,6 +171,7 @@ void		exitcommand(char *input, t_data *data);
 void		getpwd(void);
 void		getcd(char *buf);
 int			builtin_func(char *buf, t_data *data);
+void		copyenv(char **env, t_data *data);
 // init
 void		initfd(char *dir);
 void		initdata(char buf[MAXLEN], char **env, t_data *data);

@@ -50,11 +50,36 @@ static bool	syntaxfail(t_data *data)
 	return (true);
 }
 
-	// initfd(dir);
-	// initdata(buf, envp, &data);
-	// server();
-	// set_sigint_status(&data);
-	// update_exit_status(0, &data);
+int	cmdline(int argc, char **argv, char **envp, t_data *data)
+{
+	if (argc >= 3 && !ft_strncmp(argv[1], "-c", 3))
+	{
+		ft_bzero(data, sizeof(t_data));
+		copyenv(envp, data);
+		server();
+		set_sigint_status(data);
+		update_exit_status(0, data);
+		data->buf = argv[2];
+		gettkn(data, 0, 0);
+		loadcmdtkn(data);
+		if (!syn_check(data) && syntaxfail(data))
+			exitcl(0);
+		if (do_expander(data) == 0)
+			error_main(data);
+		retokenise(data);
+		if (!data->cmd[0])
+			exitcl(0);
+		create_and_process(data);
+		exit(atoi(getenvvar("EXIT_STATUS", data)));
+	}
+	exit(1);
+}
+
+// initfd(dir);
+// initdata(buf, envp, &data);
+// server();
+// set_sigint_status(&data);
+// update_exit_status(0, &data);
 int	main(int ac, char *av[], char **envp)
 {
 	char	buf[MAXLEN];
@@ -64,6 +89,7 @@ int	main(int ac, char *av[], char **envp)
 	(void)av;
 	(void)ac;
 	initalization(dir, buf, envp, &data);
+	cmdline(ac, av, envp, &data);
 	while (getcmd(buf, MAXLEN, dir, &data) >= 0)
 	{
 		if (ft_strlen(buf) == 0)
