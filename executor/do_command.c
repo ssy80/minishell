@@ -74,6 +74,8 @@ static char	*get_command_path(char *cmd, t_data *data)
 
 static void	check_dir(t_cmd *cmd, t_data *data)
 {
+	if (ft_strlen(cmd->cmd) == 0)
+		error_no_command(cmd, data);
 	if (ft_strchr(cmd->cmd, '/') != NULL)
 	{
 		if (is_dir(cmd->cmd) == 1)
