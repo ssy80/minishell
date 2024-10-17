@@ -56,3 +56,4 @@ dkms.conf
 checker_linux
 minishell
 minishell_tester/
+minishellTester
