@@ -14,10 +14,11 @@
 bool	schar(char s)
 {
 	if (s == '"' || s == '\'' || s == ' ' \
-	|| s == '$' || s == '/' || s == ':')
+	|| s == '$' || s == '/' || s == ':' || (ft_isalnum(s) == 0))
 		return (true);
 	return (false);
 }
+
 
 void	fillstack(t_stack *stack, t_data *data, char *buf)
 {
