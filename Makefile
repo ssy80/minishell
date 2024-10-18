@@ -102,17 +102,6 @@ HEADER      = ${INCLUDE}/minishell.h
 %.o: %.c   $(HEADER)
 			$(CC) $(CFLAGS) -c -I $(INCLUDE)  $< -o $(<:.c=.o)
 
-#DIR_HELPER = ./helper
-#SRC = $(NAME).c
-#OBJ = $(SRC:.c=.o)
-#HELPER = $(wildcard $(DIR_HELPER)/*.c)
-# HELPER = $(DIR_HELPER)/ft_atoi.c \
-#HELPER_OBJ = $(HELPER:.c=.o)
-#$(NAME) : $(OBJS)
-#	$(CC) $(CFLAGS) $^ -o $@ $(RFLAG) -c -I ${INCLUDE}
-#$(DIR_HELPER)/%.o : $(DIR_HELPER)/%.c $(NAME).h
-#	$(CC) -c $(CFLAGS) $< -o $@
-
 all : $(NAME)
 
 $(NAME): $(OBJS)

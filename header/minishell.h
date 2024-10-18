@@ -311,7 +311,7 @@ int			is_operator_in_quotes(char *str);
 int			expand_str(int i, t_data *data);
 int			is_contain_quotes(char *str);
 void		warning_heredoc_eof(char *delimiter);
-void		handle_sig_child(int sig);
+void		handle_sig_child(int signal, siginfo_t *siginfo, void *context);
 void		cleanup_child(t_heredoc *heredoc);
 void		write_line(int got_quotes, char *line,
 				t_data *data, int filefd);

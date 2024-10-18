@@ -6,7 +6,7 @@
 /*   By: ssian <ssian@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 10:25:59 by ssian             #+#    #+#             */
-/*   Updated: 2024/10/16 11:22:36 by ssian            ###   ########.fr       */
+/*   Updated: 2024/10/18 12:09:57 by ssian            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "minishell.h"
@@ -24,21 +24,21 @@ static int	do_is_pipe(t_ccmd *ccmd)
 
 static int	do_last(t_data *data, t_ccmd *ccmd, int *i)
 {
-		if (expand_str(*i, data) == 0)
+	if (expand_str(*i, data) == 0)
+		return (print_error_create_cmdlist(), 0);
+	if (ccmd->command == NULL)
+	{
+		ccmd->command = data->cmd[*i];
+		ccmd->args = add_arg(ccmd->args, data->cmd[*i]);
+		if (ccmd->args == NULL)
 			return (print_error_create_cmdlist(), 0);
-		if (ccmd->command == NULL)
-		{
-			ccmd->command = data->cmd[*i];
-			ccmd->args = add_arg(ccmd->args, data->cmd[*i]);
-			if (ccmd->args == NULL)
-				return (print_error_create_cmdlist(), 0);
-		}
-		else
-		{
-			ccmd->args = add_arg(ccmd->args, data->cmd[*i]);
-			if (ccmd->args == NULL)
-				return (print_error_create_cmdlist(), 0);
-		}
+	}
+	else
+	{
+		ccmd->args = add_arg(ccmd->args, data->cmd[*i]);
+		if (ccmd->args == NULL)
+			return (print_error_create_cmdlist(), 0);
+	}
 	if (add_cmd(ccmd->command, ccmd->args,
 			ccmd->inout_list, &(ccmd->cmd_list)) == 0)
 		return (print_error_create_cmdlist(), 0);
@@ -50,21 +50,21 @@ static int	do_last(t_data *data, t_ccmd *ccmd, int *i)
 
 static int	do_others(t_data *data, t_ccmd *ccmd, int *i)
 {
-		if (expand_str(*i, data) == 0)
+	if (expand_str(*i, data) == 0)
+		return (print_error_create_cmdlist(), 0);
+	if (ccmd->command == NULL)
+	{
+		ccmd->command = data->cmd[*i];
+		ccmd->args = add_arg(ccmd->args, data->cmd[*i]);
+		if (ccmd->args == NULL)
 			return (print_error_create_cmdlist(), 0);
-		if (ccmd->command == NULL)
-		{
-			ccmd->command = data->cmd[*i];
-			ccmd->args = add_arg(ccmd->args, data->cmd[*i]);
-			if (ccmd->args == NULL)
-				return (print_error_create_cmdlist(), 0);
-		}
-		else
-		{
-			ccmd->args = add_arg(ccmd->args, data->cmd[*i]);
-			if (ccmd->args == NULL)
-				return (print_error_create_cmdlist(), 0);
-		}
+	}
+	else
+	{
+		ccmd->args = add_arg(ccmd->args, data->cmd[*i]);
+		if (ccmd->args == NULL)
+			return (print_error_create_cmdlist(), 0);
+	}
 	return (1);
 }
 
