@@ -43,13 +43,14 @@ char	*get_tmp_file(int i)
 	return (tmp_file);
 }
 
-void	handle_sig_child(int sig)
+void	handle_sig_child(int sig, siginfo_t *siginfo, void *context)
 {
+	(void)context;
 	if (sig == SIGINT)
 	{
 		cleanup_child(NULL);
 		signal(SIGINT, SIG_DFL);
-		kill(getpid(), SIGINT);
+		kill(siginfo->si_pid, SIGINT);
 	}
 }
 

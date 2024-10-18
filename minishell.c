@@ -50,11 +50,6 @@ static bool	syntaxfail(t_data *data)
 	return (true);
 }
 
-	// initfd(dir);
-	// initdata(buf, envp, &data);
-	// server();
-	// set_sigint_status(&data);
-	// update_exit_status(0, &data);
 int	main(int ac, char *av[], char **envp)
 {
 	char	buf[MAXLEN];
