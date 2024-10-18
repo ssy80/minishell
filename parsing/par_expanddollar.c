@@ -19,7 +19,6 @@ bool	schar(char s)
 	return (false);
 }
 
-
 void	fillstack(t_stack *stack, t_data *data, char *buf)
 {
 	char	*env;
