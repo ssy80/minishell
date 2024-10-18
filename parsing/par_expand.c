@@ -19,14 +19,14 @@
 void	exp1q(char *s, int a[2], char *line, t_data *data)
 {
 	line[a[1]++] = s[a[0]++];
-	if ((int)ft_strlen(s) > a[0] && s[a[0]] == '"')
-		return (exp2q(s, a, line, data));
 	while (s[a[0]] && s[a[0]] != '\'')
 	{
 		line[a[1]++] = s[a[0]++];
 		if (a[1] >= MAXLEN)
 			return (freedatacmd(data), freenullall(data), exitcl(1));
 	}
+	if (s[a[0]] && s[a[0]] == '\'')
+		line[a[1]++] = s[a[0]++];
 }
 
 // when there is only 1 $ ie:echo $ "$" 
@@ -72,7 +72,7 @@ void	exp_s(char *s, int a[2], char *line, t_data *data)
 	while (s[a[0]])
 	{
 		if (s[a[0]] == '"' || s[a[0]] == '\'' || s[a[0]] == ' ' \
-		|| s[a[0]] == '$' || s[a[0]] == '/' || s[a[0]] == ':')
+		|| s[a[0]] == '$' || s[a[0]] == '/' || ft_isalnum(s[a[0]]) == 0)
 			break ;
 		buf[i++] = s[a[0]++];
 	}
@@ -89,14 +89,17 @@ void	exp2q(char *s, int a[2], char *line, t_data *data)
 {
 	if ((int)ft_strlen(s) > a[0] && s[a[0]] != '$')
 		line[a[1]++] = s[a[0]++];
-	if ((int)ft_strlen(s) > a[0] && s[a[0]] == '\'')
-		return (exp1q(s, a, line, data));
 	while (s[a[0]] && s[a[0]] != '"')
 	{
-		if (s[a[0]] == '$')
-			return (a[0]++, exp_s(s, a, line, data), exp2q(s, a, line, data));
-		line[a[1]] = s[a[0]];
-		a[1]++;
-		a[0]++;
+		while (s[a[0]] == '$')
+		{
+			a[0]++;
+			exp_s(s, a, line, data);
+		}
+		if (s[a[0]] == '"')
+			break;
+		line[a[1]++] = s[a[0]++];
 	}
+	if (s[a[0]] && s[a[0]] == '"')
+		line[a[1]++] = s[a[0]++];
 }

@@ -72,7 +72,7 @@ int	cmdline(int argc, char **argv, char **envp, t_data *data)
 		create_and_process(data);
 		exit(atoi(getenvvar("EXIT_STATUS", data)));
 	}
-	exit(1);
+	return 1;
 }
 
 // initfd(dir);
