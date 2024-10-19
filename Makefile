@@ -51,6 +51,7 @@ SRC			= ${DIR}/minishell.c \
 			  ${DIR_FT}/ft_bzero.c \
 			  ${DIR_FT}/ft_calloc.c \
 			  ${DIR_FT}/ft_isalnum.c \
+			  ${DIR_FT}/ft_isalnum2.c \
 			  ${DIR_FT}/ft_isalpha.c \
 			  ${DIR_FT}/ft_isdigit.c \
 			  ${DIR_FT}/ft_itoa.c \

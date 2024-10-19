@@ -139,6 +139,7 @@ typedef struct s_heredoc
 // ft
 int			ft_isalpha(int a);
 int			ft_isalnum(int a);
+int			ft_isalnum2(int a);
 void		ft_bzero(void *b, size_t len);
 void		*ft_calloc(size_t number, size_t size);
 void		ft_putstr_fd(char *s, int fd);
