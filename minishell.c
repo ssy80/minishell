@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 #include "minishell.h"
 
-static void	create_and_process(t_data *data)
+void	create_and_process(t_data *data)
 {
 	t_list	*cmd_list;
 
@@ -42,15 +42,7 @@ static void	initalization(char *dir, char *buf, char **envp, t_data *data)
 	update_exit_status(0, data);
 }
 
-static bool	syntaxfail(t_data *data)
-{
-	update_exit_status(2, data);
-	ft_putstr_fd("syntax error\n", STDERR_FILENO);
-	free_datacmd(data);
-	return (true);
-}
-
-static bool	syntaxfail(t_data *data)
+bool	syntaxfail(t_data *data)
 {
 	update_exit_status(2, data);
 	ft_putstr_fd("syntax error\n", STDERR_FILENO);
