@@ -33,7 +33,7 @@ static void	heredoc_child(t_inout *inout, int i, int *pipefd, t_data *data)
 	heredoc.pipefd = pipefd;
 	cleanup_child(&heredoc);
 	do_readline(heredoc.delimiter, heredoc.filefd, got_quotes, data);
-	write(pipefd[1], heredoc.file, strlen(heredoc.file) + 1);
+	write(pipefd[1], heredoc.file, ft_strlen(heredoc.file) + 1);
 	close_free_heredoc(&heredoc);
 }
 
@@ -65,6 +65,17 @@ static int	wait_heredoc_child(int pipefd[2], t_data *data, t_inout *inout)
 	return (1);
 }
 
+/*sa_sigaction should be set only if SA_SIGINFO is specified in sa_flags*/
+static void	set_signal_action(int signal, void (*fn_handle_signal)())
+{
+	struct sigaction	act;
+
+	sigemptyset(&act.sa_mask);
+	act.sa_flags = SA_SIGINFO;
+	act.sa_sigaction = fn_handle_signal;
+	sigaction(signal, &act, NULL);
+}
+
 static int	do_heredoc_as_child(t_inout *inout, int i, t_data *data)
 {
 	int		pipefd[2];
@@ -78,7 +89,7 @@ static int	do_heredoc_as_child(t_inout *inout, int i, t_data *data)
 	if (pidt == 0)
 	{
 		close(pipefd[0]);
-		signal(SIGINT, handle_sig_child);
+		set_signal_action(SIGINT, handle_sig_child);
 		signal(SIGQUIT, SIG_IGN);
 		heredoc_child(inout, i, pipefd, data);
 		exit(0);

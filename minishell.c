@@ -50,6 +50,14 @@ static bool	syntaxfail(t_data *data)
 	return (true);
 }
 
+static bool	syntaxfail(t_data *data)
+{
+	update_exit_status(2, data);
+	ft_putstr_fd("syntax error\n", STDERR_FILENO);
+	free_datacmd(data);
+	return (true);
+}
+
 int	cmdline(int argc, char **argv, char **envp, t_data *data)
 {
 	if (argc >= 3 && !ft_strncmp(argv[1], "-c", 3))

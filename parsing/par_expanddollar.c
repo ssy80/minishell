@@ -14,7 +14,7 @@
 bool	schar(char s)
 {
 	if (s == '"' || s == '\'' || s == ' ' \
-	|| s == '$' || s == '/' || s == ':')
+	|| s == '$' || s == '/' || s == ':' || (ft_isalnum2(s) == 0))
 		return (true);
 	return (false);
 }

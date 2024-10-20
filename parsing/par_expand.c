@@ -72,7 +72,7 @@ void	exp_s(char *s, int a[2], char *line, t_data *data)
 	while (s[a[0]])
 	{
 		if (s[a[0]] == '"' || s[a[0]] == '\'' || s[a[0]] == ' ' \
-		|| s[a[0]] == '$' || s[a[0]] == '/' || ft_isalnum(s[a[0]]) == 0)
+		|| s[a[0]] == '$' || s[a[0]] == '/' || ft_isalnum2(s[a[0]]) == 0)
 			break ;
 		buf[i++] = s[a[0]++];
 	}
@@ -97,7 +97,7 @@ void	exp2q(char *s, int a[2], char *line, t_data *data)
 			exp_s(s, a, line, data);
 		}
 		if (s[a[0]] == '"')
-			break;
+			break ;
 		line[a[1]++] = s[a[0]++];
 	}
 	if (s[a[0]] && s[a[0]] == '"')
