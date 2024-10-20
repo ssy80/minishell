@@ -216,6 +216,7 @@ int			getcmd(char *buf, int size, char *dir, t_data *data);
 void		error_main(t_data *data);
 void		free_main_last(t_list *cmd_list, t_data *data);
 int			do_expander(t_data *data);
+int			cmdline(int argc, char **argv, char **envp, t_data *data);
 //executor
 t_list		*ft_lstlast(t_list *lst);
 void		ft_lstadd_front(t_list **lst, t_list *new);
